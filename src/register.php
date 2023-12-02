@@ -1,5 +1,5 @@
 <?php
-
+// TODO: extend with mail confirmation
 if (isset($_POST['username']) || isset($_POST['password'])) {
 
     // User's inputted password

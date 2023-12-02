@@ -1,5 +1,7 @@
 <?php
 session_start();
+// TODO: implement password change functionality in new page
+// TODO: implement download purchased books
 ?>
 <DOCTYPE html>
 <html lang="en">

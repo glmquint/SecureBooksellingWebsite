@@ -1,3 +1,3 @@
 <?php
-echo "WIP";
+echo "WIP"; // TODO: Implement checkout with multi-step
 ?>

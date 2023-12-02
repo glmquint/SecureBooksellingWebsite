@@ -1,4 +1,6 @@
 <?php
+// TODO: implement session upgrading
+// TODO: implement password recovery
 session_start();
 // verifyLogin() is a function that verifies the user's login credentials with the database
 function verifyLogin($username, $password): bool
