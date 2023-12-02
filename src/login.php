@@ -54,6 +54,10 @@ if (isset($_POST['username']) || isset($_POST['password'])) {
         $_SESSION['username'] = $username;
         // You can set other session variables as needed
         // To Redirect the user to the home page or another secure page
+        if (isset($_POST['redirect'])) {
+            header('Location: ' . $_POST['redirect']);
+            exit();
+        }
         header('Location: index.php');
         exit();
     } else {
@@ -85,6 +89,10 @@ if (isset($_POST['username']) || isset($_POST['password'])) {
             <label>
                 <input type="password" name="password">
             </label>
+            <?php if(isset($_GET['redirect'])) {
+                echo "<input type='hidden' value='" . $_GET['redirect'] . "' name='redirect'>";
+            }
+            ?>
         </div>
         <div class="input-group">
             <button type="submit" name="login_btn">Login</button>
