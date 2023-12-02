@@ -18,6 +18,7 @@ session_start();
     <!-- if session is started, show a link to the logout page -->
     <?php if (isset($_SESSION['username'])): ?>
         <p>You are logged in as <?php echo htmlspecialchars($_SESSION['username']) ?> <a href="logout.php">Logout</a></p>
+        <p><a href="changepassword.php">Change password</a></p>
     <?php endif ?>
     <h2>Book list</h2>
     <table>
