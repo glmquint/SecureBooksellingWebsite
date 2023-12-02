@@ -1,6 +1,6 @@
 CREATE DATABASE  IF NOT EXISTS `securebooksellingdb` /*!40100 DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci */ /*!80016 DEFAULT ENCRYPTION='N' */;
 USE `securebooksellingdb`;
--- MySQL dump 10.13  Distrib 8.0.34, for macos13 (arm64)
+-- MySQL dump 10.13  Distrib 8.0.34, for Win64 (x86_64)
 --
 -- Host: localhost    Database: securebooksellingdb
 -- ------------------------------------------------------
@@ -129,6 +129,32 @@ LOCK TABLES `purchases` WRITE;
 UNLOCK TABLES;
 
 --
+-- Table structure for table `reset_token`
+--
+
+DROP TABLE IF EXISTS `reset_token`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `reset_token` (
+  `token` int NOT NULL,
+  `user` int NOT NULL,
+  `expiration_date` datetime NOT NULL,
+  PRIMARY KEY (`token`),
+  KEY `user_fk_idx` (`user`),
+  CONSTRAINT `user_reset_fk` FOREIGN KEY (`user`) REFERENCES `users` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `reset_token`
+--
+
+LOCK TABLES `reset_token` WRITE;
+/*!40000 ALTER TABLE `reset_token` DISABLE KEYS */;
+/*!40000 ALTER TABLE `reset_token` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Table structure for table `users`
 --
 
@@ -165,4 +191,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2023-12-02 16:47:39
+-- Dump completed on 2023-12-02 17:10:04
