@@ -8,16 +8,16 @@
 - [x] listing purchasable books
 - [x] add book to cart
   - [X] session upgrading
-- [ ] checkout with multistep
-  - [ ] the steps
-      - [ ] shipping address
-      - [ ] payment
-      - [ ] confirmation
-      - [ ] result
-  - [ ] add orders table with quantity and
+- [X] checkout with multistep
+  - [X] the steps
+      - [X] shipping address
+      - [X] payment
+      - [X] confirmation
+      - [X] result
+  - [X] add orders table with quantity and
   - [ ] manage quantity consistency with transactions
   - [ ] handle authentication to download electronic books
-- [ ] password change
+- [X] password change
 - [ ] password reset
 - [ ] download purchased books
 - [ ] SSL certificates on server
