@@ -3,23 +3,6 @@ session_start();
 // verifyLogin() is a function that verifies the user's login credentials with the database
 function verifyLogin($username, $password): bool
 {
-    /*
-    $db = mysqli_connect('localhost', 'root', 'rootroot', 'securebooksellingdb');
-    // user prepared statements to prevent SQL injection
-    $stmt = mysqli_prepare($db, "SELECT * FROM users WHERE username=? AND password=?");
-    mysqli_stmt_bind_param($stmt, "ss", $username, $password);
-    mysqli_stmt_execute($stmt);
-    $result = mysqli_stmt_get_result($stmt);
-    // if the user is found, return true
-    if (mysqli_num_rows($result) == 1) {
-        return true;
-    } else {
-        return false;
-    }
-    */
-
-
-
 // Retrieve the hashed password from the database based on the username
 // Replace the following lines with your database connection and query
     $servername = "localhost";
