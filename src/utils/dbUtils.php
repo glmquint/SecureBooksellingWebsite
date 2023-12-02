@@ -41,7 +41,6 @@ function verifyLogin($username, $password): bool
 
 function changePassword($username, $newPassword): bool
 {
-    // Store the hashed password in the database
     $servername = "localhost";
     $dbusername = "root";
     $dbpassword = "rootroot";
@@ -56,7 +55,7 @@ function changePassword($username, $newPassword): bool
     // use prepared statements to change the password of a user
     $stmt = $conn->prepare("UPDATE users SET password=? WHERE username=?");
     $stmt->bind_param("ss", $newPassword, $username);
-    $stmt->execute();
+    mysqli_stmt_execute($stmt);
     // check if insertion was successful
     if ($stmt->affected_rows > 0) {
         $conn->close();
@@ -67,4 +66,32 @@ function changePassword($username, $newPassword): bool
     }
 }
 
-?>
+
+// create a function to check if a user exists in the database
+function checkUser($username): bool
+{
+    $servername = "localhost";
+    $dbusername = "root";
+    $dbpassword = "rootroot";
+    $dbname = "securebooksellingdb";
+
+    $conn = new mysqli($servername, $dbusername, $dbpassword, $dbname);
+
+    if ($conn->connect_error) {
+        die("Connection failed: " . $conn->connect_error);
+    }
+
+
+    $stmt = $conn->prepare("SELECT username FROM users WHERE username=? ");
+    $stmt->bind_param("s", $username);
+    mysqli_stmt_execute($stmt);
+    $result = mysqli_stmt_get_result($stmt);
+    // check if insertion was successful
+    if ($stmt->affected_rows > 0) {
+        $conn->close();
+        return true;
+    } else {
+        $conn->close();
+        return false;
+    }
+}
