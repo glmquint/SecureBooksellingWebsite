@@ -18,7 +18,10 @@ session_start();
     <!-- if session is started, show a link to the logout page -->
     <?php if (isset($_SESSION['username'])): ?>
         <p>You are logged in as <?php echo htmlspecialchars($_SESSION['username']) ?> <a href="logout.php">Logout</a></p>
+        <p><a href="orders.php">My orders</a> </p>
+        <p><a href="books.php">My books</a> </p>
     <?php endif ?>
+    <p>Go to your <a href="cart.php">cart</a></p>
     <h2>Book list</h2>
     <table>
         <tr>

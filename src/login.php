@@ -54,6 +54,10 @@ if (isset($_POST['username']) || isset($_POST['password'])) {
         $_SESSION['username'] = $username;
         // You can set other session variables as needed
         // To Redirect the user to the home page or another secure page
+        if (isset($_POST['redirect'])) {
+            header('Location: ' . $_POST['redirect']);
+            exit();
+        }
         header('Location: index.php');
         exit();
     } else {
@@ -70,20 +74,6 @@ if (isset($_POST['username']) || isset($_POST['password'])) {
     <link rel="stylesheet" href="https://cdn.simplecss.org/simple.min.css">
 </head>
 <body>
-
-<!-- if the user is logged in, show a message -->
-<?php if (isset($_SESSION['success'])): ?>
-    <div class="error success">
-        <h3>
-            <?php
-            echo $_SESSION['success'];
-            unset($_SESSION['success']);
-            ?>
-        </h3>
-    </div>
-<!-- else, show a link to the login page -->
-<?php else: ?>
-
     <!-- show a form to login -->
     <a href="index.php">Back to Home</a>
     <h1>Login</h1>
@@ -99,12 +89,13 @@ if (isset($_POST['username']) || isset($_POST['password'])) {
             <label>
                 <input type="password" name="password">
             </label>
+            <?php if(isset($_GET['redirect'])) {
+                echo "<input type='hidden' value='" . $_GET['redirect'] . "' name='redirect'>";
+            }
+            ?>
         </div>
         <div class="input-group">
             <button type="submit" name="login_btn">Login</button>
         </div>
     </form>
-
-<?php endif ?>
-
 </body>
