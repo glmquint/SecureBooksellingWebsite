@@ -3,45 +3,7 @@
 // TODO: implement password recovery
 session_start();
 // verifyLogin() is a function that verifies the user's login credentials with the database
-function verifyLogin($username, $password): bool
-{
-// Retrieve the hashed password from the database based on the username
-// Replace the following lines with your database connection and query
-    $servername = "localhost";
-    $dbusername = "root";
-    $dbpassword = "rootroot";
-    $dbname = "securebooksellingdb";
-
-    $conn = new mysqli($servername, $dbusername, $dbpassword, $dbname);
-
-    if ($conn->connect_error) {
-        die("Connection failed: " . $conn->connect_error);
-    }
-
-
-    $stmt = $conn->prepare("SELECT password FROM users WHERE username=? ");
-    $stmt->bind_param("s", $username);
-    mysqli_stmt_execute($stmt);
-    $result = mysqli_stmt_get_result($stmt);
-    // check if insertion was successful
-    if ($stmt->affected_rows > 0) {
-        // Password hash found in the database
-        $row = mysqli_fetch_array($result);
-        $conn->close();
-        $stored_hashed_password = $row["password"];
-
-        // Verify the entered password against the stored hash
-        if (password_verify($password, $stored_hashed_password)) {
-            return true;
-        } else {
-            return false;
-        }
-    } else {
-        $conn->close();
-        return false;
-    }
-
-}
+require_once 'utils/dbUtils.php';
 
 if (isset($_POST['username']) || isset($_POST['password'])) {
     // Get username and password from the form submitted by the user
