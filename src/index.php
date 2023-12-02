@@ -2,7 +2,7 @@
 session_start();
 ?>
 <DOCTYPE html>
-<html>
+<html lang="en">
 <head>
     <title>Secure Book selling website</title>
     <link rel="stylesheet" href="https://cdn.simplecss.org/simple.min.css">
