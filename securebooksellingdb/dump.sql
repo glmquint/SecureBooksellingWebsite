@@ -1,9 +1,8 @@
-DROP DATABASE IF EXISTS `securebooksellingdb`;
 CREATE DATABASE  IF NOT EXISTS `securebooksellingdb` /*!40100 DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci */ /*!80016 DEFAULT ENCRYPTION='N' */;
 USE `securebooksellingdb`;
--- MySQL dump 10.13  Distrib 8.0.18, for Win64 (x86_64)
+-- MySQL dump 10.13  Distrib 8.0.34, for macos13 (arm64)
 --
--- Host: 127.0.0.1    Database: securebooksellingdb
+-- Host: localhost    Database: securebooksellingdb
 -- ------------------------------------------------------
 -- Server version	8.2.0
 
@@ -49,6 +48,61 @@ INSERT INTO `books` VALUES (1,'A Tale of Two Cities',1099,'Charles Dickens',100,
 UNLOCK TABLES;
 
 --
+-- Table structure for table `cart`
+--
+
+DROP TABLE IF EXISTS `cart`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `cart` (
+  `id` int NOT NULL,
+  `book` int NOT NULL,
+  `quantity` int NOT NULL,
+  PRIMARY KEY (`id`,`book`),
+  CONSTRAINT `cart_book_fk` FOREIGN KEY (`id`) REFERENCES `books` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `cart`
+--
+
+LOCK TABLES `cart` WRITE;
+/*!40000 ALTER TABLE `cart` DISABLE KEYS */;
+/*!40000 ALTER TABLE `cart` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `order`
+--
+
+DROP TABLE IF EXISTS `order`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `order` (
+  `id` varchar(45) NOT NULL,
+  `user` int NOT NULL,
+  `cart` int NOT NULL,
+  `address` varchar(45) NOT NULL,
+  `total_price` int NOT NULL,
+  `status` varchar(45) NOT NULL,
+  PRIMARY KEY (`user`,`cart`),
+  KEY `cart_fk_idx` (`cart`),
+  CONSTRAINT `cart_fk` FOREIGN KEY (`cart`) REFERENCES `cart` (`id`),
+  CONSTRAINT `user_fk` FOREIGN KEY (`user`) REFERENCES `users` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `order`
+--
+
+LOCK TABLES `order` WRITE;
+/*!40000 ALTER TABLE `order` DISABLE KEYS */;
+/*!40000 ALTER TABLE `order` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Table structure for table `purchases`
 --
 
@@ -85,6 +139,7 @@ CREATE TABLE `users` (
   `id` int NOT NULL AUTO_INCREMENT,
   `username` varchar(45) NOT NULL,
   `password` varchar(60) NOT NULL,
+  `email` varchar(60) NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `username_UNIQUE` (`username`),
   UNIQUE KEY `id_UNIQUE` (`id`)
@@ -97,7 +152,7 @@ CREATE TABLE `users` (
 
 LOCK TABLES `users` WRITE;
 /*!40000 ALTER TABLE `users` DISABLE KEYS */;
-INSERT INTO `users` VALUES (4,'ghi0m','$2y$10$W4wQGoVsC0clerP6nMW.i.vT1.7IuoWILj1Qjc7.NCZW6JrGdBIwW'),(5,'fabi0','$2y$10$1E6H.pjHbEdXIc0QInrNee7YxiaepwP8gtsq4TgLRuoLvp4RJNvQ2'),(6,'giacom0','$2y$10$BUUPclzGBPrJSKILGyKh7.Z0ULvlcrM6MRrdIoDAxjfIDVnZZNuXm');
+INSERT INTO `users` VALUES (4,'ghi0m','$2y$10$W4wQGoVsC0clerP6nMW.i.vT1.7IuoWILj1Qjc7.NCZW6JrGdBIwW',''),(5,'fabi0','$2y$10$1E6H.pjHbEdXIc0QInrNee7YxiaepwP8gtsq4TgLRuoLvp4RJNvQ2',''),(6,'giacom0','$2y$10$BUUPclzGBPrJSKILGyKh7.Z0ULvlcrM6MRrdIoDAxjfIDVnZZNuXm','');
 /*!40000 ALTER TABLE `users` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -110,4 +165,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2023-12-02 10:03:45
+-- Dump completed on 2023-12-02 16:47:39
