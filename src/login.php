@@ -65,6 +65,7 @@ if (isset($_POST['username']) || isset($_POST['password'])) {
         <div class="input-group">
             <button type="submit" name="login_btn">Login</button>
         </div>
+        <p><a href="resetpassword.php">Forgot password?</a></p>
     </form>
 
 <?php endif ?>
