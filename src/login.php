@@ -70,20 +70,6 @@ if (isset($_POST['username']) || isset($_POST['password'])) {
     <link rel="stylesheet" href="https://cdn.simplecss.org/simple.min.css">
 </head>
 <body>
-
-<!-- if the user is logged in, show a message -->
-<?php if (isset($_SESSION['success'])): ?>
-    <div class="error success">
-        <h3>
-            <?php
-            echo $_SESSION['success'];
-            unset($_SESSION['success']);
-            ?>
-        </h3>
-    </div>
-<!-- else, show a link to the login page -->
-<?php else: ?>
-
     <!-- show a form to login -->
     <a href="index.php">Back to Home</a>
     <h1>Login</h1>
@@ -104,7 +90,4 @@ if (isset($_POST['username']) || isset($_POST['password'])) {
             <button type="submit" name="login_btn">Login</button>
         </div>
     </form>
-
-<?php endif ?>
-
 </body>
