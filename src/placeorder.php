@@ -19,66 +19,76 @@ if (!isset($_SESSION['username'])) {
     exit();
 }
 else {
-    //Write a prepared statement transaction in order to update books table, orders table
-    // and cart table
-
-    // 1. Connect to the database
     $conn = mysqli_connect('localhost', 'root', 'rootroot', 'securebooksellingdb');
-    if(!$conn) {
-        //TODO: handle error hiding
-        //die("Connection failed: " . mysqli_connect_error());
+    if (!$conn) {
+        //TODO: handle error in a better way
+        echo "Error connecting to database";
+        header('Location: index.php');
         exit();
     }
     $conn->autocommit(FALSE);
     $conn->begin_transaction();
-    //TODO check cart id, autoincrement or others(?)
-    $stmt = $conn->prepare("INSERT INTO carts (book, quantity) VALUES (?, ?)");
 
-    $stmt->bind_param("ii", $bookid, $quantity);
+    try {
+        $stmt = $conn->prepare("SELECT id FROM users WHERE username=?");
 
-    $success = true; // Variable to track insert success
+        $stmt->bind_param("s", $_SESSION['username']);
 
-    foreach ($_SESSION['cart'] as $bookid => $quantity) {
         $stmt->execute();
-        if ($stmt->affected_rows <= 0) {
-            $success = false;
-            break;
-        }
-    }
-    if(!$success){
-        $conn->rollback();
-        $conn->close();
-        header('Location: index.php');
-        exit();
-    }
-    $stmt = $conn->prepare("INSERT INTO orders (id, user, cart, address, total_price, status) VALUES (?, ?, ?, ?, ?, ?)");
-    //TODO: modify username with user id otherwise it will not work
-    $stmt->bind_param("iiisis", $_SESSION['order']['orderid'], $_SESSION['order']['username'], $cart_id, $_SESSION['delivery']['address'], $_SESSION['order']['total_price'], $_SESSION['order']['status']);
-    $stmt->execute();
-    if($stmt->affected_rows <= 0){
-        $conn->rollback();
-        $conn->close();
-        header('Location: index.php');
-        exit();
-    }
-    $stmt = $conn->prepare("UPDATE books SET available = available - ? WHERE id = ?");
-    $stmt->bind_param("ii", $quantity, $bookid);
-    foreach ($_SESSION['cart'] as $bookid => $quantity) {
-        $stmt->execute();
-        if ($stmt->affected_rows <= 0) {
-            $success = false;
-            break;
-        }
-    }
-    if(!$success){
-        $conn->rollback();
-        $conn->close();
-        header('Location: index.php');
-        exit();
-    }
-    $conn->commit();
-    $conn->close();
+        $result = $stmt->get_result();
+        $row = $result->fetch_assoc();
 
+        $userid = $row['id'];
+        echo "User ID: " . $userid;
+
+        $stmt = $conn->prepare("INSERT INTO carts (id,book, quantity) VALUES (?, ?, ?)");
+
+        $cart_id = random_int(100000, 999999);
+
+        $stmt->bind_param("iii", $cart_id, $bookid, $quantity);
+
+        foreach ($_SESSION['cart'] as $bookid => $quantity) {
+            $stmt->execute();
+        }
+
+        $stmt = $conn->prepare("INSERT INTO orders (id, user, cart, address, total_price, status) VALUES (?, ?, ?, ?, ?, ?)");
+
+        $stmt->bind_param("iiisis", $_SESSION['order']['orderid'], $userid, $cart_id, $_SESSION['delivery']['address'], $_SESSION['order']['total_price'], $_SESSION['order']['status']);
+        $stmt->execute();
+
+        $stmt = $conn->prepare("INSERT INTO purchases (buyer, book) VALUES (?, ?)");
+        $stmt->bind_param("ii", $userid, $bookid);
+        foreach ($_SESSION['cart'] as $bookid => $quantity) {
+            $stmt->execute();
+        }
+
+        $stmt = $conn->prepare("UPDATE books SET available = available - ? WHERE id = ?");
+        $stmt->bind_param("ii", $quantity, $bookid);
+        foreach ($_SESSION['cart'] as $bookid => $quantity) {
+            $stmt->execute();
+        }
+
+
+        $conn->commit();
+        $conn->close();
+        unset($_SESSION['cart']);
+        unset($_SESSION['order']);
+        unset($_SESSION['delivery']);
+
+        echo "<h3>Order placed successfully</h3>";
+        //header('Location: index.php');
+        //exit();
+    } catch (mysqli_sql_exception $ex) {
+        echo "Error in placing order";
+        $conn->rollback();
+        $conn->close();
+        //TODO: handle not available book and generic MySQL error
+        unset($_SESSION['cart']);
+        unset($_SESSION['order']);
+        unset($_SESSION['delivery']);
+        header('Location: index.php');
+        exit();
+    }
 }
 ?>
 </body>
