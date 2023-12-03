@@ -6,6 +6,7 @@
 </head>
 <body>
 <?php
+require_once 'utils/dbUtils.php';
 session_start();
 
 if (!isset($_SESSION['username'])) {
@@ -30,16 +31,7 @@ else {
     $conn->begin_transaction();
 
     try {
-        $stmt = $conn->prepare("SELECT id FROM users WHERE username=?");
-
-        $stmt->bind_param("s", $_SESSION['username']);
-
-        $stmt->execute();
-        $result = $stmt->get_result();
-        $row = $result->fetch_assoc();
-
-        $userid = $row['id'];
-        echo "User ID: " . $userid;
+        $userid = getUserID($conn, $_SESSION['username']);
 
         $stmt = $conn->prepare("INSERT INTO carts (id,book, quantity) VALUES (?, ?, ?)");
 

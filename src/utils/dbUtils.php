@@ -66,5 +66,29 @@ function changePassword($username, $newPassword): bool
         return false;
     }
 }
+function getUserID($conn,$username): int
+{
+    if(!$conn) {
+        $servername = "localhost";
+        $dbusername = "root";
+        $dbpassword = "rootroot";
+        $dbname = "securebooksellingdb";
+
+        $conn = new mysqli($servername, $dbusername, $dbpassword, $dbname);
+
+        if ($conn->connect_error) {
+            die("Connection failed: " . $conn->connect_error);
+        }
+    }
+    $stmt = $conn->prepare("SELECT id FROM users WHERE username=?");
+
+    $stmt->bind_param("s", $username);
+
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $row = $result->fetch_assoc();
+
+    return $row['id'];
+}
 
 ?>
