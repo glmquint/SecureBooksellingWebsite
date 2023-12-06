@@ -1,5 +1,3 @@
-CREATE DATABASE  IF NOT EXISTS `securebooksellingdb` /*!40100 DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci */ /*!80016 DEFAULT ENCRYPTION='N' */;
-USE `securebooksellingdb`;
 -- MySQL dump 10.13  Distrib 8.0.34, for Win64 (x86_64)
 --
 -- Host: localhost    Database: securebooksellingdb
@@ -33,8 +31,9 @@ CREATE TABLE `books` (
   `synopsis` text,
   PRIMARY KEY (`id`),
   UNIQUE KEY `id_UNIQUE` (`id`),
-  UNIQUE KEY `title_UNIQUE` (`title`)
-) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+  UNIQUE KEY `title_UNIQUE` (`title`),
+  CONSTRAINT `CHK_Book_Avail` CHECK ((`available` >= 0))
+) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -43,43 +42,44 @@ CREATE TABLE `books` (
 
 LOCK TABLES `books` WRITE;
 /*!40000 ALTER TABLE `books` DISABLE KEYS */;
-INSERT INTO `books` VALUES (1,'A Tale of Two Cities',1099,'Charles Dickens',100,'A Tale of Two Cities is a historical novel published in 1859 by Charles Dickens, set in London and Paris before and during the French Revolution. The novel tells the story of the French Doctor Manette, his 18-year-long imprisonment in the Bastille in Paris, and his release to live in London with his daughter Lucie whom he had never met. The story is set against the conditions that led up to the French Revolution and the Reign of Terror.'),(2,'The Little Prince',836,'Antoine de Saint-Exupérie',100,'The Little Prince (French: Le Petit Prince, pronounced [lə p(ə)ti pʁɛ̃s]) is a novella written and illustrated by French aristocrat, writer, and military pilot Antoine de Saint-Exupéry. It was first published in English and French in the United States by Reynal & Hitchcock in April 1943 and was published posthumously in France following liberation; Saint-Exupéry\'s works had been banned by the Vichy Regime. The story follows a young prince who visits various planets, including Earth, and addresses themes of loneliness, friendship, love, and loss. Despite its style as a children\'s book, The Little Prince makes observations about life, adults, and human nature.'),(3,'Harry Potter and the Philosopher\'s Stone',1200,'J.K. Rowling',100,'Harry Potter and the Philosopher\'s Stone is a fantasy novel written by British author J. K. Rowling. The first novel in the Harry Potter series and Rowling\'s debut novel, it follows Harry Potter, a young wizard who discovers his magical heritage on his eleventh birthday, when he receives a letter of acceptance to Hogwarts School of Witchcraft and Wizardry. Harry makes close friends and a few enemies during his first year at the school and with the help of his friends, Ron Weasley and Hermione Granger, he faces an attempted comeback by the dark wizard Lord Voldemort, who killed Harry\'s parents, but failed to kill Harry when he was just 15 months old.'),(4,'And Then There Were None',1150,'Agatha Christie',100,'And Then There Were None is a mystery novel by the English writer Agatha Christie, who described it as the most difficult of her books to write.[2] It was first published in the United Kingdom by the Collins Crime Club on 6 November 1939, as Ten Little Niggers,[3] after an 1869 minstrel song that serves as a major plot element.[4][5] The US edition was released in January 1940 with the title And Then There Were None, taken from the last five words of the song.[6] Successive American reprints and adaptations use that title, though American Pocket Books paperbacks used the title Ten Little Indians between 1964 and 1986. UK editions continued to use the original title until 1985'),(5,'Dream of the Red Chamber',1510,'Cao Xueqin',100,'Dream of the Red Chamber (Honglou Meng) or The Story of the Stone (Shitou Ji) is a Chinese novel composed by Cao Xueqin in the mid-18th century. One of the Four Great Classical Novels of Chinese literature, it is known for its psychological scope, and its observation of the worldview, aesthetics, lifestyles, and social relations of 18th-century China'),(6,'The Hobbit',990,'J.R.R. Tolkien',100,'The Hobbit, or There and Back Again is a children\'s fantasy novel by English author J. R. R. Tolkien. It was published in 1937 to wide critical acclaim, being nominated for the Carnegie Medal and awarded a prize from the New York Herald Tribune for best juvenile fiction. The book is recognized as a classic in children\'s literature, and is one of the best-selling books of all time with over 100 million copies sold.');
+INSERT INTO `books` VALUES (1,'A Tale of Two Cities',1099,'Charles Dickens',100,'A Tale of Two Cities is a historical novel published in 1859 by Charles Dickens, set in London and Paris before and during the French Revolution. The novel tells the story of the French Doctor Manette, his 18-year-long imprisonment in the Bastille in Paris, and his release to live in London with his daughter Lucie whom he had never met. The story is set against the conditions that led up to the French Revolution and the Reign of Terror.'),(2,'The Little Prince',836,'Antoine de Saint-Exupérie',100,'The Little Prince (French: Le Petit Prince, pronounced [lə p(ə)ti pʁɛ̃s]) is a novella written and illustrated by French aristocrat, writer, and military pilot Antoine de Saint-Exupéry. It was first published in English and French in the United States by Reynal & Hitchcock in April 1943 and was published posthumously in France following liberation; Saint-Exupéry\'s works had been banned by the Vichy Regime. The story follows a young prince who visits various planets, including Earth, and addresses themes of loneliness, friendship, love, and loss. Despite its style as a children\'s book, The Little Prince makes observations about life, adults, and human nature.'),(3,'Harry Potter and the Philosopher\'s Stone',1200,'J.K. Rowling',99,'Harry Potter and the Philosopher\'s Stone is a fantasy novel written by British author J. K. Rowling. The first novel in the Harry Potter series and Rowling\'s debut novel, it follows Harry Potter, a young wizard who discovers his magical heritage on his eleventh birthday, when he receives a letter of acceptance to Hogwarts School of Witchcraft and Wizardry. Harry makes close friends and a few enemies during his first year at the school and with the help of his friends, Ron Weasley and Hermione Granger, he faces an attempted comeback by the dark wizard Lord Voldemort, who killed Harry\'s parents, but failed to kill Harry when he was just 15 months old.'),(4,'And Then There Were None',1150,'Agatha Christie',100,'And Then There Were None is a mystery novel by the English writer Agatha Christie, who described it as the most difficult of her books to write.[2] It was first published in the United Kingdom by the Collins Crime Club on 6 November 1939, as Ten Little Niggers,[3] after an 1869 minstrel song that serves as a major plot element.[4][5] The US edition was released in January 1940 with the title And Then There Were None, taken from the last five words of the song.[6] Successive American reprints and adaptations use that title, though American Pocket Books paperbacks used the title Ten Little Indians between 1964 and 1986. UK editions continued to use the original title until 1985'),(5,'Dream of the Red Chamber',1510,'Cao Xueqin',100,'Dream of the Red Chamber (Honglou Meng) or The Story of the Stone (Shitou Ji) is a Chinese novel composed by Cao Xueqin in the mid-18th century. One of the Four Great Classical Novels of Chinese literature, it is known for its psychological scope, and its observation of the worldview, aesthetics, lifestyles, and social relations of 18th-century China'),(6,'The Hobbit',990,'J.R.R. Tolkien',100,'The Hobbit, or There and Back Again is a children\'s fantasy novel by English author J. R. R. Tolkien. It was published in 1937 to wide critical acclaim, being nominated for the Carnegie Medal and awarded a prize from the New York Herald Tribune for best juvenile fiction. The book is recognized as a classic in children\'s literature, and is one of the best-selling books of all time with over 100 million copies sold.'),(7,'TestBook',1000,'Lorem Ipsum',2,'dolor sit amet');
 /*!40000 ALTER TABLE `books` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
--- Table structure for table `cart`
+-- Table structure for table `carts`
 --
 
-DROP TABLE IF EXISTS `cart`;
+DROP TABLE IF EXISTS `carts`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `cart` (
+CREATE TABLE `carts` (
   `id` int NOT NULL,
   `book` int NOT NULL,
   `quantity` int NOT NULL,
   PRIMARY KEY (`id`,`book`),
-  CONSTRAINT `cart_book_fk` FOREIGN KEY (`id`) REFERENCES `books` (`id`)
+  KEY `book_id_fk_idx` (`book`),
+  CONSTRAINT `book_id_fk` FOREIGN KEY (`book`) REFERENCES `books` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `cart`
+-- Dumping data for table `carts`
 --
 
-LOCK TABLES `cart` WRITE;
-/*!40000 ALTER TABLE `cart` DISABLE KEYS */;
-/*!40000 ALTER TABLE `cart` ENABLE KEYS */;
+LOCK TABLES `carts` WRITE;
+/*!40000 ALTER TABLE `carts` DISABLE KEYS */;
+/*!40000 ALTER TABLE `carts` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
--- Table structure for table `order`
+-- Table structure for table `orders`
 --
 
-DROP TABLE IF EXISTS `order`;
+DROP TABLE IF EXISTS `orders`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `order` (
+CREATE TABLE `orders` (
   `id` varchar(45) NOT NULL,
   `user` int NOT NULL,
   `cart` int NOT NULL,
@@ -88,18 +88,18 @@ CREATE TABLE `order` (
   `status` varchar(45) NOT NULL,
   PRIMARY KEY (`user`,`cart`),
   KEY `cart_fk_idx` (`cart`),
-  CONSTRAINT `cart_fk` FOREIGN KEY (`cart`) REFERENCES `cart` (`id`),
+  CONSTRAINT `cart_fk` FOREIGN KEY (`cart`) REFERENCES `carts` (`id`),
   CONSTRAINT `user_fk` FOREIGN KEY (`user`) REFERENCES `users` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `order`
+-- Dumping data for table `orders`
 --
 
-LOCK TABLES `order` WRITE;
-/*!40000 ALTER TABLE `order` DISABLE KEYS */;
-/*!40000 ALTER TABLE `order` ENABLE KEYS */;
+LOCK TABLES `orders` WRITE;
+/*!40000 ALTER TABLE `orders` DISABLE KEYS */;
+/*!40000 ALTER TABLE `orders` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
@@ -137,11 +137,11 @@ DROP TABLE IF EXISTS `reset_token`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `reset_token` (
   `token` int NOT NULL,
-  `user` int NOT NULL,
+  `user_id` int NOT NULL,
   `expiration_date` datetime NOT NULL,
   PRIMARY KEY (`token`),
-  KEY `user_fk_idx` (`user`),
-  CONSTRAINT `user_reset_fk` FOREIGN KEY (`user`) REFERENCES `users` (`id`)
+  KEY `user_fk_idx` (`user_id`),
+  CONSTRAINT `user_reset_fk` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -151,6 +151,7 @@ CREATE TABLE `reset_token` (
 
 LOCK TABLES `reset_token` WRITE;
 /*!40000 ALTER TABLE `reset_token` DISABLE KEYS */;
+INSERT INTO `reset_token` VALUES (278642991,5,'2023-12-06 16:53:25');
 /*!40000 ALTER TABLE `reset_token` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -191,4 +192,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2023-12-02 17:10:04
+-- Dump completed on 2023-12-06 16:55:22
