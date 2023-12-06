@@ -68,7 +68,7 @@ function changePassword($username, $newPassword): bool
 
 
 // create a function to check if a user exists in the database
-function checkUser($username): bool
+function checkUser($username): int
 {
     $servername = "localhost";
     $dbusername = "root";
@@ -82,8 +82,43 @@ function checkUser($username): bool
     }
 
 
-    $stmt = $conn->prepare("SELECT username FROM users WHERE username=? ");
+    $stmt = $conn->prepare("SELECT id FROM users WHERE username=? ");
     $stmt->bind_param("s", $username);
+    mysqli_stmt_execute($stmt);
+    $result = mysqli_stmt_get_result($stmt);
+    // check if insertion was successful
+    if ($stmt->affected_rows > 0) {
+        $row = mysqli_fetch_array($result);
+        $conn->close();
+        return $row["id"];
+    } else {
+        $conn->close();
+        return -1;
+    }
+}
+
+
+function saveToken($token, $userId): bool
+{
+    date_default_timezone_set('Europe/Rome');
+    //generate a time to live for the token express in datetime
+    $ttl = date('Y-m-d H:i:s', strtotime('+5 minutes'));
+
+    $servername = "localhost";
+    $dbusername = "root";
+    $dbpassword = "rootroot";
+    $dbname = "securebooksellingdb";
+
+    $conn = new mysqli($servername, $dbusername, $dbpassword, $dbname);
+
+    if ($conn->connect_error) {
+        die("Connection failed: " . $conn->connect_error);
+    }
+
+    //create a prepared statemt to insert the token, the user and ttl into the database
+    $stmt = $conn->prepare("INSERT INTO reset_token (token, user_id, expiration_date) VALUES (?, ?, ?)");
+    //bind the parameters where token is an integer, username is a strings and ttl is datetime
+    $stmt->bind_param("iss", $token, $userId, $ttl);
     mysqli_stmt_execute($stmt);
     $result = mysqli_stmt_get_result($stmt);
     // check if insertion was successful
