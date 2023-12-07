@@ -22,7 +22,7 @@
 - [ ] download purchased books
 - [ ] SSL certificates on server
   - [ ] use a custom webserver (because https://stackoverflow.com/questions/27597670/how-to-enable-https-connections-in-phpstorms-built-in-web-server)
-- [ ] make it simpler to change the number of books in cart (maybe a counter)
+- [X] make it simpler to change the number of books in cart
 - [X] show availability in book store
 - [ ] remove a single book from cart
 - [ ] add user check on books page 
