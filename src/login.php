@@ -37,27 +37,18 @@ if (isset($_POST['username']) || isset($_POST['password'])) {
 </head>
 <body>
     <!-- show a form to login -->
-    <a href="index.php">Back to Home</a>
     <h1>Login</h1>
+    <p>Back to <a href="index.php">Home</a></p>
     <form method="post" action="login.php">
-        <div class="input-group">
-            <label>Username</label>
-            <label>
-                <input type="text" name="username">
-            </label>
-        </div>
-        <div class="input-group">
-            <label>Password</label>
-            <label>
-                <input type="password" name="password">
-            </label>
-            <?php if(isset($_GET['redirect'])) {
-                echo "<input type='hidden' value='" . $_GET['redirect'] . "' name='redirect'>";
-            }
-            ?>
-        </div>
-        <div class="input-group">
-            <button type="submit" name="login_btn">Login</button>
-        </div>
+        <label>Username</label>
+        <input type="text" name="username">
+        <label>Password</label>
+        <input type="password" name="password">
+        <?php if(isset($_GET['redirect'])) {
+            echo "<input type='hidden' value='" . $_GET['redirect'] . "' name='redirect'>";
+        }
+        ?>
+        <button type="submit" name="login_btn">Login</button>
     </form>
+    <p>Don't have an account? <a href="register.php">Register here</a></p>
 </body>

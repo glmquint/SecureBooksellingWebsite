@@ -44,6 +44,7 @@ if (isset($_POST['username']) || isset($_POST['password'])) {
     </head>
     <body>
     <h1>Register</h1>
+    <p>Back to <a href="index.php">Home</a></p>
     <form method="post" action="register.php">
         <label for="username">Username</label>
         <input type="text" name="username" id="username" required="required">
@@ -51,6 +52,7 @@ if (isset($_POST['username']) || isset($_POST['password'])) {
         <input type="password" name="password" id="password" required="required">
         <button type="submit">Register</button>
     </form>
+    <p>Already have an account? <a href="login.php">Login here</a></p>
     </body>
 </html>
 
