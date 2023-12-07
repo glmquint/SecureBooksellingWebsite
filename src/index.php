@@ -29,6 +29,7 @@ session_start();
             <th>Book name</th>
             <th>Author</th>
             <th>Price</th>
+            <th>#Avb</th>
         </tr>
         <?php
         // connect to the database
@@ -43,6 +44,8 @@ session_start();
             echo "<td>" . $row['author'] . "</td>";
             // price is divided by 100 to avoid floating point arithmetic
             echo "<td>" . $row['price'] / 100 . "€</td>";
+            // availables
+            echo "<td>" . $row['available'] . "</td>";
             // button to add the book to the cart
             echo "<td><a href='addtocart.php?id=" . $row['id'] . "'>Add to cart</a></td>";
             echo "</tr>";
