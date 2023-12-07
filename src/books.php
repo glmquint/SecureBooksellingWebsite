@@ -28,32 +28,20 @@ else {
 
     if($cart_id != ""){
         $stmt = mysqli_prepare($db, "SELECT book,title FROM carts c INNER JOIN books b ON c.book=b.id WHERE c.id = ?");
-        mysqli_stmt_bind_param($stmt, "i", $cart_id);
-        mysqli_stmt_execute($stmt);
-        $result = mysqli_stmt_get_result($stmt);
-        if (mysqli_num_rows($result) > 0) {
-            // Loop through each row
-            while ($row = mysqli_fetch_array($result, MYSQLI_ASSOC)) {
-                // Display each row or perform operations with $row data
-                echo "<tr>";
-                echo "<td><a href='bookdetails.php?id=" . $row['book'] . "'>" . $row['title'] . "</a></td>";
-                echo "</tr>";
-            }
-        }
-    }
-    else{
+    } else{
         $stmt = mysqli_prepare($db, "SELECT book,title FROM purchases INNER JOIN books ON book=id WHERE buyer = ?");
-        mysqli_stmt_bind_param($stmt, "i", $user_id);
-        mysqli_stmt_execute($stmt);
-        $result = mysqli_stmt_get_result($stmt);
-        if (mysqli_num_rows($result) > 0) {
-            // Loop through each row
-            while ($row = mysqli_fetch_array($result, MYSQLI_ASSOC)) {
-                // Display each row or perform operations with $row data
-                echo "<tr>";
-                echo "<td><a href='bookdetails.php?id=" . $row['book'] . "'>" . $row['title'] . "</a></td>";
-                echo "</tr>";
-            }
+    }
+    mysqli_stmt_bind_param($stmt, "i", $user_id);
+    mysqli_stmt_execute($stmt);
+    $result = mysqli_stmt_get_result($stmt);
+    if (mysqli_num_rows($result) > 0) {
+        // Loop through each row
+        while ($row = mysqli_fetch_array($result, MYSQLI_ASSOC)) {
+            // Display each row or perform operations with $row data
+            echo "<tr>";
+            echo "<td><a href='bookdetails.php?id=" . $row['book'] . "'>" . $row['title'] . "</a></td>";
+            echo "<td><a href='download.php?id=" . $row['book'] . "'>Download</a></td>";
+            echo "</tr>";
         }
     }
 
