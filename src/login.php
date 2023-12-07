@@ -14,6 +14,8 @@ if (isset($_POST['username']) || isset($_POST['password'])) {
     if (verifyLogin($username, $password)) {
         // Correct login
         $_SESSION['username'] = $username;
+        // change session id to prevent session fixation
+        session_regenerate_id();
         // You can set other session variables as needed
         // To Redirect the user to the home page or another secure page
         if (isset($_POST['redirect'])) {
@@ -40,10 +42,10 @@ if (isset($_POST['username']) || isset($_POST['password'])) {
     <h1>Login</h1>
     <p>Back to <a href="index.php">Home</a></p>
     <form method="post" action="login.php">
-        <label>Username</label>
-        <input type="text" name="username">
-        <label>Password</label>
-        <input type="password" name="password">
+        <label for="username">Username</label>
+        <input type="text" name="username" id="username">
+        <label for="password">Password</label>
+        <input type="password" name="password" id="password">
         <?php if(isset($_GET['redirect'])) {
             echo "<input type='hidden' value='" . $_GET['redirect'] . "' name='redirect'>";
         }
