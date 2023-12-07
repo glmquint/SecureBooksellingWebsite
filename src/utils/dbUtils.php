@@ -68,7 +68,7 @@ function changePassword($username, $newPassword): bool
 
 
 // create a function to check if a user exists in the database
-function checkUser($username): int
+function checkUser($username): array
 {
     $servername = "localhost";
     $dbusername = "root";
@@ -82,7 +82,7 @@ function checkUser($username): int
     }
 
 
-    $stmt = $conn->prepare("SELECT id FROM users WHERE username=? ");
+    $stmt = $conn->prepare("SELECT * FROM users WHERE username=? ");
     $stmt->bind_param("s", $username);
     mysqli_stmt_execute($stmt);
     $result = mysqli_stmt_get_result($stmt);
@@ -90,10 +90,10 @@ function checkUser($username): int
     if ($stmt->affected_rows > 0) {
         $row = mysqli_fetch_array($result);
         $conn->close();
-        return $row["id"];
+        return array($row["id"], $row["email"]);
     } else {
         $conn->close();
-        return -1;
+        return [];
     }
 }
 

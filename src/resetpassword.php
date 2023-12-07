@@ -1,18 +1,23 @@
 <?php
+
+
 session_start();
 require_once 'utils/dbUtils.php';
+
 
 if(isset($_POST['username'])){
     $token = random_int(100000, 999999999);
     $username = $_POST['username'];
-    $userId = checkUser($username);
-    if($userId!=-1){
-       if(saveToken($token, $userId)) {
+    $userArray = checkUser($username);
+    if(count($userArray) > 0){
+        $userId = $userArray[0];
+        $email = $userArray[1];
+        if(saveToken($token, $userId)) {
 
            $_SESSION['success'] = "Password reset link sent to your email " . strval($token);
            header('Location: resetpassword.php');
            exit();
-       }
+        }
         else{
             echo "failed inserting token";
         }
