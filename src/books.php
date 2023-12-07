@@ -5,7 +5,7 @@
     <link rel="stylesheet" href="https://cdn.simplecss.org/simple.min.css">
 </head>
 <body>
-<h1>My orders</h1>
+<h1>My Books</h1>
 <a href="index.php">Back to Home</a>
 <?php
 require_once 'utils/dbUtils.php';

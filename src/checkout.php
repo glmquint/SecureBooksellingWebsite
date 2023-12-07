@@ -35,7 +35,7 @@ if (!isset($_SESSION['username'])) {
         'cart' => $_SESSION['cart'],
         'total_price' => $total_price,
         'username' => $_SESSION['username'],
-        'status' => 'pending'
+        'status' => 'in transit'
     ];
 
     echo print_r($_SESSION['order']);
