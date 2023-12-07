@@ -41,6 +41,8 @@ if (isset($_POST['username']) || isset($_POST['password'])) {
     <head>
         <title>Secure Book selling website</title>
         <link rel="stylesheet" href="https://cdn.simplecss.org/simple.min.css">
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/zxcvbn/4.4.2/zxcvbn.js"></script>
+        <script src="utils/checkPasswordStrength.js"></script>
     </head>
     <body>
     <h1>Register</h1>
@@ -49,8 +51,8 @@ if (isset($_POST['username']) || isset($_POST['password'])) {
         <label for="username">Username</label>
         <input type="text" name="username" id="username" required="required">
         <label for="password">Password</label>
-        <input type="password" name="password" id="password" required="required">
-        <button type="submit">Register</button>
+        <input type="password" name="password" id="password" required="required" onchange=checkPasswordStrength(document.getElementById('password').value)>
+        <button id="registerbtn" type="submit">Register</button>
     </form>
     <p>Already have an account? <a href="login.php">Login here</a></p>
     </body>
