@@ -66,6 +66,8 @@ function changePassword($username, $newPassword): bool
         return false;
     }
 }
+
+// TODO: maybe refactor at login time -> set uid in session
 function getUserID($conn,$username): int
 {
     if(!$conn) {
