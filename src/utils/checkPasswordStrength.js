@@ -1,30 +1,15 @@
 function checkPasswordStrength (password) {
   const result = zxcvbn(password);
-  const warmingP = document.getElementById('warning');
-  const suggestionsP = document.getElementById('suggestions');
-
-  if(warmingP){
-    warmingP.remove();
-  }
-  if(suggestionsP){
-    suggestionsP.remove();
-  }
 
   document.getElementById("registerbtn").disabled = true;
-  if(result.score < 3) {
-    const passwordLabel = document.querySelector('label[for="password"]');
+  const warning = document.getElementById('warning') ;
+  const suggestions = document.getElementById('suggestions') ;
+  const strength = document.getElementById('strength') ;
 
-    const warning = document.createElement('p');
-    warning.setAttribute('id', 'warning');
-    const suggestions = document.createElement('p');
-    suggestions.setAttribute('id', 'suggestions');
+  strongenough = (result.score < 3);
+  warning.textContent = strongenough ? "Your password is weak: " + result.feedback.warning : '';
+  suggestions.textContent = strongenough ? "Suggestions: " + result.feedback.suggestions: '';
+  strength.value = result.score;
 
-    warning.textContent = "Your password is weak: " + result.feedback.warning;
-    suggestions.textContent = "Suggestions: " + result.feedback.suggestions;
-
-    passwordLabel.insertAdjacentElement('afterend', suggestions);
-    passwordLabel.insertAdjacentElement('afterend', warning);
-    return;
-  }
-  document.getElementById("registerbtn").disabled = false;
+  document.getElementById("registerbtn").disabled = strongenough;
 }
