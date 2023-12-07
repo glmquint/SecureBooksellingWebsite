@@ -15,7 +15,7 @@
       - [X] confirmation
       - [X] result
   - [X] add orders table with quantity and
-  - [ ] manage quantity consistency with transactions
+  - [X] manage quantity consistency with transactions
   - [ ] handle authentication to download electronic books
 - [X] password change
 - [ ] password reset
@@ -23,10 +23,16 @@
 - [ ] SSL certificates on server
   - [ ] use a custom webserver (because https://stackoverflow.com/questions/27597670/how-to-enable-https-connections-in-phpstorms-built-in-web-server)
 - [ ] make it simpler to change the number of books in cart (maybe a counter)
-- [ ] show availability in book store (??)
+- [X] show availability in book store
 - [ ] remove a single book from cart
+- [ ] add user check on books page 
+- [ ] impose strong password (zxcvbn php)
+- [ ] handle session timeout
+
+## Maybe
+- [ ] add a search bar
+- [ ] add an admin panel to manage books
 
 ## Questions to ask
-- Is simple css too simple?
-  - Is it ok to use bootstrap?
+
 - should we implement an admin panel to manage books?
