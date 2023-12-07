@@ -39,6 +39,8 @@ if (isset($_SESSION['cart'])) {
         $quantity = $_SESSION['cart'][$row['id']];
         $total_price += $row['price'] * $quantity;
         echo "<td>" . $quantity . "</td>";
+        echo "<td><a href='addtocart.php?id=" . $row['id'] . "'>Add</a></td>";
+        echo "<td><a href='removefromcart.php?id=" . $row['id'] . "'>Remove</a></td>";
 
         echo "</tr>";
     }

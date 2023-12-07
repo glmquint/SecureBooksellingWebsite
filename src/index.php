@@ -47,7 +47,7 @@ session_start();
             // availables
             echo "<td>" . $row['available'] . "</td>";
             // button to add the book to the cart
-            echo "<td><a href='addtocart.php?id=" . $row['id'] . "'>Add to cart</a></td>";
+            echo "<td><a href='addtocart.php?id=" . $row['id'] . "'>Buy</a></td>";
             echo "</tr>";
         }
         ?>
