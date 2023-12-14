@@ -28,10 +28,12 @@ else {
 
     if($cart_id != ""){
         $stmt = mysqli_prepare($db, "SELECT book,title FROM carts c INNER JOIN books b ON c.book=b.id WHERE c.id = ?");
+        mysqli_stmt_bind_param($stmt, "i", $cart_id);
     } else{
-        $stmt = mysqli_prepare($db, "SELECT book,title FROM purchases INNER JOIN books ON book=id WHERE buyer = ?");
+        $stmt = mysqli_prepare($db, "SELECT book,title FROM purchases p INNER JOIN books b ON p.book=b.id WHERE p.buyer = ?");
+        mysqli_stmt_bind_param($stmt, "i", $user_id);
     }
-    mysqli_stmt_bind_param($stmt, "i", $user_id);
+
     mysqli_stmt_execute($stmt);
     $result = mysqli_stmt_get_result($stmt);
     if (mysqli_num_rows($result) > 0) {
