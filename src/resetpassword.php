@@ -5,6 +5,7 @@ session_start();
 require_once 'utils/dbUtils.php';
 
 
+
 if(isset($_POST['username'])){
     $token = random_int(100000, 999999999);
     $username = $_POST['username'];
@@ -13,10 +14,24 @@ if(isset($_POST['username'])){
         $userId = $userArray[0];
         $email = $userArray[1];
         if(saveToken($token, $userId)) {
+            $subject = "Reset Email";
+            $message = "This is a reset email. Click on the link to reset your password\n"
+                . "http://localhost:63342/snh-securebooksellingwebsite/src/resetpassword-token.php?token=" . strval($token);
 
-           $_SESSION['success'] = "Password reset link sent to your email " . strval($token);
-           header('Location: resetpassword.php');
-           exit();
+            // Additional headers
+            $headers = "From: noreply@localhost.com";
+
+            // Send email
+            $mailSuccess = mail($email, $subject, $message, $headers);
+
+            if ($mailSuccess) {
+                $_SESSION['success'] = "Password reset link sent to your email " . strval($token);
+                header('Location: resetpassword.php');
+                exit();
+            } else {
+            echo "Failed to send email.";
+            }
+
         }
         else{
             echo "failed inserting token";
@@ -25,6 +40,7 @@ if(isset($_POST['username'])){
     else{
         echo "Invalid username";
     }
+
 
 }
 
