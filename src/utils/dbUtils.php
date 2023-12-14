@@ -153,6 +153,8 @@ function checkToken($token): int
         if ($row["expiration_date"] > $currentDate) {
             return $row["user_id"];
         } else {
+            //delete the token from the database
+            deleteToken($token);
             return -1;
         }
     } else {
