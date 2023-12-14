@@ -151,7 +151,6 @@ CREATE TABLE `reset_token` (
 
 LOCK TABLES `reset_token` WRITE;
 /*!40000 ALTER TABLE `reset_token` DISABLE KEYS */;
-INSERT INTO `reset_token` VALUES (278642991,5,'2023-12-06 16:53:25');
 /*!40000 ALTER TABLE `reset_token` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -179,7 +178,7 @@ CREATE TABLE `users` (
 
 LOCK TABLES `users` WRITE;
 /*!40000 ALTER TABLE `users` DISABLE KEYS */;
-INSERT INTO `users` VALUES (4,'ghi0m','$2y$10$W4wQGoVsC0clerP6nMW.i.vT1.7IuoWILj1Qjc7.NCZW6JrGdBIwW',''),(5,'fabi0','$2y$10$1E6H.pjHbEdXIc0QInrNee7YxiaepwP8gtsq4TgLRuoLvp4RJNvQ2',''),(6,'giacom0','$2y$10$BUUPclzGBPrJSKILGyKh7.Z0ULvlcrM6MRrdIoDAxjfIDVnZZNuXm','');
+INSERT INTO `users` VALUES (4,'ghi0m','$2y$10$W4wQGoVsC0clerP6nMW.i.vT1.7IuoWILj1Qjc7.NCZW6JrGdBIwW','ghi0m@localhost.com'),(5,'fabi0','$2y$10$zlhonxbkYBC1i.qudCmTv.OpFHTnALjtur/sa0FzjUNoLKhoglVpq','fabi0@localhost.com'),(6,'giacom0','$2y$10$BUUPclzGBPrJSKILGyKh7.Z0ULvlcrM6MRrdIoDAxjfIDVnZZNuXm','giacom0@localhost.com');
 /*!40000 ALTER TABLE `users` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -192,4 +191,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2023-12-06 16:55:22
+-- Dump completed on 2023-12-14 11:47:55
