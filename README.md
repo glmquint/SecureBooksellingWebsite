@@ -25,7 +25,7 @@
 - [X] make it simpler to change the number of books in cart
 - [X] show availability in book store
 - [X] remove a single book from cart
-- [ ] add user check on books page 
+- [X] add user check on books page 
 - [X] impose strong password (zxcvbn php)
 - [ ] handle session timeout
 - [ ] add mail address in register

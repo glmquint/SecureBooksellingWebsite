@@ -27,8 +27,11 @@ else {
     $user_id = getUserID($db, $_SESSION['username']);
 
     if($cart_id != ""){
-        $stmt = mysqli_prepare($db, "SELECT book,title FROM carts c INNER JOIN books b ON c.book=b.id WHERE c.id = ?");
-        mysqli_stmt_bind_param($stmt, "i", $cart_id);
+        $stmt = mysqli_prepare($db, "SELECT book,title FROM carts c
+                                                INNER JOIN books b ON c.book=b.id
+                                                INNER JOIN orders o ON o.cart=c.id
+                                                  WHERE c.id = ? AND o.user = ?");
+        mysqli_stmt_bind_param($stmt, "ii", $cart_id, $user_id);
     } else{
         $stmt = mysqli_prepare($db, "SELECT book,title FROM purchases p INNER JOIN books b ON p.book=b.id WHERE p.buyer = ?");
         mysqli_stmt_bind_param($stmt, "i", $user_id);
