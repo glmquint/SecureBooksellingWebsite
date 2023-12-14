@@ -1,6 +1,4 @@
-CREATE DATABASE  IF NOT EXISTS `securebooksellingdb` /*!40100 DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci */ /*!80016 DEFAULT ENCRYPTION='N' */;
-USE `securebooksellingdb`;
--- MySQL dump 10.13  Distrib 8.0.34, for macos13 (arm64)
+-- MySQL dump 10.13  Distrib 8.0.34, for Win64 (x86_64)
 --
 -- Host: localhost    Database: securebooksellingdb
 -- ------------------------------------------------------
@@ -139,11 +137,11 @@ DROP TABLE IF EXISTS `reset_token`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `reset_token` (
   `token` int NOT NULL,
-  `user` int NOT NULL,
+  `user_id` int NOT NULL,
   `expiration_date` datetime NOT NULL,
   PRIMARY KEY (`token`),
-  KEY `user_fk_idx` (`user`),
-  CONSTRAINT `user_reset_fk` FOREIGN KEY (`user`) REFERENCES `users` (`id`)
+  KEY `user_fk_idx` (`user_id`),
+  CONSTRAINT `user_reset_fk` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -180,7 +178,7 @@ CREATE TABLE `users` (
 
 LOCK TABLES `users` WRITE;
 /*!40000 ALTER TABLE `users` DISABLE KEYS */;
-INSERT INTO `users` VALUES (4,'ghi0m','$2y$10$W4wQGoVsC0clerP6nMW.i.vT1.7IuoWILj1Qjc7.NCZW6JrGdBIwW',''),(5,'fabi0','$2y$10$1E6H.pjHbEdXIc0QInrNee7YxiaepwP8gtsq4TgLRuoLvp4RJNvQ2',''),(6,'giacom0','$2y$10$BUUPclzGBPrJSKILGyKh7.Z0ULvlcrM6MRrdIoDAxjfIDVnZZNuXm','');
+INSERT INTO `users` VALUES (4,'ghi0m','$2y$10$W4wQGoVsC0clerP6nMW.i.vT1.7IuoWILj1Qjc7.NCZW6JrGdBIwW','ghi0m@localhost.com'),(5,'fabi0','$2y$10$zlhonxbkYBC1i.qudCmTv.OpFHTnALjtur/sa0FzjUNoLKhoglVpq','fabi0@localhost.com'),(6,'giacom0','$2y$10$BUUPclzGBPrJSKILGyKh7.Z0ULvlcrM6MRrdIoDAxjfIDVnZZNuXm','giacom0@localhost.com');
 /*!40000 ALTER TABLE `users` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -193,4 +191,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2023-12-03 11:21:13
+-- Dump completed on 2023-12-14 12:21:42

@@ -51,6 +51,8 @@ if (isset($_POST['username']) || isset($_POST['password'])) {
         }
         ?>
         <button type="submit" name="login_btn">Login</button>
+
     </form>
+    <p><a href="resetpassword.php">Forgot password?</a></p>
     <p>Don't have an account? <a href="register.php">Register here</a></p>
 </body>

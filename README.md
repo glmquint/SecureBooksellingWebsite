@@ -3,10 +3,15 @@
 ## TODO
 - [x] login
 - [x] register
+
   - [ ] email confirmation after registration
+  - [ ] request strong password (zxcvbn) could be done by js
+
 - [x] logout
+- [ ] session expiration
 - [x] listing purchasable books
 - [x] add book to cart
+
   - [X] session upgrading
 - [X] checkout with multistep
   - [X] the steps
@@ -18,6 +23,13 @@
   - [X] manage quantity consistency with transactions
   - [X] handle authentication to download electronic books
 - [X] password change
+    - [ ] session upgrading
+- [ ] checkout with multistep
+  - [ ] add orders table with quantity and 
+  - [ ] manage quantity consistency with transactions
+  - [ ] handle authentication to download electronic books
+  - [x] empty cart in session after order
+
 - [ ] password reset
 - [X] download purchased books
 - [ ] SSL certificates on server
@@ -36,6 +48,6 @@
 - [ ] add a search bar
 - [ ] add an admin panel to manage books
 
-## Questions to ask
+- [ ] temporarely block user access for too many failed login attempts
 
-- should we implement an admin panel to manage books?
+ver web is enough?
