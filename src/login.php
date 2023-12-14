@@ -26,7 +26,7 @@ if (isset($_POST['username']) || isset($_POST['password'])) {
         exit();
     } else {
         // Incorrect login
-        echo "Invalid login credentials";
+        echo "Invalid login credentials. Try again later!";
     }
 }
 ?>

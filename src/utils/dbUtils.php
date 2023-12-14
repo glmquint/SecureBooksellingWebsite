@@ -9,7 +9,6 @@ class DBConnection {
     public $conn;
     function __construct()
     {
-        echo "construct";
         if(!$this->conn){
             $this->connect();
         }
@@ -17,7 +16,6 @@ class DBConnection {
 
     function __destruct()
     {
-        echo "destruct";
         if ($this->conn){
             $this->conn->close();
         }
@@ -40,7 +38,8 @@ function verifyLogin($username, $password): bool
     }
 
 
-    $stmt = $db->conn->prepare("SELECT password FROM users WHERE username=? ");
+    $stmt = $db->conn->prepare("SELECT password FROM users WHERE username=? 
+        AND (failed_login_attempts < 3 OR failed_login_time < DATE_SUB(NOW(), INTERVAL 1 MINUTE))");
     $stmt->bind_param("s", $username);
     mysqli_stmt_execute($stmt);
     $result = mysqli_stmt_get_result($stmt);
@@ -52,8 +51,15 @@ function verifyLogin($username, $password): bool
 
         // Verify the entered password against the stored hash
         if (password_verify($password, $stored_hashed_password)) {
+            $stmt = $db->conn->prepare("UPDATE users SET failed_login_attempts=0 WHERE username=?");
+            $stmt->bind_param("s", $username);
+            mysqli_stmt_execute($stmt);
             return true;
         } else {
+            $stmt = $db->conn->prepare("UPDATE users SET failed_login_attempts=failed_login_attempts+1, 
+                                                            failed_login_time=NOW() WHERE username=?");
+            $stmt->bind_param("s", $username);
+            mysqli_stmt_execute($stmt);
             return false;
         }
     } else {
