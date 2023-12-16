@@ -9,6 +9,7 @@ session_start();
 // verifyLogin() is a function that verifies the user's login credentials with the database
 require_once 'utils/dbUtils.php';
 
+date_default_timezone_set('Europe/Rome');
 $log = new Logger('LoginAttempt');
 $log->pushHandler(new StreamHandler('../logfile.log', Level::Warning));
 
