@@ -6,7 +6,7 @@
 </head>
 <body>
 <?php
-session_start();
+session_start_or_expire();
 
 if (!isset($_SESSION['username'])) {
     header('Location: login.php?redirect=checkout.php');

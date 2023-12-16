@@ -1,7 +1,7 @@
 <?php
 
 
-session_start();
+session_start_or_expire();
 require_once 'utils/dbUtils.php';
 
 

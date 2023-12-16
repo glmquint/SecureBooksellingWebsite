@@ -1,7 +1,7 @@
 <?php
 // TODO: implement session upgrading
 // TODO: implement password recovery
-session_start();
+session_start_or_expire();
 // verifyLogin() is a function that verifies the user's login credentials with the database
 require_once 'utils/dbUtils.php';
 

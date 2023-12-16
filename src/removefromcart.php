@@ -1,5 +1,5 @@
 <?php
-    session_start();
+    session_start_or_expire();
     $bookid = $_REQUEST['id'] ?? "";
     echo "book id: " . $bookid . " removed from cart (WIP)";
     if (!isset($_SESSION['cart'])){
