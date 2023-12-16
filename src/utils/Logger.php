@@ -13,13 +13,14 @@ class Log{
     private static $formatter;
     private static $LowstreamHandler;
     private static $HighstreamHandler;
-    private static $formatString= "[%datetime%] %channel%.%level_name%: %message% %context%\n";
+    private static $formatStringLow= "[%datetime%] %channel%.%level_name%: %message%\n";
+    private static $formatStringHigh= "[%datetime%] %channel%.%level_name%: %message% %context%\n";
     public function __construct() {}
 
     public static function getInstanceLow(): Logger {
         if (self::$lowdetailLog == null) {
             date_default_timezone_set('Europe/Rome');
-            self::$formatter = new LineFormatter(self::$formatString);
+            self::$formatter = new LineFormatter(self::$formatStringLow);
             self::$LowstreamHandler = new StreamHandler(self::$lowdetailLogPath);
             self::$LowstreamHandler->setFormatter(self::$formatter);
             self::$lowdetailLog = new Logger('lowdetailLog');
@@ -31,7 +32,7 @@ class Log{
     public static function getInstanceHigh(): Logger {
         if (self::$highdetailLog == null) {
             date_default_timezone_set('Europe/Rome');
-            self::$formatter = new LineFormatter(self::$formatString);
+            self::$formatter = new LineFormatter(self::$formatStringHigh);
             self::$HighstreamHandler = new StreamHandler(self::$highdetailLogPath);
             self::$HighstreamHandler->setFormatter(self::$formatter);
             self::$highdetailLog = new Logger('highdetailLog');
@@ -47,16 +48,16 @@ function performLog($level, $lowInfo, $highInfo): void{
         switch ($level){
             case "Info":
                 $lowdetailLog->info($lowInfo);
-                $highdetailLog->info($lowInfo . $highInfo);
+                $highdetailLog->info($lowInfo , $highInfo);
                 break;
 
             case "Warning":
                 $lowdetailLog->warning($lowInfo);
-                $highdetailLog->warning($lowInfo . $highInfo);
+                $highdetailLog->warning($lowInfo , $highInfo);
                 break;
             case "Error":
                 $lowdetailLog->error($lowInfo);
-                $highdetailLog->error($lowInfo . $highInfo);
+                $highdetailLog->error($lowInfo , $highInfo);
                 break;
         }
     }

@@ -1,4 +1,6 @@
 <?php
+require_once 'utils/Logger.php';
+
 // TODO: extend with mail confirmation
 if (isset($_POST['username']) || isset($_POST['password'])) {
 
@@ -7,6 +9,7 @@ if (isset($_POST['username']) || isset($_POST['password'])) {
 
     // Hash the password using bcrypt
     $hashed_password = password_hash($user_input_password, PASSWORD_BCRYPT);
+
 
     // Store the hashed password in the database
     $servername = "localhost";
@@ -27,8 +30,10 @@ if (isset($_POST['username']) || isset($_POST['password'])) {
     $stmt->execute();
     // check if insertion was successful
     if ($stmt->affected_rows > 0) {
+        performLog("Info", "New user registered", array("username" => $_POST['username'],"IP" => $_SERVER['REMOTE_ADDR']));
         echo "New record created successfully";
     } else {
+        performLog("Warning", "New user registration failed", array("username" => $_POST['username'],"IP" => $_SERVER['REMOTE_ADDR']));
         echo "Error: " . $conn->error;
     }
     $conn->close();

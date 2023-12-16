@@ -1,9 +1,8 @@
 <?php
 
-
 session_start();
 require_once 'utils/dbUtils.php';
-
+require_once 'utils/Logger.php';
 
 
 if(isset($_POST['username'])){
@@ -26,21 +25,24 @@ if(isset($_POST['username'])){
             $mailSuccess = mail($email, $subject, $message, $headers);
 
             if ($mailSuccess) {
+                performLog("Info", "Password reset link sent to user", array("username" => $username, "IP" => $_SERVER['REMOTE_ADDR']));
                 $_SESSION['success'] = "Password reset link sent to your email";
                 header('Location: resetpassword.php');
                 exit();
             } else {
-            echo "Failed to send email.";
+                performLog("Warning", "Failed to send email", array("username" => $username, "mail" => $email ,"IP" => $_SERVER['REMOTE_ADDR']));
+                echo "Failed to send email.";
             }
 
         }
         else{
+            performLog("Error", "Failed to save token", array("username" => $username, "mail" => $email ,"IP" => $_SERVER['REMOTE_ADDR']));
             echo "something went wrong";
         }
     }
     else{
         //This is a fake success message is to avoid account enumeration
-        //TODO log this event
+        performLog("Warning", "Reset password for not existing user", array("username" => $username, "IP" => $_SERVER['REMOTE_ADDR']));
         $_SESSION['success'] = "Password reset link sent to your email";
         header('Location: resetpassword.php');
         exit();

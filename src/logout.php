@@ -2,7 +2,7 @@
 require_once 'utils/Logger.php';
  // perform logout
     session_start();
-    performLog("Info", "User logged out", "with username " . $_SESSION['username'] . " from IP " . $_SERVER['REMOTE_ADDR']);
+    performLog("Info", "User logged out", array("username" => $_SESSION['username'], "IP" => $_SERVER['REMOTE_ADDR']));
     // reset username
     $_SESSION['username'] = null;
     // change session id to prevent session fixation

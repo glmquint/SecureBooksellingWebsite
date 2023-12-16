@@ -3,7 +3,6 @@
 // TODO: implement password recovery
 
 session_start();
-// verifyLogin() is a function that verifies the user's login credentials with the database
 require_once 'utils/dbUtils.php';
 require_once 'utils/Logger.php';
 
@@ -15,7 +14,8 @@ if (isset($_POST['username']) || isset($_POST['password'])) {
     // You need to replace this with your actual login verification logic
     if (verifyLogin($username, $password)) {
         // Correct login
-        performLog("Info", "User logged in", "with username " . $username . " from IP " . $_SERVER['REMOTE_ADDR']);
+        performLog("Info", "User logged in", array("username" => $username, "IP" => $_SERVER['REMOTE_ADDR']));
+
         $_SESSION['username'] = $username;
         // change session id to prevent session fixation
         session_regenerate_id();
@@ -29,7 +29,7 @@ if (isset($_POST['username']) || isset($_POST['password'])) {
         exit();
     } else {
         // Incorrect login
-        performLog("Warning", "Incorrect login attempt ", "with username " . $username . " from IP " . $_SERVER['REMOTE_ADDR']);
+        performLog("Warning", "Incorrect login attempt ", array("username" => $username, "IP" => $_SERVER['REMOTE_ADDR']));
         echo "Invalid login credentials. Try again later!";
     }
 }

@@ -1,7 +1,7 @@
 <?php
 session_start();
 require_once 'utils/dbUtils.php';
-
+require_once 'utils/Logger.php';
 
 if (isset($_POST['OldPassword']) && isset($_POST['NewPassword'])&& isset($_SESSION['username'])) {
     // Get username and password from the form submitted by the user
@@ -14,11 +14,13 @@ if (isset($_POST['OldPassword']) && isset($_POST['NewPassword'])&& isset($_SESSI
         // Hash the password using bcrypt
         $hashed_password = password_hash($NewPassword, PASSWORD_BCRYPT);
         if(changePassword($username, $hashed_password)){
+            performLog("Info", "Password changed correctly", array("username" => $username,"IP" => $_SERVER['REMOTE_ADDR']));
             $_SESSION['success'] = "Password changed successfully";
             header('Location: changepassword.php');
             exit();
         }
         else{
+            performLog("Warning", "Password change failed", array("username" => $username,"IP" => $_SERVER['REMOTE_ADDR']));
             echo "Invalid login credentials";
         }
 

@@ -14,6 +14,7 @@ function paymentSuccessful($order, $payment) : bool
 }
 
 require_once 'utils/dbUtils.php';
+require_once 'utils/Logger.php';
 session_start();
 
 if (!isset($_SESSION['username'])) {
@@ -79,6 +80,9 @@ else {
         $conn->commit();
         $stmt->close();
         $conn->close();
+
+        performLog("Info", "Order placed successfully", array("username" => $_SESSION['username'], "orderid" => $_SESSION['order']['orderid']));
+
         unset($_SESSION['cart']);
         unset($_SESSION['order']);
         unset($_SESSION['payment']);
@@ -97,6 +101,8 @@ else {
         if ($ex->getCode() == 3819){
             echo "<p>A book that you ordered is currently not available. You can still read the digital version from <a href='books.php'>your books</a>. 
             We will let you know when your book will get back in stock!</p>";
+
+            performLog("Warning", "Book not in stock", array("username" => $_SESSION['username'], "orderid" => $_SESSION['order']['orderid']));
         }
 
 
