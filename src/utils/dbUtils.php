@@ -53,7 +53,7 @@ function registerUser($username, $user_input_password, $mail): int
 
 }
 
-function verifyLogin($username, $password): bool
+function verifyLogin($username, $password): int
 {
 // Retrieve the hashed password from the database based on the username
 // Replace the following lines with your database connection and query
@@ -63,7 +63,7 @@ function verifyLogin($username, $password): bool
     }
 
 
-    $stmt = $db->conn->prepare("SELECT password FROM users WHERE username=? 
+    $stmt = $db->conn->prepare("SELECT password, active FROM users WHERE username=? 
         AND (failed_login_attempts < 3 OR failed_login_time < DATE_SUB(NOW(), INTERVAL 1 MINUTE))");
     $stmt->bind_param("s", $username);
     mysqli_stmt_execute($stmt);
@@ -73,22 +73,27 @@ function verifyLogin($username, $password): bool
         // Password hash found in the database
         $row = mysqli_fetch_array($result);
         $stored_hashed_password = $row["password"];
-
+        $active = $row["active"];
         // Verify the entered password against the stored hash
         if (password_verify($password, $stored_hashed_password)) {
-            $stmt = $db->conn->prepare("UPDATE users SET failed_login_attempts=0 WHERE username=?");
-            $stmt->bind_param("s", $username);
-            mysqli_stmt_execute($stmt);
-            return true;
+            if($active==1) {
+                $stmt = $db->conn->prepare("UPDATE users SET failed_login_attempts=0 WHERE username=?");
+                $stmt->bind_param("s", $username);
+                mysqli_stmt_execute($stmt);
+                return 1;
+            }
+            else{
+                return -1;
+            }
         } else {
             $stmt = $db->conn->prepare("UPDATE users SET failed_login_attempts=failed_login_attempts+1, 
                                                             failed_login_time=NOW() WHERE username=?");
             $stmt->bind_param("s", $username);
             mysqli_stmt_execute($stmt);
-            return false;
+            return 0;
         }
     } else {
-        return false;
+        return 0;
     }
 
 }
@@ -203,6 +208,19 @@ function deleteToken($token): bool
     return ($stmt->affected_rows > 0);
 }
 
+function activateAccount($userId): bool
+{
+    $db = new DBConnection();
+
+    //create a prepare statement to delete the token from the database
+    $stmt = $db->conn->prepare("UPDATE users SET active=1 WHERE id=?");
+    //bind the token parameter
+    $stmt->bind_param("i", $userId);
+    mysqli_stmt_execute($stmt);
+    $result = mysqli_stmt_get_result($stmt);
+    // check if insertion was successful
+    return ($stmt->affected_rows > 0);
+}
 
 // TODO: maybe refactor at login time -> set uid in session
 function getUserID($conn,$username): int
@@ -218,5 +236,6 @@ function getUserID($conn,$username): int
 
     return $row['id'];
 }
+
 
 ?>
