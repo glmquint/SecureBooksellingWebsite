@@ -28,6 +28,31 @@ class DBConnection {
         }
     }
 }
+
+function registerUser($username, $user_input_password, $mail): int
+{
+    $db = new DBConnection();
+    if(!$db->conn){
+        die("Connection failed: " . $db->conn->connect_error);
+    }
+    $hashed_password = password_hash($user_input_password, PASSWORD_BCRYPT);
+    $stmt = $db->conn->prepare("INSERT INTO users (username, password, email) VALUES (?, ?, ?)");
+    $stmt->bind_param("sss",$username, $hashed_password, $mail);
+    $stmt->execute();
+    // check if insertion was successful
+    if ($stmt->affected_rows > 0) {
+        $stmt = $db->conn->prepare("SELECT id FROM users WHERE email=?");
+        $stmt->bind_param("s", $mail);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $row = $result->fetch_assoc();
+        return $row["id"];
+    } else {
+        return -1;
+    }
+
+}
+
 function verifyLogin($username, $password): bool
 {
 // Retrieve the hashed password from the database based on the username
@@ -113,11 +138,11 @@ function checkUser($username): array
     }
 }
 
-function saveToken($token, $userId): bool
+function saveToken($token, $userId, $time): bool
 {
     date_default_timezone_set('Europe/Rome');
     //generate a time to live for the token express in datetime
-    $ttl = date('Y-m-d H:i:s', strtotime('+5 minutes'));
+    $ttl = date('Y-m-d H:i:s', strtotime('+'. $time .' minutes'));
 
     $db = new DBConnection();
 
