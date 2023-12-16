@@ -11,19 +11,24 @@ if (isset($_POST['username']) || isset($_POST['password'])) {
     $password = $_POST['password'] ?? '';
     // Assume $username and $password are the submitted credentials
     // You need to replace this with your actual login verification logic
-    if (verifyLogin($username, $password)) {
-        // Correct login
-        $_SESSION['username'] = $username;
-        // change session id to prevent session fixation
-        session_regenerate_id();
-        // You can set other session variables as needed
-        // To Redirect the user to the home page or another secure page
-        if (isset($_POST['redirect'])) {
-            header('Location: ' . $_POST['redirect']);
+    $userValidity = verifyLogin($username, $password);
+    if ($userValidity) {
+        if ($userValidity == 1) {
+            echo "Verify your email first";
+        }else {
+            // Correct login
+            $_SESSION['username'] = $username;
+            // change session id to prevent session fixation
+            session_regenerate_id();
+            // You can set other session variables as needed
+            // To Redirect the user to the home page or another secure page
+            if (isset($_POST['redirect'])) {
+                header('Location: ' . $_POST['redirect']);
+                exit();
+            }
+            header('Location: index.php');
             exit();
         }
-        header('Location: index.php');
-        exit();
     } else {
         // Incorrect login
         echo "Invalid login credentials. Try again later!";

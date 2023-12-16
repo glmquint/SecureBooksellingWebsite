@@ -76,15 +76,10 @@ function verifyLogin($username, $password): int
         $active = $row["active"];
         // Verify the entered password against the stored hash
         if (password_verify($password, $stored_hashed_password)) {
-            if($active==1) {
-                $stmt = $db->conn->prepare("UPDATE users SET failed_login_attempts=0 WHERE username=?");
-                $stmt->bind_param("s", $username);
-                mysqli_stmt_execute($stmt);
-                return 1;
-            }
-            else{
-                return -1;
-            }
+            $stmt = $db->conn->prepare("UPDATE users SET failed_login_attempts=0 WHERE username=?");
+            $stmt->bind_param("s", $username);
+            mysqli_stmt_execute($stmt);
+            return 1 + $active;
         } else {
             $stmt = $db->conn->prepare("UPDATE users SET failed_login_attempts=failed_login_attempts+1, 
                                                             failed_login_time=NOW() WHERE username=?");
