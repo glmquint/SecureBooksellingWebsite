@@ -3,7 +3,7 @@
     session_start();
     if (isset($_GET['token'])) {
     $token = $_GET['token'];
-        $userid = checkToken($token);
+        $userid = getUidFromToken($token);
         if($userid!=-1){
             if(deleteToken($token)) {
                 $_SESSION['success'] = "You can now reset your password";
