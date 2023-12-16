@@ -11,6 +11,7 @@ if(isset($_POST['username'])){
     $username = $_POST['username'];
     $userArray = checkUser($username);
     if(count($userArray) > 0){
+        //TODO log this event
         $userId = $userArray[0];
         $email = $userArray[1];
         if(saveToken($token, $userId)) {
@@ -25,7 +26,7 @@ if(isset($_POST['username'])){
             $mailSuccess = mail($email, $subject, $message, $headers);
 
             if ($mailSuccess) {
-                $_SESSION['success'] = "Password reset link sent to your email " . strval($token);
+                $_SESSION['success'] = "Password reset link sent to your email";
                 header('Location: resetpassword.php');
                 exit();
             } else {
@@ -34,11 +35,15 @@ if(isset($_POST['username'])){
 
         }
         else{
-            echo "failed inserting token";
+            echo "something went wrong";
         }
     }
     else{
-        echo "Invalid username";
+        //This is a fake success message is to avoid account enumeration
+        //TODO log this event
+        $_SESSION['success'] = "Password reset link sent to your email";
+        header('Location: resetpassword.php');
+        exit();
     }
 
 
