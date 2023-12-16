@@ -1,5 +1,5 @@
 <?php
-
+require_once 'Logger.php';
 
 class DBConnection {
     private $servername = "localhost";
@@ -24,6 +24,7 @@ class DBConnection {
     private function connect(): void{
         $this->conn = new mysqli($this->servername, $this->dbusername, $this->dbpassword, $this->dbname);
         if ($this->conn->connect_error) {
+            performLog("Error", "Failed to connect to database", array("IP" => $_SERVER['REMOTE_ADDR'], "Error" => $this->conn->connect_error));
             die("Connection failed: " . $this->conn->connect_error);
         }
     }
@@ -33,10 +34,6 @@ function verifyLogin($username, $password): bool
 // Retrieve the hashed password from the database based on the username
 // Replace the following lines with your database connection and query
     $db = new DBConnection();
-    if ($db->conn->connect_error) {
-        die("Connection failed: " . $db->conn->connect_error);
-    }
-
 
     $stmt = $db->conn->prepare("SELECT password FROM users WHERE username=? 
         AND (failed_login_attempts < 3 OR failed_login_time < DATE_SUB(NOW(), INTERVAL 1 MINUTE))");
@@ -180,7 +177,7 @@ function deleteToken($token): bool
 
 
 // TODO: maybe refactor at login time -> set uid in session
-function getUserID($conn,$username): int
+function getUserID($username): int
 {
     $db = new DBConnection();
     $stmt = $db->conn->prepare("SELECT id FROM users WHERE username=?");

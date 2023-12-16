@@ -1,4 +1,5 @@
 <?php
+require_once 'utils/dbUtils.php';
 require_once 'utils/Logger.php';
 
 // TODO: extend with mail confirmation
@@ -10,33 +11,23 @@ if (isset($_POST['username']) || isset($_POST['password'])) {
     // Hash the password using bcrypt
     $hashed_password = password_hash($user_input_password, PASSWORD_BCRYPT);
 
+    $db = new DBConnection();
 
     // Store the hashed password in the database
-    $servername = "localhost";
-    $username = "root";
-    $password = "rootroot";
-    $dbname = "securebooksellingdb";
-
-    $conn = new mysqli($servername, $username, $password, $dbname);
-
-    if ($conn->connect_error) {
-        die("Connection failed: " . $conn->connect_error);
-    }
-
     // use prepared statements to insert into users
 
-    $stmt = $conn->prepare("INSERT INTO users (username, password) VALUES (?, ?)");
-    $stmt->bind_param("ss", $_POST['username'], $hashed_password);
+    $stmt = $db->conn->prepare("INSERT INTO users (username, password, email) VALUES (?, ?, ?)");
+    $stmt->bind_param("sss", $_POST['username'], $hashed_password, $_POST['email']);
     $stmt->execute();
     // check if insertion was successful
     if ($stmt->affected_rows > 0) {
         performLog("Info", "New user registered", array("username" => $_POST['username'],"IP" => $_SERVER['REMOTE_ADDR']));
-        echo "New record created successfully";
+        echo "New user created successfully";
+
     } else {
         performLog("Warning", "New user registration failed", array("username" => $_POST['username'],"IP" => $_SERVER['REMOTE_ADDR']));
-        echo "Error: " . $conn->error;
+        echo "Error: " . $db->conn->error;
     }
-    $conn->close();
 }
 
 ?>
@@ -55,6 +46,8 @@ if (isset($_POST['username']) || isset($_POST['password'])) {
     <form method="post" action="register.php">
         <label for="username">Username</label>
         <input type="text" name="username" id="username" required="required">
+        <label for="email">Email</label>
+        <input type="email" name="email" id="email" required="required">
         <label for="password">Password</label>
         <input type="password" name="password" id="password" required="required" oninput=checkPasswordStrength(document.getElementById('password').value)>
         <button id="registerbtn" type="submit">Register</button>

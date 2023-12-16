@@ -6,6 +6,7 @@
 </head>
 <body>
 <?php
+require_once 'utils/dbUtils.php';
 session_start();
 
 if (!isset($_SESSION['username'])) {
@@ -16,18 +17,17 @@ if (!isset($_SESSION['username'])) {
     exit();
 } elseif (!isset($_SESSION['delivery']) || isset($_GET['updatedelivery'])) {
 // recompute total price
-    $db = mysqli_connect('localhost', 'root', 'rootroot', 'securebooksellingdb');
+    $db = new DBConnection();
     $total_price = 0;
     foreach ($_SESSION['cart'] as $bookid => $quantity) {
-        $stmt = mysqli_prepare($db, "SELECT * FROM books WHERE id = ?");
-        mysqli_stmt_bind_param($stmt, "i", $bookid);
-        mysqli_stmt_execute($stmt);
+        $stmt = $db->conn->prepare("SELECT * FROM books WHERE id = ?");
+        $stmt->bind_param("i", $bookid);
+        $stmt->execute();
         $result = mysqli_stmt_get_result($stmt);
         $row = mysqli_fetch_array($result) ?? null;
         $quantity = $_SESSION['cart'][$row['id']];
         $total_price += $row['price'] * $quantity;
     }
-    $db->close();
 
     $_SESSION['order'] = array();
     $_SESSION['order'] = [

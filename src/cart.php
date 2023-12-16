@@ -8,6 +8,7 @@
 <h1>Cart</h1>
 <a href="index.php">Back to Home</a>
 <?php
+require_once 'utils/dbUtils.php';
 session_start();
 // print the cart contents in a table
 
@@ -20,14 +21,14 @@ if (isset($_SESSION['cart'])) {
     echo "<th>Quantity</th>";
     echo "</tr>";
     // connect to the database
-    $db = mysqli_connect('localhost', 'root', 'rootroot', 'securebooksellingdb');
+    $db = new DBConnection();
     // get the book list from the db
     // loop through the book list
     $total_price = 0;
     foreach ($_SESSION['cart'] as $bookid => $quantity){
-        $stmt = mysqli_prepare($db, "SELECT * FROM books WHERE id = ?");
-        mysqli_stmt_bind_param($stmt, "i", $bookid);
-        mysqli_stmt_execute($stmt);
+        $stmt = $db->conn->prepare("SELECT * FROM books WHERE id = ?");
+        $stmt->bind_param("i", $bookid);
+        $stmt->execute();
         $result = mysqli_stmt_get_result($stmt);
         $row = mysqli_fetch_array($result) ?? null;
         echo "<tr>";
