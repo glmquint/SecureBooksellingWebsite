@@ -19,6 +19,7 @@ class Log{
 
     public static function getInstanceLow(): Logger {
         if (self::$lowdetailLog == null) {
+            date_default_timezone_set('Europe/Rome');
             self::$formatter = new LineFormatter(self::$formatString);
             self::$LowstreamHandler = new StreamHandler(self::$lowdetailLogPath);
             self::$LowstreamHandler->setFormatter(self::$formatter);
@@ -30,6 +31,7 @@ class Log{
     }
     public static function getInstanceHigh(): Logger {
         if (self::$highdetailLog == null) {
+            date_default_timezone_set('Europe/Rome');
             self::$formatter = new LineFormatter(self::$formatString);
             self::$HighstreamHandler = new StreamHandler(self::$highdetailLogPath);
             self::$HighstreamHandler->setFormatter(self::$formatter);
