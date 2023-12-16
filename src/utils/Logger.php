@@ -1,6 +1,5 @@
 <?php
 require_once '../vendor/autoload.php';
-use Monolog\Level;
 use Monolog\Formatter\LineFormatter;
 use Monolog\Logger;
 use Monolog\Handler\StreamHandler;
@@ -43,7 +42,6 @@ class Log{
     }
 }
 function performLog($level, $lowInfo, $highInfo): void{
-
         $highdetailLog = Log::getInstanceHigh();
         $lowdetailLog = Log::getInstanceLow();
         switch ($level){
