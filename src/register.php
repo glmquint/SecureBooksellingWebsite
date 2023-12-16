@@ -22,8 +22,6 @@ if (isset($_POST['username']) || isset($_POST['password'])) {
 
             if ($mailSuccess) {
                 $_SESSION['success'] = "Account registered, a confirmation mail was send to your email address";
-                header('Location: register.php');
-                exit();
             } else {
                 echo "Failed to send email.";
             }
@@ -67,7 +65,7 @@ if (isset($_POST['username']) || isset($_POST['password'])) {
         <form method="post" action="register.php">
             <label for="username">Username</label>
             <input type="text" name="username" id="username" required="required">
-            <label for="Email">Email</label>
+            <label for="email">Email</label>
             <input type="email" name="email" id="email" required="required">
             <label for="password">Password</label>
             <input type="password" name="password" id="password" required="required" oninput=checkPasswordStrength(document.getElementById('password').value)>
