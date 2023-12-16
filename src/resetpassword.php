@@ -30,7 +30,7 @@ if(isset($_POST['username'])){
                 header('Location: resetpassword.php');
                 exit();
             } else {
-            echo "Failed to send email.";
+                echo "Failed to send email.";
             }
 
         }
