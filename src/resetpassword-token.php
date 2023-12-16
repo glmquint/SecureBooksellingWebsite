@@ -16,7 +16,9 @@
             }
         }
         else{
-            echo "Token is invalid";
+            // If 'token' is not wrong, return a 404 error
+            http_response_code(404);
+            echo "Error 404: Page Not Found";
         }
     }
     else {
