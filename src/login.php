@@ -1,9 +1,16 @@
 <?php
 // TODO: implement session upgrading
 // TODO: implement password recovery
+require_once '../vendor/autoload.php';
+use Monolog\Level;
+use Monolog\Logger;
+use Monolog\Handler\StreamHandler;
 session_start();
 // verifyLogin() is a function that verifies the user's login credentials with the database
 require_once 'utils/dbUtils.php';
+
+$log = new Logger('LoginAttempt');
+$log->pushHandler(new StreamHandler('../logfile.log', Level::Warning));
 
 if (isset($_POST['username']) || isset($_POST['password'])) {
     // Get username and password from the form submitted by the user
@@ -26,6 +33,7 @@ if (isset($_POST['username']) || isset($_POST['password'])) {
         exit();
     } else {
         // Incorrect login
+        $log->warning('Invalid login');
         echo "Invalid login credentials. Try again later!";
     }
 }
