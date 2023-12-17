@@ -14,6 +14,7 @@ function paymentSuccessful($order, $payment) : bool
 }
 
 require_once 'utils/dbUtils.php';
+require_once 'utils/Logger.php';
 session_start_or_expire();
 
 if (!isset($_SESSION['username'])) {
@@ -27,13 +28,7 @@ if (!isset($_SESSION['username'])) {
     exit();
 }
 else {
-    $conn = mysqli_connect('localhost', 'root', 'rootroot', 'securebooksellingdb');
-    if (!$conn) {
-        //TODO: handle error in a better way
-        echo "Error connecting to database";
-        header('Location: index.php');
-        exit();
-    }
+    $db = new DBConnection();
     if (!paymentSuccessful($_SESSION['order'], $_SESSION['payment'])) {
         echo "<h3>Payment failed</h3>";
         echo "<a href='index.php'>Back to home</a>";
@@ -43,42 +38,43 @@ else {
     // TODO: check the insret ignore
     // we want to insert the purchase only if it is not already present
     // but currently all purchases by a user that already has a book, get discarded
-    $stmt = $conn->prepare("INSERT INTO purchases (buyer, book) VALUES (?, ?) ON DUPLICATE KEY UPDATE buyer = buyer");
-    $userid = getUserID($conn, $_SESSION['username']);
-    $stmt->bind_param("ii", $userid, $bookid);
+    $db->stmt = $db->conn->prepare("INSERT INTO purchases (buyer, book) VALUES (?, ?) ON DUPLICATE KEY UPDATE buyer = buyer");
+    $userid = getUserID($_SESSION['username']);
+    $db->stmt->bind_param("ii", $userid, $bookid); // bookid is defined and used just below.. it just works
     foreach ($_SESSION['cart'] as $bookid => $quantity) {
-        $stmt->execute();
+        $db->stmt->execute();
     }
 
 
 
-    $stmt = $conn->prepare("INSERT INTO carts (id,book, quantity) VALUES (?, ?, ?)");
+    $db->stmt = $db->conn->prepare("INSERT INTO carts (id,book, quantity) VALUES (?, ?, ?)");
 
     $cart_id = random_int(100000, 999999);
 
-    $stmt->bind_param("iii", $cart_id, $bookid, $quantity);
+    $db->stmt->bind_param("iii", $cart_id, $bookid, $quantity);
 
     foreach ($_SESSION['cart'] as $bookid => $quantity) {
-        $stmt->execute();
+        $db->stmt->execute();
     }
 
-    $stmt = $conn->prepare("INSERT INTO orders (id, user, cart, address, total_price, status) VALUES (?, ?, ?, ?, ?, ?)");
+    $db->stmt = $db->conn->prepare("INSERT INTO orders (id, user, cart, address, total_price, status) VALUES (?, ?, ?, ?, ?, ?)");
 
-    $stmt->bind_param("iiisis", $_SESSION['order']['orderid'], $userid, $cart_id, $_SESSION['delivery']['address'], $_SESSION['order']['total_price'], $_SESSION['order']['status']);
-    $stmt->execute();
+    $db->stmt->bind_param("iiisis", $_SESSION['order']['orderid'], $userid, $cart_id, $_SESSION['delivery']['address'], $_SESSION['order']['total_price'], $_SESSION['order']['status']);
+    $db->stmt->execute();
 
-    $conn->begin_transaction();
+    $db->conn->begin_transaction();
     try {
-        $stmt = $conn->prepare("UPDATE books SET available = available - ? WHERE id = ?");
-        $stmt->bind_param("ii", $quantity, $bookid);
+        $db->stmt = $db->conn->prepare("UPDATE books SET available = available - ? WHERE id = ?");
+        $db->stmt->bind_param("ii", $quantity, $bookid);
         foreach ($_SESSION['cart'] as $bookid => $quantity) {
-            $stmt->execute();
+            $db->stmt->execute();
         }
 
 
-        $conn->commit();
-        $stmt->close();
-        $conn->close();
+        $db->conn->commit();
+
+        performLog("Info", "Order placed successfully", array("username" => $_SESSION['username'], "orderid" => $_SESSION['order']['orderid']));
+
         unset($_SESSION['cart']);
         unset($_SESSION['order']);
         unset($_SESSION['payment']);
@@ -90,31 +86,32 @@ else {
         //exit();
     } catch (mysqli_sql_exception $ex) {
         echo "Error in placing order";
-        $conn->rollback();
+        $db->conn->rollback();
         // echo out the error
-        echo "Error: " . $ex->getMessage() . "<br>" . $ex->getCode();
 
         if ($ex->getCode() == 3819){
             echo "<p>A book that you ordered is currently not available. You can still read the digital version from <a href='books.php'>your books</a>. 
             We will let you know when your book will get back in stock!</p>";
+
+            performLog("Warning", "Book not in stock", array("username" => $_SESSION['username'], "orderid" => $_SESSION['order']['orderid']));
+
+
+            $db->stmt = $db->conn->prepare("UPDATE orders SET status = 'waiting for restock' WHERE id = ?");
+
+            $db->stmt->bind_param("i", $_SESSION['order']['orderid']);
+            $db->stmt->execute();
+
+
+            //TODO: handle not available book and generic MySQL error
+            unset($_SESSION['cart']);
+            unset($_SESSION['order']);
+            unset($_SESSION['payment']);
+            unset($_SESSION['delivery']);
+            //header('Location: index.php');
+            echo "<a href='index.php'>Back to home</a>";
+        }else{
+            performLog("Error", "Error while placing order", ["db_msg"=>$ex->getMessage(), "db_error_code"=>$ex->getCode(), "username" => $_SESSION['username'], "orderid" => $_SESSION['order']['orderid']]);
         }
-
-
-        $stmt = $conn->prepare("UPDATE orders SET status = 'waiting for restock' WHERE id = ?");
-
-        $stmt->bind_param("i", $_SESSION['order']['orderid']);
-        $stmt->execute();
-
-        $stmt->close();
-        $conn->close();
-
-        //TODO: handle not available book and generic MySQL error
-        unset($_SESSION['cart']);
-        unset($_SESSION['order']);
-        unset($_SESSION['payment']);
-        unset($_SESSION['delivery']);
-        //header('Location: index.php');
-        echo "<a href='index.php'>Back to home</a>";
         exit();
     }
 }

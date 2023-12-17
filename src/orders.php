@@ -25,14 +25,13 @@ else {
     echo "<th>Status</th>";
     echo "</tr>";
     // connect to the database
-    $db = mysqli_connect('localhost', 'root', 'rootroot', 'securebooksellingdb');
+    $db = new DBConnection();
 
-    $user_id = getUserID($db, $_SESSION['username']);
-
-    $stmt = mysqli_prepare($db, "SELECT id,cart,address,total_price,status FROM orders WHERE user = ?");
-    mysqli_stmt_bind_param($stmt, "i", $user_id);
-    mysqli_stmt_execute($stmt);
-    $result = mysqli_stmt_get_result($stmt);
+    $user_id = getUserID($_SESSION['username']);
+    $db->stmt = $db->conn->prepare("SELECT id,cart,address,total_price,status FROM orders WHERE user = ?");
+    $db->stmt->bind_param("i", $user_id);
+    $db->stmt->execute();
+    $result = mysqli_stmt_get_result($db->stmt);
     if (mysqli_num_rows($result) > 0) {
         // Loop through each row
         while ($row = mysqli_fetch_array($result, MYSQLI_ASSOC)) {

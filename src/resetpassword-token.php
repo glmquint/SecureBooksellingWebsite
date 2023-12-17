@@ -1,6 +1,7 @@
 <?php
     require_once 'utils/dbUtils.php';
     session_start_or_expire();
+    require_once 'utils/Logger.php';
     if (isset($_GET['token'])) {
     $token = $_GET['token'];
         $userid = getUidFromToken($token);
@@ -8,10 +9,12 @@
             if(deleteToken($token)) {
                 $_SESSION['success'] = "You can now reset your password";
                 $_SESSION['$userid'] = $userid;
+                performLog("Info", "Request to reset password accepted", array("userid" => $userid));
                 header('Location: resetpassword-token.php');
                 exit();
             }
             else{
+                performLog("Error", "Failed to delete token", array("userid" => $userid));
                 echo "failed deleting token";
             }
         }
@@ -19,10 +22,12 @@
             // If 'token' is not wrong, return a 404 error
             http_response_code(404);
             echo "Error 404: Page Not Found";
+            performLog("Warning", "Invalid token", array("token" => $token));
         }
     }
     else {
         if(!isset($_SESSION['success'])) {
+            performLog("Warning", "Token not set", array());
             // If 'token' is not set, return a 404 error
             http_response_code(404);
             echo "Error 404: Page Not Found";

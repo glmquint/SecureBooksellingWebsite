@@ -21,15 +21,15 @@ if (isset($_SESSION['cart'])) {
     echo "<th>Quantity</th>";
     echo "</tr>";
     // connect to the database
-    $db = mysqli_connect('localhost', 'root', 'rootroot', 'securebooksellingdb');
+    $db = new DBConnection();
     // get the book list from the db
     // loop through the book list
     $total_price = 0;
     foreach ($_SESSION['cart'] as $bookid => $quantity){
-        $stmt = mysqli_prepare($db, "SELECT * FROM books WHERE id = ?");
-        mysqli_stmt_bind_param($stmt, "i", $bookid);
-        mysqli_stmt_execute($stmt);
-        $result = mysqli_stmt_get_result($stmt);
+        $db->stmt = $db->conn->prepare("SELECT * FROM books WHERE id = ?");
+        $db->stmt->bind_param("i", $bookid);
+        $db->stmt->execute();
+        $result = mysqli_stmt_get_result($db->stmt);
         $row = mysqli_fetch_array($result) ?? null;
         echo "<tr>";
         // title is a link to the book details page

@@ -2,8 +2,8 @@
 // TODO: implement session upgrading
 // TODO: implement password recovery
 require_once 'utils/dbUtils.php';
+require_once 'utils/Logger.php';
 session_start_or_expire();
-// verifyLogin() is a function that verifies the user's login credentials with the database
 
 if (isset($_POST['username']) || isset($_POST['password'])) {
     // Get username and password from the form submitted by the user
@@ -17,7 +17,7 @@ if (isset($_POST['username']) || isset($_POST['password'])) {
             echo "Verify your email first";
         }else {
             // Correct login
-            $_SESSION['username'] = $username;
+            performLog("Info", "User logged in", array("username" => $username));$_SESSION['username'] = $username;
             // change session id to prevent session fixation
             session_regenerate_id();
             // You can set other session variables as needed
@@ -31,6 +31,7 @@ if (isset($_POST['username']) || isset($_POST['password'])) {
         }
     } else {
         // Incorrect login
+        performLog("Warning", "Incorrect login attempt ", array("username" => $username));
         echo "Invalid login credentials. Try again later!";
     }
 }

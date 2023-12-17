@@ -1,6 +1,8 @@
 <?php
-// TODO: extend with mail confirmation
 require_once 'utils/dbUtils.php';
+require_once 'utils/Logger.php';
+
+// TODO: extend with mail confirmation
 if (isset($_POST['username']) || isset($_POST['password'])) {
 
     // User's inputted password
@@ -22,17 +24,21 @@ if (isset($_POST['username']) || isset($_POST['password'])) {
 
             if ($mailSuccess) {
                 $_SESSION['success'] = "Account registered, a confirmation mail was send to your email address";
+                performLog("Info", "New user registered, confirmation mail sent", array("username" => $_POST['username'], "mail" => $_POST['mail']));
             } else {
                 echo "Failed to send email.";
+                performLog("Error", "Failed to send email", array("username" => $_POST['username'], "mail" => $_POST['mail']));
             }
         }
         else{
             echo "something went wrong";
+            performLog("Error", "Failed to generate registration token", array("username" => $_POST['username'], "mail" => $_POST['mail'], "token" => $token));
         }
 
     }
     else{
-        echo "Invalid login credentials";
+        performLog("Warning", "Invalid credentials during registration", array("username" => $_POST['username'], "mail" => $_POST['mail']));
+        echo "Invalid credentials";
     }
 
 }

@@ -12,12 +12,12 @@
     // finally, ther is a button for the user to add the book to its cart
 
     $bookid = $_GET['id'] ?? 0;
-    $db = mysqli_connect('localhost', 'root', 'rootroot', 'securebooksellingdb');
     // get the book list from the db, using prepared statements
-    $stmt = mysqli_prepare($db, "SELECT * FROM books WHERE id = ?");
-    mysqli_stmt_bind_param($stmt, "i", $bookid);
-    mysqli_stmt_execute($stmt);
-    $result = mysqli_stmt_get_result($stmt);
+    $db = new DBConnection();
+    $db->stmt = mysqli_prepare($db->conn, "SELECT * FROM books WHERE id = ?");
+    mysqli_stmt_bind_param($db->stmt, "i", $bookid);
+    mysqli_stmt_execute($db->stmt);
+    $result = mysqli_stmt_get_result($db->stmt);
     $row = mysqli_fetch_array($result) ?? null;
     $booktitle = $row['title'] ?? 'Unkown book';
     $bookprice = $row['price'] ?? 0;

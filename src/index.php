@@ -34,9 +34,10 @@ session_start_or_expire();
         </tr>
         <?php
         // connect to the database
-        $db = mysqli_connect('localhost', 'root', 'rootroot', 'securebooksellingdb');
+        $db = new DBConnection();
+
+        $result = $db->conn->query("SELECT * FROM books");
         // get the book list from the db
-        $result = mysqli_query($db, "SELECT * FROM books");
         // loop through the book list
         while ($row = mysqli_fetch_array($result)) {
             echo "<tr>";
