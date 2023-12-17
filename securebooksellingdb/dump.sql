@@ -1,8 +1,8 @@
 CREATE DATABASE  IF NOT EXISTS `securebooksellingdb` /*!40100 DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci */ /*!80016 DEFAULT ENCRYPTION='N' */;
 USE `securebooksellingdb`;
--- MySQL dump 10.13  Distrib 8.0.18, for Win64 (x86_64)
+-- MySQL dump 10.13  Distrib 8.0.34, for Win64 (x86_64)
 --
--- Host: 127.0.0.1    Database: securebooksellingdb
+-- Host: localhost    Database: securebooksellingdb
 -- ------------------------------------------------------
 -- Server version	8.2.0
 
@@ -170,10 +170,11 @@ CREATE TABLE `users` (
   `email` varchar(60) NOT NULL,
   `failed_login_attempts` int NOT NULL DEFAULT '0',
   `failed_login_time` datetime DEFAULT '1970-01-01 00:00:00',
+  `active` int NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`),
   UNIQUE KEY `username_UNIQUE` (`username`),
   UNIQUE KEY `id_UNIQUE` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -182,7 +183,7 @@ CREATE TABLE `users` (
 
 LOCK TABLES `users` WRITE;
 /*!40000 ALTER TABLE `users` DISABLE KEYS */;
-INSERT INTO `users` VALUES (4,'ghi0m','$2y$10$Wsh9tE2dwsc5y8wLUjtA1.x5fICopLyiwcQRgz51FnVGwDO.D5Jai','ghi0m@localhost.com',0,'2023-12-16 10:50:54'),(5,'fabi0','$2y$10$zlhonxbkYBC1i.qudCmTv.OpFHTnALjtur/sa0FzjUNoLKhoglVpq','fabi0@localhost.com',0,'1970-01-01 00:00:00'),(6,'giacom0','$2y$10$BUUPclzGBPrJSKILGyKh7.Z0ULvlcrM6MRrdIoDAxjfIDVnZZNuXm','giacom0@localhost.com',0,'1970-01-01 00:00:00');
+INSERT INTO `users` VALUES (4,'ghi0m','$2y$10$Wsh9tE2dwsc5y8wLUjtA1.x5fICopLyiwcQRgz51FnVGwDO.D5Jai','ghi0m@localhost.com',0,'2023-12-16 10:50:54',1),(5,'fabi0','$2y$10$zlhonxbkYBC1i.qudCmTv.OpFHTnALjtur/sa0FzjUNoLKhoglVpq','fabi0@localhost.com',0,'1970-01-01 00:00:00',1),(6,'giacom0','$2y$10$BUUPclzGBPrJSKILGyKh7.Z0ULvlcrM6MRrdIoDAxjfIDVnZZNuXm','giacom0@localhost.com',0,'1970-01-01 00:00:00',1);
 /*!40000 ALTER TABLE `users` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -195,4 +196,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2023-12-16 11:01:19
+-- Dump completed on 2023-12-16 13:01:44

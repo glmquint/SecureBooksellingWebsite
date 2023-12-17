@@ -14,7 +14,7 @@ if(isset($_POST['username'])){
         //TODO log this event
         $userId = $userArray[0];
         $email = $userArray[1];
-        if(saveToken($token, $userId)) {
+        if(saveToken($token, $userId, 5)) {
             $subject = "Reset Email";
             $message = "This is a reset email. Click on the link to reset your password\n"
                 . "http://localhost:63342/snh-securebooksellingwebsite/src/resetpassword-token.php?token=" . strval($token);
@@ -30,7 +30,7 @@ if(isset($_POST['username'])){
                 header('Location: resetpassword.php');
                 exit();
             } else {
-            echo "Failed to send email.";
+                echo "Failed to send email.";
             }
 
         }
