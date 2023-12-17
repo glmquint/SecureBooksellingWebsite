@@ -25,11 +25,10 @@ if (isset($_POST['OldPassword']) && isset($_POST['NewPassword'])&& isset($_SESSI
     // You need to replace this with your actual login verification logic
     if (verifyLogin($username, $OldPassword)) {
         // Hash the password using bcrypt
-        $hashed_password = password_hash($NewPassword, PASSWORD_BCRYPT);
-        if(changePassword($username, $hashed_password)){
+        if(changePassword($username, $NewPassword)){
             performLog("Info", "Password changed correctly", array("username" => $username));
             $_SESSION['success'] = "Password changed successfully";
-            header('Location: changepassword.php');
+            header('Location: logout.php');
             exit();
         }
         else{
