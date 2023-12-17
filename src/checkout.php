@@ -6,7 +6,8 @@
 </head>
 <body>
 <?php
-session_start();
+require_once 'utils/dbUtils.php';
+session_start_or_expire();
 
 if (!isset($_SESSION['username'])) {
     header('Location: login.php?redirect=checkout.php');

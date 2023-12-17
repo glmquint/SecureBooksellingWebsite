@@ -1,6 +1,7 @@
 <?php
  // perform logout
-    session_start();
+    require_once 'utils/dbUtils.php';
+    session_start_or_expire();
     // reset username
     $_SESSION['username'] = null;
     // change session id to prevent session fixation

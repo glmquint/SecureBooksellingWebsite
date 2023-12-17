@@ -1,6 +1,6 @@
 <?php
-session_start();
 require_once 'utils/dbUtils.php';
+session_start_or_expire();
 
 
 if (isset($_POST['OldPassword']) && isset($_POST['NewPassword'])&& isset($_SESSION['username'])) {

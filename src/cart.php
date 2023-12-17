@@ -8,7 +8,8 @@
 <h1>Cart</h1>
 <a href="index.php">Back to Home</a>
 <?php
-session_start();
+require_once 'utils/dbUtils.php';
+session_start_or_expire();
 // print the cart contents in a table
 
 if (isset($_SESSION['cart'])) {

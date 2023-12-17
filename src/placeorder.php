@@ -14,7 +14,7 @@ function paymentSuccessful($order, $payment) : bool
 }
 
 require_once 'utils/dbUtils.php';
-session_start();
+session_start_or_expire();
 
 if (!isset($_SESSION['username'])) {
     header('Location: login.php');
