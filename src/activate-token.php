@@ -22,7 +22,7 @@ if (isset($_GET['token'])) {
         }
     }
     else{
-        // If 'token' is not incorrect, return a 404 error
+        // If 'token' is not correct, return a 404 error
         http_response_code(404);
         echo "Error 404: Page Not Found";
     }

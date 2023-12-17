@@ -79,7 +79,7 @@ function verifyLogin($username, $password): int
             $stmt = $db->conn->prepare("UPDATE users SET failed_login_attempts=0 WHERE username=?");
             $stmt->bind_param("s", $username);
             mysqli_stmt_execute($stmt);
-            return 1 + $active;
+            return 1 + $active; // 1 - registered but not yet activated, 2 - registered and mail activated
         } else {
             $stmt = $db->conn->prepare("UPDATE users SET failed_login_attempts=failed_login_attempts+1, 
                                                             failed_login_time=NOW() WHERE username=?");
