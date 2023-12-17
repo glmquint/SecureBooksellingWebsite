@@ -14,7 +14,7 @@ if (isset($_POST['username']) || isset($_POST['password'])) {
     // You need to replace this with your actual login verification logic
     if (verifyLogin($username, $password)) {
         // Correct login
-        performLog("Info", "User logged in", array("username" => $username, "IP" => $_SERVER['REMOTE_ADDR']));
+        performLog("Info", "User logged in", array("username" => $username));
 
         $_SESSION['username'] = $username;
         // change session id to prevent session fixation
@@ -29,7 +29,7 @@ if (isset($_POST['username']) || isset($_POST['password'])) {
         exit();
     } else {
         // Incorrect login
-        performLog("Warning", "Incorrect login attempt ", array("username" => $username, "IP" => $_SERVER['REMOTE_ADDR']));
+        performLog("Warning", "Incorrect login attempt ", array("username" => $username));
         echo "Invalid login credentials. Try again later!";
     }
 }

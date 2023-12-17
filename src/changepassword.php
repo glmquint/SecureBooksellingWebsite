@@ -14,18 +14,19 @@ if (isset($_POST['OldPassword']) && isset($_POST['NewPassword'])&& isset($_SESSI
         // Hash the password using bcrypt
         $hashed_password = password_hash($NewPassword, PASSWORD_BCRYPT);
         if(changePassword($username, $hashed_password)){
-            performLog("Info", "Password changed correctly", array("username" => $username,"IP" => $_SERVER['REMOTE_ADDR']));
+            performLog("Info", "Password changed correctly", array("username" => $username));
             $_SESSION['success'] = "Password changed successfully";
             header('Location: changepassword.php');
             exit();
         }
         else{
-            performLog("Warning", "Password change failed", array("username" => $username,"IP" => $_SERVER['REMOTE_ADDR']));
+            performLog("Warning", "Password change failed", array("username" => $username));
             echo "Invalid login credentials";
         }
 
     } else {
         // Incorrect login
+        performLog("Warning", "Verify Login failed during password change", array("username" => $username));
         echo "Invalid login credentials";
     }
 }

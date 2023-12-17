@@ -20,10 +20,10 @@ if (!isset($_SESSION['username'])) {
     $db = new DBConnection();
     $total_price = 0;
     foreach ($_SESSION['cart'] as $bookid => $quantity) {
-        $stmt = $db->conn->prepare("SELECT * FROM books WHERE id = ?");
-        $stmt->bind_param("i", $bookid);
-        $stmt->execute();
-        $result = mysqli_stmt_get_result($stmt);
+        $db->stmt = $db->conn->prepare("SELECT * FROM books WHERE id = ?");
+        $db->stmt->bind_param("i", $bookid);
+        $db->stmt->execute();
+        $result = mysqli_stmt_get_result($db->stmt);
         $row = mysqli_fetch_array($result) ?? null;
         $quantity = $_SESSION['cart'][$row['id']];
         $total_price += $row['price'] * $quantity;

@@ -9,23 +9,23 @@
             if(deleteToken($token)) {
                 $_SESSION['success'] = "You can now reset your password";
                 $_SESSION['$userid'] = $userid;
-                performLog("Info", "", array("userid" => $userid, "IP" => $_SERVER['REMOTE_ADDR']));
+                performLog("Info", "Request to reset password accepted", array("userid" => $userid));
                 header('Location: resetpassword-token.php');
                 exit();
             }
             else{
-                performLog("Error", "Failed to delete token", array("userid" => $userid, "IP" => $_SERVER['REMOTE_ADDR']));
+                performLog("Error", "Failed to delete token", array("userid" => $userid));
                 echo "failed deleting token";
             }
         }
         else{
-            performLog("Warning", "Invalid token", array("token" => $token, "IP" => $_SERVER['REMOTE_ADDR']));
+            performLog("Warning", "Invalid token", array("token" => $token));
             echo "Token is invalid";
         }
     }
     else {
         if(!isset($_SESSION['success'])) {
-            performLog("Warning", "Token not set", array("IP" => $_SERVER['REMOTE_ADDR']));
+            performLog("Warning", "Token not set", array());
             // If 'token' is not set, return a 404 error
             http_response_code(404);
             echo "Error 404: Page Not Found";

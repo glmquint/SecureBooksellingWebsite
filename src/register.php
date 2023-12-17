@@ -16,16 +16,16 @@ if (isset($_POST['username']) || isset($_POST['password'])) {
     // Store the hashed password in the database
     // use prepared statements to insert into users
 
-    $stmt = $db->conn->prepare("INSERT INTO users (username, password, email) VALUES (?, ?, ?)");
-    $stmt->bind_param("sss", $_POST['username'], $hashed_password, $_POST['email']);
-    $stmt->execute();
+    $db->stmt = $db->conn->prepare("INSERT INTO users (username, password, email) VALUES (?, ?, ?)");
+    $db->stmt->bind_param("sss", $_POST['username'], $hashed_password, $_POST['email']);
+    $db->stmt->execute();
     // check if insertion was successful
-    if ($stmt->affected_rows > 0) {
-        performLog("Info", "New user registered", array("username" => $_POST['username'],"IP" => $_SERVER['REMOTE_ADDR']));
+    if ($db->stmt->affected_rows > 0) {
+        performLog("Info", "New user registered", array("username" => $_POST['username']));
         echo "New user created successfully";
 
     } else {
-        performLog("Warning", "New user registration failed", array("username" => $_POST['username'],"IP" => $_SERVER['REMOTE_ADDR']));
+        performLog("Warning", "New user registration failed", array("username" => $_POST['username']));
         echo "Error: " . $db->conn->error;
     }
 }

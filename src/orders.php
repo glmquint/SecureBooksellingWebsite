@@ -28,10 +28,10 @@ else {
     $db = new DBConnection();
 
     $user_id = getUserID($_SESSION['username']);
-    $stmt = $db->conn->prepare("SELECT id,cart,address,total_price,status FROM orders WHERE user = ?");
-    $stmt->bind_param("i", $user_id);
-    $stmt->execute();
-    $result = mysqli_stmt_get_result($stmt);
+    $db->stmt = $db->conn->prepare("SELECT id,cart,address,total_price,status FROM orders WHERE user = ?");
+    $db->stmt->bind_param("i", $user_id);
+    $db->stmt->execute();
+    $result = mysqli_stmt_get_result($db->stmt);
     if (mysqli_num_rows($result) > 0) {
         // Loop through each row
         while ($row = mysqli_fetch_array($result, MYSQLI_ASSOC)) {

@@ -26,19 +26,19 @@ else {
     $user_id = getUserID($_SESSION['username']);
 
     if($cart_id != ""){
-        $stmt = $db->conn->prepare("SELECT book,title FROM carts c
+        $db->stmt = $db->conn->prepare("SELECT book,title FROM carts c
                                                 INNER JOIN books b ON c.book=b.id
                                                 INNER JOIN orders o ON o.cart=c.id
                                                   WHERE c.id = ? AND o.user = ?");
-        $stmt->bind_param("ii", $cart_id, $user_id);
+        $db->stmt->bind_param("ii", $cart_id, $user_id);
     } else{
-        $stmt = $db->conn->prepare("SELECT book,title FROM purchases p INNER JOIN books b ON p.book=b.id WHERE p.buyer = ?");
-        $stmt->bind_param("i", $user_id);
+        $db->stmt = $db->conn->prepare("SELECT book,title FROM purchases p INNER JOIN books b ON p.book=b.id WHERE p.buyer = ?");
+        $db->stmt->bind_param("i", $user_id);
     }
 
-    $stmt->execute();
-    $result = mysqli_stmt_get_result($stmt);
-    if ($stmt->affected_rows>0) {
+    $db->stmt->execute();
+    $result = mysqli_stmt_get_result($db->stmt);
+    if ($db->stmt->affected_rows>0) {
         // Loop through each row
         while ($row = mysqli_fetch_array($result, MYSQLI_ASSOC)) {
             // Display each row or perform operations with $row data

@@ -48,17 +48,22 @@ function performLog($level, $lowInfo, $highInfo): void{
         switch ($level){
             case "Info":
                 $lowdetailLog->info($lowInfo);
+                $highInfo['IP'] = $_SERVER['REMOTE_ADDR'];
                 $highdetailLog->info($lowInfo , $highInfo);
                 break;
 
             case "Warning":
                 $lowdetailLog->warning($lowInfo);
+                $highInfo['IP'] = $_SERVER['REMOTE_ADDR'];
                 $highdetailLog->warning($lowInfo , $highInfo);
                 break;
             case "Error":
                 $lowdetailLog->error($lowInfo);
+                $highInfo['IP'] = $_SERVER['REMOTE_ADDR'];
                 $highdetailLog->error($lowInfo , $highInfo);
                 break;
+            default:
+                echo "Invalid log level";
         }
     }
 ?>
