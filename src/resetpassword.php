@@ -11,7 +11,12 @@ if(isset($_POST['username'])){
     $username = $_POST['username'];
     $userArray = checkUser($username);
     if(count($userArray) > 0){
-        //TODO log this event
+        if($userArray[2] == 0){
+            performLog("Warning", "Reset password for disabled user", array("username" => $username));
+            header('Location: resetpassword.php');
+            $_SESSION['success'] = "Your account is disabled. Please activate your account first.";
+            exit();
+        }
         $userId = $userArray[0];
         $email = $userArray[1];
         if(saveToken($token, $userId, 5)) {

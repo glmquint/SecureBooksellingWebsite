@@ -38,7 +38,7 @@
     if(isset($_POST["newPassword"]) && isset($_POST["newPasswordRetype"])){
         $newPassword = $_POST["newPassword"];
         $newPasswordRetype = $_POST["newPasswordRetype"];
-        if($newPassword == $newPasswordRetype){
+        if($newPassword == $newPasswordRetype && $newPassword != "" && $newPasswordRetype != ""){
             $userid = $_SESSION['$userid'];
             if(changePasswordId($userid, $newPassword)){
                 session_destroy();
