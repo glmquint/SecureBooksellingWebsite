@@ -147,7 +147,7 @@ function checkUser($username): array
     // check if insertion was successful
     if ($db->stmt->affected_rows > 0) {
         $row = mysqli_fetch_array($result);
-        return array($row["id"], $row["email"]);
+        return array($row["id"], $row["email"], $row["active"]);
     } else {
         return [];
     }
