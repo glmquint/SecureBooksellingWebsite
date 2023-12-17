@@ -3,10 +3,10 @@
 ## TODO
 - [x] login
 - [x] register
-  - [ ] email request and confirmation after registration
+  - [X] email request and confirmation after registration
   - [X] link somewhere to the register form
 - [x] logout
-- [ ] session expiration
+- [X] session expiration
 - [x] listing purchasable books
 - [x] add book to cart
   - [X] session upgrading
@@ -32,7 +32,7 @@
   - [ ] also on password reset/change
 - [X] add security lock in login 
 - [ ] add remember me in login
-- [ ] add event logging 
+- [X] add event logging 
 
 ## Maybe
 - [ ] add a search bar
