@@ -1,4 +1,5 @@
 <?php
+require_once 'utils/dbUtils.php';
 session_start_or_expire();
 // TODO: implement password change functionality in new page
 // TODO: implement download purchased books

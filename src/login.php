@@ -1,9 +1,9 @@
 <?php
 // TODO: implement session upgrading
 // TODO: implement password recovery
+require_once 'utils/dbUtils.php';
 session_start_or_expire();
 // verifyLogin() is a function that verifies the user's login credentials with the database
-require_once 'utils/dbUtils.php';
 
 if (isset($_POST['username']) || isset($_POST['password'])) {
     // Get username and password from the form submitted by the user

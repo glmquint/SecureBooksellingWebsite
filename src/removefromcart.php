@@ -1,4 +1,5 @@
 <?php
+    require_once 'utils/dbUtils.php';
     session_start_or_expire();
     $bookid = $_REQUEST['id'] ?? "";
     echo "book id: " . $bookid . " removed from cart (WIP)";

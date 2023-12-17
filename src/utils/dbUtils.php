@@ -2,16 +2,13 @@
 
 function session_start_or_expire()
 {
-    if (session_status() == PHP_SESSION_NONE) {
+    session_start();
+    // Expire the session if it hasn't been accessed for more than 30 minutes.
+    $maxlifetime =  30*60;
+    if (isset($_SESSION['last_access']) && ((time() - $_SESSION['last_access']) > $maxlifetime)) {
+        session_unset();
+        session_destroy();
         session_start();
-    } else {
-        // Expire the session if it hasn't been accessed for more than 30 minutes.
-        $maxlifetime = 30 * 60;
-        if (isset($_SESSION['last_access']) && (time() - $_SESSION['last_access'] > $maxlifetime)) {
-            session_unset();
-            session_destroy();
-            session_start();
-        }
     }
     $_SESSION['last_access'] = time();
 }
