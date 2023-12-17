@@ -75,7 +75,7 @@ if (isset($_POST['username']) || isset($_POST['password'])) {
             <input type="email" name="email" id="email" required="required">
             <label for="password">Password</label>
             <input type="password" name="password" id="password" required="required" oninput=checkPasswordStrength(document.getElementById('password').value)>
-            <button id="registerbtn" type="submit">Register</button>
+            <button id="btn" type="submit">Register</button>
         </form>
         <label for="strength">password strength: </label>
         <progress id="strength" value="0" max="4"> password strength </progress>

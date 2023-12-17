@@ -50,6 +50,8 @@ if (isset($_POST['OldPassword']) && isset($_POST['NewPassword'])&& isset($_SESSI
 <head>
     <title>Secure Book selling website</title>
     <link rel="stylesheet" href="https://cdn.simplecss.org/simple.min.css">
+    <script src="utils/checkPasswordStrength.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/zxcvbn/4.4.2/zxcvbn.js"></script>
 </head>
 <body>
 
@@ -82,19 +84,23 @@ if (isset($_POST['OldPassword']) && isset($_POST['NewPassword'])&& isset($_SESSI
         <div class="input-group">
             <label>Old password</label>
             <label>
-                <input type="password" name="OldPassword">
+                <input type="password" required="required" name="OldPassword">
             </label>
         </div>
         <div class="input-group">
             <label>New Password</label>
             <label>
-                <input type="password" name="NewPassword">
+                <input type="password" name="NewPassword" id="NewPassword" required="required" oninput=checkPasswordStrength(document.getElementById('NewPassword').value)>
             </label>
         </div>
         <div class="input-group">
-            <button type="submit" name="change_btn">Change</button>
+            <button type="submit" id="btn" name="btn">Change</button>
         </div>
     </form>
+    <label for="strength">password strength: </label>
+    <progress id="strength" value="0" max="4"> password strength </progress>
+    <p id="warning"></p>
+    <p id="suggestions"></p>
 
 <?php endif ?>
 

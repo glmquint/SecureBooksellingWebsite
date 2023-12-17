@@ -1,7 +1,7 @@
 function checkPasswordStrength (password) {
   const result = zxcvbn(password);
 
-  document.getElementById("registerbtn").disabled = true;
+  document.getElementById("btn").disabled = true;
   const warning = document.getElementById('warning') ;
   const suggestions = document.getElementById('suggestions') ;
   const strength = document.getElementById('strength') ;
@@ -11,5 +11,5 @@ function checkPasswordStrength (password) {
   suggestions.textContent = strongenough ? "Suggestions: " + result.feedback.suggestions: '';
   strength.value = result.score;
 
-  document.getElementById("registerbtn").disabled = strongenough;
+  document.getElementById("btn").disabled = strongenough;
 }
