@@ -5,19 +5,20 @@ require_once 'utils/dbUtils.php';
 require_once 'utils/Logger.php';
 session_start_or_expire();
 
-if (isset($_POST['username']) || isset($_POST['password'])) {
+if (isset($_POST['email']) || isset($_POST['password'])) {
     // Get username and password from the form submitted by the user
-    $username = $_POST['username'] ?? '';
+    $email = $_POST['email'] ?? '';
     $password = $_POST['password'] ?? '';
     // Assume $username and $password are the submitted credentials
     // You need to replace this with your actual login verification logic
-    $userValidity = verifyLogin($username, $password);
+    $userValidity = verifyLogin($email, $password);
     if ($userValidity) {
         if ($userValidity == 1) {
             echo "Verify your email first";
         }else {
             // Correct login
-            performLog("Info", "User logged in", array("username" => $username));$_SESSION['username'] = $username;
+            performLog("Info", "User logged in", array("email" => $email));
+            $_SESSION['email'] = $email;
             // change session id to prevent session fixation
             session_regenerate_id();
             // You can set other session variables as needed
@@ -31,7 +32,7 @@ if (isset($_POST['username']) || isset($_POST['password'])) {
         }
     } else {
         // Incorrect login
-        performLog("Warning", "Incorrect login attempt ", array("username" => $username));
+        performLog("Warning", "Incorrect login attempt ", array("email" => $email));
         echo "Invalid login credentials. Try again later!";
     }
 }
@@ -48,8 +49,8 @@ if (isset($_POST['username']) || isset($_POST['password'])) {
     <h1>Login</h1>
     <p>Back to <a href="index.php">Home</a></p>
     <form method="post" action="login.php">
-        <label for="username">Username</label>
-        <input type="text" name="username" id="username">
+        <label for="email">Email</label>
+        <input type="email" name="email" id="email" required="required">
         <label for="password">Password</label>
         <input type="password" name="password" id="password">
         <?php if(isset($_GET['redirect'])) {

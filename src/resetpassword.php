@@ -6,19 +6,18 @@ session_start_or_expire();
 
 
 
-if(isset($_POST['username'])){
+if(isset($_POST['email'])){
     $token = random_int(100000, 999999999);
-    $username = $_POST['username'];
-    $userArray = getUser($username);
+    $email = $_POST['email'];
+    $userArray = getUser($email);
     if(count($userArray) > 0){
         if(!$userArray["active"]){
-            performLog("Warning", "Reset password for disabled user", array("username" => $username));
+            performLog("Warning", "Reset password for disabled user", array("email" => $email));
             header('Location: resetpassword.php');
             $_SESSION['success'] = "Your account is disabled. Please activate your account first.";
             exit();
         }
         $userId = $userArray["id"];
-        $email = $userArray["email"];
         if(saveToken($token, $userId, 5)) {
             $subject = "Reset Email";
             $message = "This is a reset email. Click on the link to reset your password\n"
@@ -31,24 +30,24 @@ if(isset($_POST['username'])){
             $mailSuccess = mail($email, $subject, $message, $headers);
 
             if ($mailSuccess) {
-                performLog("Info", "Password reset link sent to user", array("username" => $username));
+                performLog("Info", "Password reset link sent to user", array("email" => $email));
                 $_SESSION['success'] = "Password reset link sent to your email";
                 header('Location: resetpassword.php');
                 exit();
             } else {
-                performLog("Warning", "Failed to send email", array("username" => $username, "mail" => $email ));
+                performLog("Warning", "Failed to send email", array("email" => $email));
                 echo "Failed to send email.";
             }
 
         }
         else{
-            performLog("Error", "Failed to save token", array("username" => $username, "mail" => $email ));
+            performLog("Error", "Failed to save token", array("email" => $email));
             echo "something went wrong";
         }
     }
     else{
         //This is a fake success message is to avoid account enumeration
-        performLog("Warning", "Reset password for not existing user", array("username" => $username));
+        performLog("Warning", "Reset password for not existing user", array("email" => $email));
         $_SESSION['success'] = "Password reset link sent to your email";
         header('Location: resetpassword.php');
         exit();
@@ -85,12 +84,8 @@ if(isset($_POST['username'])){
     <a href="index.php">Back to Home</a>
     <h1>Reset Password</h1>
     <form method="post" action="resetpassword.php">
-        <div class="input-group">
-            <label>Username</label>
-            <label>
-                <input type="text" name="username">
-            </label>
-        </div>
+        <label for="email">Email</label>
+        <input type="email" name="email" id="email" required="required">
         <div class="input-group">
             <button type="submit" name="reset_btn">Reset</button>
         </div>

@@ -48,15 +48,15 @@ class DBConnection {
     }
 }
 
-function registerUser($username, $user_input_password, $mail): int
+function registerUser($mail, $user_input_password): int
 {
     $db = new DBConnection();
     if(!$db->conn){
         die("Connection failed: " . $db->conn->connect_error);
     }
     $hashed_password = password_hash($user_input_password, PASSWORD_BCRYPT);
-    $stmt = $db->conn->prepare("INSERT INTO users (username, password, email) VALUES (?, ?, ?)");
-    $stmt->bind_param("sss",$username, $hashed_password, $mail);
+    $stmt = $db->conn->prepare("INSERT INTO users (email, password) VALUES (?, ?)");
+    $stmt->bind_param("ss",$mail, $hashed_password);
     $stmt->execute();
     // check if insertion was successful
     if ($stmt->affected_rows > 0) {
@@ -72,15 +72,15 @@ function registerUser($username, $user_input_password, $mail): int
 
 }
 
-function verifyLogin($username, $password): int
+function verifyLogin($email, $password): int
 {
 // Retrieve the hashed password from the database based on the username
 // Replace the following lines with your database connection and query
     $db = new DBConnection();
 
-    $db->stmt = $db->conn->prepare("SELECT password, active FROM users WHERE username=? 
+    $db->stmt = $db->conn->prepare("SELECT password, active FROM users WHERE email=? 
         AND (failed_login_attempts < 3 OR failed_login_time < DATE_SUB(NOW(), INTERVAL 1 MINUTE))");
-    $db->stmt->bind_param("s", $username);
+    $db->stmt->bind_param("s", $email);
     mysqli_stmt_execute($db->stmt);
     $result = mysqli_stmt_get_result($db->stmt);
     // check if insertion was successful
@@ -91,14 +91,14 @@ function verifyLogin($username, $password): int
         $active = $row["active"];
         // Verify the entered password against the stored hash
         if (password_verify($password, $stored_hashed_password)) {
-            $db->stmt = $db->conn->prepare("UPDATE users SET failed_login_attempts=0 WHERE username=?");
-            $db->stmt->bind_param("s", $username);
+            $db->stmt = $db->conn->prepare("UPDATE users SET failed_login_attempts=0 WHERE email=?");
+            $db->stmt->bind_param("s", $email);
             mysqli_stmt_execute($db->stmt);
             return 1 + $active; // 1 - registered but not yet activated, 2 - registered and mail activated
         } else {
             $db->stmt = $db->conn->prepare("UPDATE users SET failed_login_attempts=failed_login_attempts+1, 
-                                                            failed_login_time=NOW() WHERE username=?");
-            $db->stmt->bind_param("s", $username);
+                                                            failed_login_time=NOW() WHERE email=?");
+            $db->stmt->bind_param("s", $email);
             mysqli_stmt_execute($db->stmt);
             return 0;
         }
@@ -108,15 +108,15 @@ function verifyLogin($username, $password): int
 
 }
 
-function changePassword($username, $newPassword): bool
+function changePassword($email, $newPassword): bool
 {
     // Store the hashed password in the database
     $hashed_password = password_hash($newPassword, PASSWORD_BCRYPT);
     $db = new DBConnection();
 
     // use prepared statements to change the password of a user
-    $db->stmt = $db->conn->prepare("UPDATE users SET password=? WHERE username=?");
-    $db->stmt->bind_param("ss", $hashed_password, $username);
+    $db->stmt = $db->conn->prepare("UPDATE users SET password=? WHERE email=?");
+    $db->stmt->bind_param("ss", $hashed_password, $email);
     $db->stmt->execute();
     // check if insertion was successful
     return ($db->stmt->affected_rows > 0);
@@ -136,18 +136,18 @@ function changePasswordId($userId, $newPassword): bool
 }
 
 // create a function to check if a user exists in the database
-function getUser($username): array
+function getUser($email): array
 {
     $db = new DBConnection();
 
-    $db->stmt = $db->conn->prepare("SELECT * FROM users WHERE username=? ");
-    $db->stmt->bind_param("s", $username);
+    $db->stmt = $db->conn->prepare("SELECT * FROM users WHERE email=? ");
+    $db->stmt->bind_param("s", $email);
     mysqli_stmt_execute($db->stmt);
     $result = mysqli_stmt_get_result($db->stmt);
     // check if insertion was successful
     if ($db->stmt->affected_rows > 0) {
         $row = mysqli_fetch_array($result);
-        return array("id" => $row["id"], "email" => $row["email"], "active" => $row["active"]);
+        return array("id" => $row["id"], "active" => $row["active"]);
     } else {
         return [];
     }
