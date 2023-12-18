@@ -37,3 +37,7 @@
 ## Maybe
 - [ ] add a search bar
 - [ ] add an admin panel to manage books
+
+## New questions
+- [ ] Email change
+- [ ] Rembember me

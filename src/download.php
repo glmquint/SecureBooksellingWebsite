@@ -1,7 +1,7 @@
 <?php
 require_once 'utils/dbUtils.php';
 session_start_or_expire();
-if (!isset($_SESSION['username'])) {
+if (!isset($_SESSION['email'])) {
     header('Location: login.php');
     exit();
 }
@@ -11,7 +11,7 @@ if (!isset($_GET['id'])) {
 }
 $db = new DBConnection();
 
-$user_id = getUserID($_SESSION['username']);
+$user_id = getUserID($_SESSION['email']);
 $db->stmt = $db->conn->prepare("SELECT book,title FROM purchases INNER JOIN books ON book=id WHERE buyer = ? AND book = ?");
 $db->stmt->bind_param("ii", $user_id, $_GET['id']);
 $db->stmt->execute();

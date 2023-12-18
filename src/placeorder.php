@@ -17,7 +17,7 @@ require_once 'utils/dbUtils.php';
 require_once 'utils/Logger.php';
 session_start_or_expire();
 
-if (!isset($_SESSION['username'])) {
+if (!isset($_SESSION['email'])) {
     header('Location: login.php');
     exit();
 } elseif (!isset($_SESSION['cart'])) {
@@ -39,7 +39,7 @@ else {
     // we want to insert the purchase only if it is not already present
     // but currently all purchases by a user that already has a book, get discarded
     $db->stmt = $db->conn->prepare("INSERT INTO purchases (buyer, book) VALUES (?, ?) ON DUPLICATE KEY UPDATE buyer = buyer");
-    $userid = getUserID($_SESSION['username']);
+    $userid = getUserID($_SESSION['email']);
     $db->stmt->bind_param("ii", $userid, $bookid); // bookid is defined and used just below.. it just works
     foreach ($_SESSION['cart'] as $bookid => $quantity) {
         $db->stmt->execute();
@@ -73,7 +73,7 @@ else {
 
         $db->conn->commit();
 
-        performLog("Info", "Order placed successfully", array("username" => $_SESSION['username'], "orderid" => $_SESSION['order']['orderid']));
+        performLog("Info", "Order placed successfully", array("email" => $_SESSION['email'], "orderid" => $_SESSION['order']['orderid']));
 
         unset($_SESSION['cart']);
         unset($_SESSION['order']);
@@ -93,7 +93,7 @@ else {
             echo "<p>A book that you ordered is currently not available. You can still read the digital version from <a href='books.php'>your books</a>. 
             We will let you know when your book will get back in stock!</p>";
 
-            performLog("Warning", "Book not in stock", array("username" => $_SESSION['username'], "orderid" => $_SESSION['order']['orderid']));
+            performLog("Warning", "Book not in stock", array("email" => $_SESSION['email'], "orderid" => $_SESSION['order']['orderid']));
 
 
             $db->stmt = $db->conn->prepare("UPDATE orders SET status = 'waiting for restock' WHERE id = ?");
@@ -110,7 +110,7 @@ else {
             //header('Location: index.php');
             echo "<a href='index.php'>Back to home</a>";
         }else{
-            performLog("Error", "Error while placing order", ["db_msg"=>$ex->getMessage(), "db_error_code"=>$ex->getCode(), "username" => $_SESSION['username'], "orderid" => $_SESSION['order']['orderid']]);
+            performLog("Error", "Error while placing order", ["db_msg"=>$ex->getMessage(), "db_error_code"=>$ex->getCode(), "email" => $_SESSION['email'], "orderid" => $_SESSION['order']['orderid']]);
         }
         exit();
     }

@@ -40,7 +40,7 @@
         $newPasswordRetype = $_POST["newPasswordRetype"];
         if($newPassword == $newPasswordRetype && $newPassword != "" && $newPasswordRetype != ""){
             $userid = $_SESSION['$userid'];
-            if(changePasswordId($userid, $newPassword)){
+            if(changePasswordById($userid, $newPassword)){
                 session_destroy();
                 header('Location: index.php');
                 exit();

@@ -9,7 +9,7 @@
 require_once 'utils/dbUtils.php';
 session_start_or_expire();
 
-if (!isset($_SESSION['username'])) {
+if (!isset($_SESSION['email'])) {
     header('Location: login.php?redirect=checkout.php');
     exit();
 } elseif (!isset($_SESSION['cart'])) {
@@ -34,7 +34,7 @@ if (!isset($_SESSION['username'])) {
         'orderid' => random_int(100000, 999999),
         'cart' => $_SESSION['cart'],
         'total_price' => $total_price,
-        'username' => $_SESSION['username'],
+        'email' => $_SESSION['email'],
         'status' => 'in transit'
     ];
 
@@ -105,7 +105,7 @@ if (!isset($_SESSION['username'])) {
     // order summary
     echo "<h1>Order summary</h1>";
     echo "<p>Order ID: " . $_SESSION['order']['orderid'] . "</p>";
-    echo "<p>Username: " . $_SESSION['order']['username'] . "</p>";
+    echo "<p>Email: " . $_SESSION['order']['email'] . "</p>";
     echo "<p>Total price: " . $_SESSION['order']['total_price'] / 100 . "€</p>";
     // TODO: maybe list also the cart
     echo "<p>Delivery address: " . $_SESSION['delivery']['firstname'] . " " . $_SESSION['delivery']['lastname'] . "</p>";

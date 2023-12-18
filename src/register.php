@@ -2,12 +2,12 @@
 require_once 'utils/dbUtils.php';
 require_once 'utils/Logger.php';
 
-// TODO: extend with mail confirmation
-if (isset($_POST['username']) || isset($_POST['password'])) {
+
+if (isset($_POST['email']) || isset($_POST['password'])) {
 
     // User's inputted password
     $user_input_password = $_POST['password'];
-    $userId=registerUser($_POST['username'], $user_input_password, $_POST['email']);
+    $userId=registerUser($_POST['email'], $user_input_password);
     if($userId!=-1){
         $token = random_int(100000, 999999999);
         if(saveToken($token, $userId, 60)) {
@@ -24,20 +24,20 @@ if (isset($_POST['username']) || isset($_POST['password'])) {
 
             if ($mailSuccess) {
                 $_SESSION['success'] = "Account registered, a confirmation mail was send to your email address";
-                performLog("Info", "New user registered, confirmation mail sent", array("username" => $_POST['username'], "mail" => $_POST['email']));
+                performLog("Info", "New user registered, confirmation mail sent", array("mail" => $_POST['email']));
             } else {
                 echo "Failed to send email.";
-                performLog("Error", "Failed to send email", array("username" => $_POST['username'], "mail" => $_POST['email']));
+                performLog("Error", "Failed to send email", array("mail" => $_POST['email']));
             }
         }
         else{
             echo "something went wrong";
-            performLog("Error", "Failed to generate registration token", array("username" => $_POST['username'], "mail" => $_POST['email'], "token" => $token));
+            performLog("Error", "Failed to generate registration token", array( "mail" => $_POST['email'], "token" => $token));
         }
 
     }
     else{
-        performLog("Warning", "Invalid credentials during registration", array("username" => $_POST['username'], "mail" => $_POST['email']));
+        performLog("Warning", "Invalid credentials during registration", array( "mail" => $_POST['email']));
         echo "Invalid credentials";
     }
 
@@ -69,8 +69,6 @@ if (isset($_POST['username']) || isset($_POST['password'])) {
         <h1>Register</h1>
         <p>Back to <a href="index.php">Home</a></p>
         <form method="post" action="register.php">
-            <label for="username">Username</label>
-            <input type="text" name="username" id="username" required="required">
             <label for="email">Email</label>
             <input type="email" name="email" id="email" required="required">
             <label for="password">Password</label>
