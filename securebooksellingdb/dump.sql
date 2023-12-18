@@ -165,16 +165,15 @@ DROP TABLE IF EXISTS `users`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `users` (
   `id` int NOT NULL AUTO_INCREMENT,
-  `username` varchar(45) NOT NULL,
-  `password` varchar(60) NOT NULL,
   `email` varchar(60) NOT NULL,
+  `password` varchar(60) NOT NULL,
   `failed_login_attempts` int NOT NULL DEFAULT '0',
   `failed_login_time` datetime DEFAULT '1970-01-01 00:00:00',
   `active` int NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`),
-  UNIQUE KEY `username_UNIQUE` (`username`),
-  UNIQUE KEY `id_UNIQUE` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+  UNIQUE KEY `id_UNIQUE` (`id`),
+  UNIQUE KEY `email_UNIQUE` (`email`)
+) ENGINE=InnoDB AUTO_INCREMENT=16 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -183,7 +182,7 @@ CREATE TABLE `users` (
 
 LOCK TABLES `users` WRITE;
 /*!40000 ALTER TABLE `users` DISABLE KEYS */;
-INSERT INTO `users` VALUES (4,'ghi0m','$2y$10$Wsh9tE2dwsc5y8wLUjtA1.x5fICopLyiwcQRgz51FnVGwDO.D5Jai','ghi0m@localhost.com',0,'2023-12-16 10:50:54',1),(5,'fabi0','$2y$10$zlhonxbkYBC1i.qudCmTv.OpFHTnALjtur/sa0FzjUNoLKhoglVpq','fabi0@localhost.com',0,'1970-01-01 00:00:00',1),(6,'giacom0','$2y$10$BUUPclzGBPrJSKILGyKh7.Z0ULvlcrM6MRrdIoDAxjfIDVnZZNuXm','giacom0@localhost.com',0,'1970-01-01 00:00:00',1);
+INSERT INTO `users` VALUES (4,'ghi0m@localhost.com','$2y$10$u9REmg63ZzMbtCclEe7FUO.hUAVtxSL1eC4RmAOLvDPMXAavtnLha',0,'2023-12-16 10:50:54',1),(5,'fabi0@localhost.com','$2y$10$MdaisEyyuy6TwmSSo8ipDOue6T/dmrDgdHzoQjvkm75eXDFFkeXCu',0,'2023-12-18 16:59:58',1),(6,'giacom0@localhost.com','$2y$10$BUUPclzGBPrJSKILGyKh7.Z0ULvlcrM6MRrdIoDAxjfIDVnZZNuXm',0,'1970-01-01 00:00:00',1);
 /*!40000 ALTER TABLE `users` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -196,4 +195,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2023-12-16 13:01:44
+-- Dump completed on 2023-12-18 17:11:12
