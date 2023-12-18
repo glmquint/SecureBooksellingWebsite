@@ -6,6 +6,7 @@
     </head>
     <body>
     <?php
+    require_once 'utils/dbUtils.php';
     // Purpose: Displays the details of a book
     // given the id passed as a GET parameter, the page shows the information about the book,
     // like the title, the author, the synopsis and the price
