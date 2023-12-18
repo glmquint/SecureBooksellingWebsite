@@ -49,9 +49,9 @@ if (isset($_POST['username']) || isset($_POST['password'])) {
     <p>Back to <a href="index.php">Home</a></p>
     <form method="post" action="login.php">
         <label for="username">Username</label>
-        <input type="text" name="username" id="username">
+        <input type="text" required="required" name="username" id="username">
         <label for="password">Password</label>
-        <input type="password" name="password" id="password">
+        <input type="password" required="required" name="password" id="password">
         <?php if(isset($_GET['redirect'])) {
             echo "<input type='hidden' value='" . $_GET['redirect'] . "' name='redirect'>";
         }
