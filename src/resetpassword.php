@@ -9,16 +9,16 @@ session_start_or_expire();
 if(isset($_POST['username'])){
     $token = random_int(100000, 999999999);
     $username = $_POST['username'];
-    $userArray = checkUser($username);
+    $userArray = getUser($username);
     if(count($userArray) > 0){
-        if($userArray[2] == 0){
+        if(!$userArray["active"]){
             performLog("Warning", "Reset password for disabled user", array("username" => $username));
             header('Location: resetpassword.php');
             $_SESSION['success'] = "Your account is disabled. Please activate your account first.";
             exit();
         }
-        $userId = $userArray[0];
-        $email = $userArray[1];
+        $userId = $userArray["id"];
+        $email = $userArray["email"];
         if(saveToken($token, $userId, 5)) {
             $subject = "Reset Email";
             $message = "This is a reset email. Click on the link to reset your password\n"
