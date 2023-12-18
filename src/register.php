@@ -24,20 +24,20 @@ if (isset($_POST['username']) || isset($_POST['password'])) {
 
             if ($mailSuccess) {
                 $_SESSION['success'] = "Account registered, a confirmation mail was send to your email address";
-                performLog("Info", "New user registered, confirmation mail sent", array("username" => $_POST['username'], "mail" => $_POST['mail']));
+                performLog("Info", "New user registered, confirmation mail sent", array("username" => $_POST['username'], "mail" => $_POST['email']));
             } else {
                 echo "Failed to send email.";
-                performLog("Error", "Failed to send email", array("username" => $_POST['username'], "mail" => $_POST['mail']));
+                performLog("Error", "Failed to send email", array("username" => $_POST['username'], "mail" => $_POST['email']));
             }
         }
         else{
             echo "something went wrong";
-            performLog("Error", "Failed to generate registration token", array("username" => $_POST['username'], "mail" => $_POST['mail'], "token" => $token));
+            performLog("Error", "Failed to generate registration token", array("username" => $_POST['username'], "mail" => $_POST['email'], "token" => $token));
         }
 
     }
     else{
-        performLog("Warning", "Invalid credentials during registration", array("username" => $_POST['username'], "mail" => $_POST['mail']));
+        performLog("Warning", "Invalid credentials during registration", array("username" => $_POST['username'], "mail" => $_POST['email']));
         echo "Invalid credentials";
     }
 

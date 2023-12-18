@@ -8,16 +8,27 @@ if (isset($_POST['OldPassword']) && isset($_POST['NewPassword'])&& isset($_SESSI
     // Get username and password from the form submitted by the user
     $OldPassword = $_POST['OldPassword'] ?? '';
     $NewPassword = $_POST['NewPassword'] ?? '';
+    if($OldPassword == '' || $NewPassword == ''){
+        performLog("Warning", "Empty password field in change", array("username" => $_SESSION['username']));
+        $_SESSION["warning"] = "Empty password field";
+        header('Location: changepassword.php');
+        exit();
+    }
+    if($OldPassword == $NewPassword){
+        performLog("Warning", "Old and new password are the same", array("username" => $_SESSION['username']));
+        $_SESSION["warning"] = "Old and new password are the same";
+        header('Location: changepassword.php');
+        exit();
+    }
     $username = $_SESSION['username'];
     // Assume $username and $password are the submitted credentials
     // You need to replace this with your actual login verification logic
     if (verifyLogin($username, $OldPassword)) {
         // Hash the password using bcrypt
-        $hashed_password = password_hash($NewPassword, PASSWORD_BCRYPT);
-        if(changePassword($username, $hashed_password)){
+        if(changePassword($username, $NewPassword)){
             performLog("Info", "Password changed correctly", array("username" => $username));
             $_SESSION['success'] = "Password changed successfully";
-            header('Location: changepassword.php');
+            header('Location: logout.php');
             exit();
         }
         else{
@@ -54,9 +65,17 @@ if (isset($_POST['OldPassword']) && isset($_POST['NewPassword'])&& isset($_SESSI
         </h3>
         <a href="index.php">Back to Home</a>
     </div>
-<!-- else, show a link to the changepassword page -->
 <?php else: ?>
-
+    <?php if (isset($_SESSION['warning'])): ?>
+        <div class="error warning">
+            <h3>
+                <?php
+                echo $_SESSION['warning'];
+                unset($_SESSION['warning']);
+                ?>
+            </h3>
+        </div>
+    <?php endif ?>
     <!-- show a form to login -->
     <a href="index.php">Back to Home</a>
     <h1>Change Password</h1>

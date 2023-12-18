@@ -136,7 +136,7 @@ function changePasswordId($userId, $newPassword): bool
 }
 
 // create a function to check if a user exists in the database
-function checkUser($username): array
+function getUser($username): array
 {
     $db = new DBConnection();
 
@@ -147,7 +147,7 @@ function checkUser($username): array
     // check if insertion was successful
     if ($db->stmt->affected_rows > 0) {
         $row = mysqli_fetch_array($result);
-        return array($row["id"], $row["email"]);
+        return array("id" => $row["id"], "email" => $row["email"], "active" => $row["active"]);
     } else {
         return [];
     }
