@@ -29,11 +29,11 @@
 - [X] remove a single book from cart
 - [X] add user check on books page 
 - [X] impose strong password (zxcvbn php)
-  - [ ] also on password reset/change
+  - [X] also on password reset/change
 - [X] add security lock in login 
 - [ ] add remember me in login
-- [X] add event logging 
-
+- [X] add event logging
+- [] remove user from username in case of failure to register 
 ## Maybe
 - [ ] add a search bar
 - [ ] add an admin panel to manage books
