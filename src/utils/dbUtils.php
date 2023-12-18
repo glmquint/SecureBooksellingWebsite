@@ -122,7 +122,7 @@ function changePassword($email, $newPassword): bool
     return ($db->stmt->affected_rows > 0);
 }
 
-function changePasswordId($userId, $newPassword): bool
+function changePasswordById($userId, $newPassword): bool
 {
     // Store the hashed password in the database
     $hashed_password = password_hash($newPassword, PASSWORD_BCRYPT);
