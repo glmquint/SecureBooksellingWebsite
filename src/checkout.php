@@ -48,13 +48,13 @@ if (!isset($_SESSION['username'])) {
     echo "<label for='lastname'>Last name</label>";
     echo "<input type='text' name='lastname' id='lastname' required='required' pattern=\"[\\-'A-Z a-zÀ-ÿ]+\">";
     echo "<label for='address'>Address</label>";
-    echo "<input type='text' name='address' id='address' required='required' pattern=\"[\\-'A-Z a-zÀ-ÿ0-9]+\">";
+    echo "<input type='text' name='address' id='address' required='required' pattern=\"[\\-'A-Z a-zÀ-ÿ0-9.,]+\">";
     echo "<label for='city'>City</label>";
-    echo "<input type='text' name='city' id='city' required='required' pattern=\"[\\-'A-Z a-zÀ-ÿ]+\">";
+    echo "<input type='text' name='city' id='city' required='required' pattern=\"[\\-'A-Z a-zÀ-ÿ.]+\">";
     echo "<label for='postalcode'>Postal code</label>";
     echo "<input type='text' name='postalcode' id='postalcode' required='required' pattern='\d+'>";
     echo "<label for='country'>Country</label>";
-    echo "<input type='text' name='country' id='country' required='required'>";
+    echo "<input type='text' name='country' id='country' required='required' pattern=\"[\\-'A-Z a-z]+\" >";
     echo "<button type='submit'>Submit</button>";
     echo "</form>";
 
@@ -89,7 +89,7 @@ if (!isset($_SESSION['username'])) {
     // form to input payment details
     echo "<h1>Payment details</h1>";
     echo "<form method='post' action='checkout.php'>";
-    echo "<label for='cardnumber'>Card number (XXXX-XXXX-XXXX-XXXX)</label>";
+    echo "<label for='cardnumber'>Card number</label>";
     echo "<input type='text' name='cardnumber' id='cardnumber' required='required' pattern=\"\b\d{4}[\\- ]?\d{4}[\\- ]?\d{4}[\\- ]?\d{4}\b\">";
     echo "<label for='cardholder'>Card holder</label>";
     echo "<input type='text' name='cardholder' id='cardholder' required='required' pattern=\"[\\-'A-Z a-zÀ-ÿ]+\">";
