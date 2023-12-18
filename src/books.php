@@ -11,7 +11,7 @@
 require_once 'utils/dbUtils.php';
 session_start_or_expire();
 
-if (!isset($_SESSION['username'])) {
+if (!isset($_SESSION['email'])) {
     header('Location: login.php');
     exit();
 }
@@ -23,7 +23,7 @@ else {
     $cart_id = $_REQUEST['id'] ?? "";
     // connect to the database
     $db = new DBConnection();
-    $user_id = getUserID($_SESSION['username']);
+    $user_id = getUserID($_SESSION['email']);
 
     if($cart_id != ""){
         $db->stmt = $db->conn->prepare("SELECT book,title FROM carts c

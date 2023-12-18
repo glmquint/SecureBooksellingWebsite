@@ -11,7 +11,7 @@
 require_once 'utils/dbUtils.php';
 session_start_or_expire();
 
-if (!isset($_SESSION['username'])) {
+if (!isset($_SESSION['email'])) {
     header('Location: login.php');
     exit();
 }
@@ -27,7 +27,7 @@ else {
     // connect to the database
     $db = new DBConnection();
 
-    $user_id = getUserID($_SESSION['username']);
+    $user_id = getUserID($_SESSION['email']);
     $db->stmt = $db->conn->prepare("SELECT id,cart,address,total_price,status FROM orders WHERE user = ?");
     $db->stmt->bind_param("i", $user_id);
     $db->stmt->execute();

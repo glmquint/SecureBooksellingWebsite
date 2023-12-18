@@ -233,12 +233,12 @@ function activateAccount($userId): bool
 }
 
 // TODO: maybe refactor at login time -> set uid in session
-function getUserID($username): int
+function getUserID($email): int
 {
     $db = new DBConnection();
-    $db->stmt = $db->conn->prepare("SELECT id FROM users WHERE username=?");
+    $db->stmt = $db->conn->prepare("SELECT id FROM users WHERE email=?");
 
-    $db->stmt->bind_param("s", $username);
+    $db->stmt->bind_param("s", $email);
 
     $db->stmt->execute();
     $result = $db->stmt->get_result();
