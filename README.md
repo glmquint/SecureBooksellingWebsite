@@ -33,11 +33,11 @@
 - [X] add security lock in login 
 - [ ] add remember me in login
 - [X] add event logging
-- [] remove user from username in case of failure to register 
+- [ ] remove user from username in case of failure to register 
 ## Maybe
 - [ ] add a search bar
 - [ ] add an admin panel to manage books
 
 ## New questions
 - [ ] Email change
-- [ ] Rembember me
+- [X] Rembember me

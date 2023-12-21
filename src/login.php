@@ -1,10 +1,33 @@
 <?php
-// TODO: implement session upgrading
-// TODO: implement password recovery
 require_once 'utils/dbUtils.php';
 require_once 'utils/Logger.php';
 session_start_or_expire();
 
+$dotenv = Dotenv\Dotenv::createImmutable(__DIR__);
+$dotenv->load();
+$REMEMBERME_KEY = $_ENV['REMEMBERME_KEY'];
+$CIPHER = "aes-128-gcm";
+
+if (isset($_COOKIE['rememberme'])) {
+    $rememberme_token = unserialize(base64_decode($_COOKIE['rememberme']));
+    $iv = $rememberme_token[0];
+    $enc_email = $rememberme_token[1];
+    $tag = $rememberme_token[2];
+    try{
+        $email = openssl_decrypt($enc_email, $CIPHER, $REMEMBERME_KEY, $options=0, $iv, $tag);
+        if(!getUser($email)){
+            performLog("Warning", "User not found in database", array("email" => $email));
+            header('Location: logout.php');
+            exit();
+        }
+        $_SESSION['email'] = $email;
+        performLog("Info", "User logged in via remember me cookie", array("email" => $_SESSION['email']));
+    } catch (Exception $e){
+        performLog("Error", "Failed to decrypt remember me cookie", array("cookie" => $rememberme_token, "cipher" => $CIPHER));
+    }
+    header('Location: index.php');
+    exit();
+}
 if (isset($_POST['email']) || isset($_POST['password'])) {
     // Get username and password from the form submitted by the user
     $email = $_POST['email'] ?? '';
@@ -21,7 +44,18 @@ if (isset($_POST['email']) || isset($_POST['password'])) {
             $_SESSION['email'] = $email;
             // change session id to prevent session fixation
             session_regenerate_id();
-            // You can set other session variables as needed
+            if(isset($_POST['remember']) && $_POST['remember'] == "on"){
+                // encrypt the email and store it in a cookie
+                if (in_array($CIPHER, openssl_get_cipher_methods())) {
+                    $ivlen = openssl_cipher_iv_length($CIPHER);
+                    $iv = openssl_random_pseudo_bytes($ivlen);
+                    $enc_email = openssl_encrypt($email, $CIPHER, $REMEMBERME_KEY, $options = 0, $iv, $tag);
+                    setcookie('rememberme', base64_encode(serialize([$iv, $enc_email, $tag])), time() + (86400 * 30), '/', '', true, true); // 86400 = 1 day
+                } else {
+                    performLog("Error", "Cipher not supported", array("cipher" => $CIPHER));
+                }
+
+            }
             // To Redirect the user to the home page or another secure page
             if (isset($_POST['redirect'])) {
                 header('Location: ' . $_POST['redirect']);
@@ -57,6 +91,10 @@ if (isset($_POST['email']) || isset($_POST['password'])) {
             echo "<input type='hidden' value='" . $_GET['redirect'] . "' name='redirect'>";
         }
         ?>
+        <label for="remember">Remember me</label>
+        <input type="checkbox" name="remember" id="remember">
+        <br>
+        <br>
         <button type="submit" name="login_btn">Login</button>
 
     </form>
