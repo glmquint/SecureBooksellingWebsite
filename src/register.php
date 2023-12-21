@@ -23,22 +23,22 @@ if (isset($_POST['email']) || isset($_POST['password'])) {
             $mailSuccess = mail($email, $subject, $message, $headers);
 
             if ($mailSuccess) {
-                $_SESSION['success'] = "Account registered, a confirmation mail was send to your email address";
+                $_SESSION['message'] = "Account registered, a confirmation mail was send to your email address";
                 performLog("Info", "New user registered, confirmation mail sent", array("mail" => $_POST['email']));
             } else {
-                echo "Failed to send email.";
+                $_SESSION['message'] = "Failed to send email";
                 performLog("Error", "Failed to send email", array("mail" => $_POST['email']));
             }
         }
         else{
-            echo "something went wrong";
+            $_SESSION['message'] = "Something went wrong with your request";
             performLog("Error", "Failed to generate registration token", array( "mail" => $_POST['email'], "token" => $token));
         }
 
     }
     else{
         performLog("Warning", "Invalid credentials during registration", array( "mail" => $_POST['email']));
-        echo "Invalid credentials";
+        $_SESSION['message'] = "Something went wrong with your request";
     }
 
 }
@@ -54,12 +54,12 @@ if (isset($_POST['email']) || isset($_POST['password'])) {
         <script src="utils/checkPasswordStrength.js"></script>
     </head>
     <body>
-    <?php if (isset($_SESSION['success'])): ?>
+    <?php if (isset($_SESSION['message'])): ?>
         <div class="error success">
             <h3>
                 <?php
-                echo $_SESSION['success'];
-                unset($_SESSION['success']);
+                echo $_SESSION['message'];
+                unset($_SESSION['message']);
                 ?>
             </h3>
             <a href="index.php">Back to Home</a>

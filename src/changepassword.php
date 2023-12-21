@@ -33,13 +33,13 @@ if (isset($_POST['OldPassword']) && isset($_POST['NewPassword'])&& isset($_SESSI
         }
         else{
             performLog("Warning", "Password change failed", array("email" => $email));
-            echo "Invalid login credentials";
+            $_SESSION['errorMsg']="Something went wrong with your request!";
         }
 
     } else {
         // Incorrect login
         performLog("Warning", "Verify Login failed during password change", array("email" => $email));
-        echo "Invalid login credentials";
+        $_SESSION['errorMsg']="Something went wrong with your request!";
     }
 }
 
@@ -56,7 +56,7 @@ if (isset($_POST['OldPassword']) && isset($_POST['NewPassword'])&& isset($_SESSI
 
 <!-- if the user is logged in, show a message -->
 <?php if (isset($_SESSION['success'])): ?>
-    <div class="error success">
+    <div class="success">
         <h3>
             <?php
             echo $_SESSION['success'];
@@ -66,12 +66,12 @@ if (isset($_POST['OldPassword']) && isset($_POST['NewPassword'])&& isset($_SESSI
         <a href="index.php">Back to Home</a>
     </div>
 <?php else: ?>
-    <?php if (isset($_SESSION['warning'])): ?>
+    <?php if (isset($_SESSION['errorMsg'])): ?>
         <div class="error warning">
             <h3>
                 <?php
-                echo $_SESSION['warning'];
-                unset($_SESSION['warning']);
+                echo $_SESSION['errorMsg'];
+                unset($_SESSION['errorMsg']);
                 ?>
             </h3>
         </div>
