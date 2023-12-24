@@ -54,7 +54,7 @@ if (!isset($_SESSION['email'])) {
     echo "<label for='postalcode'>Postal code</label>";
     echo "<input type='text' name='postalcode' id='postalcode' required='required' placeholder='10128' pattern='\d+'>";
     echo "<label for='country'>Country</label>";
-    echo "<input type='text' name='country' id='country' required='required' placeholder='USA' pattern=\"[\\-'A-Z a-z]+\" >";
+    echo "<input type='text' name='country' id='country' required='required' placeholder='United States' pattern=\"[\\-'A-Z a-z]+\" >";
     echo "<button type='submit'>Submit</button>";
     echo "</form>";
 
@@ -90,7 +90,7 @@ if (!isset($_SESSION['email'])) {
     echo "<h1>Payment details</h1>";
     echo "<form method='post' action='checkout.php'>";
     echo "<label for='cardnumber'>Card number</label>";
-    echo "<input type='text' name='cardnumber' id='cardnumber' required='required' placeholder='1234-1234-1234-1234' pattern=\"\b\d{4}[\\- ]?\d{4}[\\- ]?\d{4}[\\- ]?\d{4}\b\">";
+    echo "<input type='text' name='cardnumber' id='cardnumber' required='required' placeholder='XXXX-XXXX-XXXX-XXXX' pattern=\"\b\d{4}[\\- ]?\d{4}[\\- ]?\d{4}[\\- ]?\d{4}\b\">";
     echo "<label for='cardholder'>Card holder</label>";
     echo "<input type='text' name='cardholder' id='cardholder' required='required' placeholder='Abbie Bernstein' pattern=\"[\\-'A-Z a-zÀ-ÿ]+\">";
     echo "<label for='expirationdate'>Expiration date</label>";
