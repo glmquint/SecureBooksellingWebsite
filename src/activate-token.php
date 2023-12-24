@@ -13,25 +13,26 @@ if (isset($_GET['token'])) {
                 exit();
             }
             else{
-                echo "failed activating account";
+                performLog("Error", "Failed to activate account", array("userid" => $userid, "token" => $token));
+                $_SESSION['errorMsg'] = "Something went wrong with your request!";
+
             }
 
         }
         else{
-            echo "failed deleting token";
+            performLog("Error", "Failed to delete activation token", array("userid" => $userid, "token" => $token));
+            $_SESSION['errorMsg'] = "Something went wrong with your request!";
         }
     }
     else{
-        // If 'token' is not correct, return a 404 error
-        http_response_code(404);
-        echo "Error 404: Page Not Found";
+        performLog("Error", "missing user id in activate token", array("userid" => $userid, "token" => $token));
+        $_SESSION['errorMsg'] = "Something went wrong with your request!";
     }
 }
 else {
     if(!isset($_SESSION['success'])) {
-        // If 'token' is not set, return a 404 error
-        http_response_code(404);
-        echo "Error 404: Page Not Found";
+        performLog("Error", "Activate token not set", array());
+        $_SESSION['errorMsg'] = "Something went wrong with your request!";
     }
 
 }
@@ -49,6 +50,16 @@ else {
 <body>
 
 <!-- if the user is logged in, show a message -->
+<?php if (isset($_SESSION['errorMsg'])): ?>
+    <div class="error warning">
+        <h3>
+            <?php
+            echo $_SESSION['errorMsg'];
+            unset($_SESSION['errorMsg']);
+            ?>
+        </h3>
+    </div>
+<?php endif ?>
 <?php if (isset($_SESSION['success'])): ?>
     <div class="error success">
         <h3>

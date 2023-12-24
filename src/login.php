@@ -37,7 +37,7 @@ if (isset($_POST['email']) || isset($_POST['password'])) {
     $userValidity = verifyLogin($email, $password);
     if ($userValidity) {
         if ($userValidity == 1) {
-            echo "Verify your email first";
+            $_SESSION['errorMsg'] = "Verify your email first!";
         }else {
             // Correct login
             performLog("Info", "User logged in", array("email" => $email));
@@ -66,7 +66,7 @@ if (isset($_POST['email']) || isset($_POST['password'])) {
     } else {
         // Incorrect login
         performLog("Warning", "Incorrect login attempt ", array("email" => $email));
-        echo "Invalid login credentials. Try again later!";
+        $_SESSION['errorMsg'] = "Invalid login credentials!";
     }
 }
 ?>
@@ -81,6 +81,16 @@ if (isset($_POST['email']) || isset($_POST['password'])) {
     <!-- show a form to login -->
     <h1>Login</h1>
     <p>Back to <a href="index.php">Home</a></p>
+    <?php if (isset($_SESSION['errorMsg'])): ?>
+        <div class="error">
+            <h4>
+                <?php
+                echo $_SESSION['errorMsg'];
+                unset($_SESSION['errorMsg']);
+                ?>
+            </h4>
+        </div>
+    <?php endif ?>
     <form method="post" action="login.php">
         <label for="email">Email</label>
         <input type="email" name="email" id="email" required="required">

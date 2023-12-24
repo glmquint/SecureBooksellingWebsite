@@ -31,24 +31,23 @@ if(isset($_POST['email'])){
 
             if ($mailSuccess) {
                 performLog("Info", "Password reset link sent to user", array("email" => $email));
-                $_SESSION['success'] = "Password reset link sent to your email";
+                $_SESSION['message'] = "Password reset link sent to your email";
                 header('Location: resetpassword.php');
-                exit();
             } else {
                 performLog("Warning", "Failed to send email", array("email" => $email));
-                echo "Failed to send email.";
+                $_SESSION['message'] = "Failed to send email";
             }
 
         }
         else{
             performLog("Error", "Failed to save token", array("email" => $email));
-            echo "something went wrong";
+            $_SESSION['message'] = "Something went wrong with your request!";
         }
     }
     else{
         //This is a fake success message is to avoid account enumeration
         performLog("Warning", "Reset password for not existing user", array("email" => $email));
-        $_SESSION['success'] = "Password reset link sent to your email";
+        $_SESSION['message'] = "Password reset link sent to your email";
         header('Location: resetpassword.php');
         exit();
     }
@@ -67,12 +66,12 @@ if(isset($_POST['email'])){
 <body>
 
 <!-- if the user is logged in, show a message -->
-<?php if (isset($_SESSION['success'])): ?>
+<?php if (isset($_SESSION['message'])): ?>
     <div class="error success">
         <h3>
             <?php
-            echo $_SESSION['success'];
-            unset($_SESSION['success']);
+            echo $_SESSION['message'];
+            unset($_SESSION['message']);
             ?>
         </h3>
         <a href="index.php">Back to Home</a>

@@ -19,8 +19,8 @@ $result = mysqli_stmt_get_result($db->stmt);
 $row = mysqli_fetch_array($result);
 if (!$row){
     performLog("Error", "Error while retrieving a book", ["book_id" => $_GET['id'], "user_id" => $user_id]);
-    echo "Error while retrieving the book";
-    exit();
+    $_SESSION['errorMsg'] = "Something went wrong with your request!";
+    header('Location: books.php');
 }
 performLog("Info", "EBook downloaded", ["book_id" => $_GET['id'], "user_id" => $user_id]);
 header("Content-type: application/pdf");

@@ -7,7 +7,7 @@
         $userid = getUidFromToken($token);
         if($userid!=-1){
             if(deleteToken($token)) {
-                $_SESSION['success'] = "You can now reset your password";
+                $_SESSION['message'] = "You can now reset your password";
                 $_SESSION['$userid'] = $userid;
                 performLog("Info", "Request to reset password accepted", array("userid" => $userid));
                 header('Location: resetpassword-token.php');
@@ -15,23 +15,19 @@
             }
             else{
                 performLog("Error", "Failed to delete token", array("userid" => $userid));
-                echo "failed deleting token";
+                $_SESSION['message'] = "Failed to reset password";
             }
         }
         else{
             // If 'token' is not wrong, return a 404 error
-            http_response_code(404);
-            echo "Error 404: Page Not Found";
+            $_SESSION['message'] = "Failed to reset password";
             performLog("Warning", "Invalid token", array("token" => $token));
         }
     }
     else {
-        if(!isset($_SESSION['success'])) {
             performLog("Warning", "Token not set", array());
             // If 'token' is not set, return a 404 error
-            http_response_code(404);
-            echo "Error 404: Page Not Found";
-        }
+            $_SESSION['message'] = "Something went wrong with your request!";
 
     }
 
@@ -46,11 +42,12 @@
                 exit();
             }
             else{
-                echo "Failed to change password";
+                performLog("Error", "Failed to change password", array("userid" => $userid));
+                $_SESSION['message'] = "Failed to reset password";
             }
         }
         else{
-            echo "Passwords do not match";
+            $_SESSION['message'] = "Passwords do not match";
         }
     }
 
@@ -67,21 +64,21 @@
 <body>
 
 <!-- if the user is logged in, show a message -->
-<?php if (isset($_SESSION['success'])): ?>
-    <div class="error success">
-        <h3>
-            <?php
-            echo $_SESSION['success'];
-            unset($_SESSION['success']);
-            ?>
-        </h3>
-    </div>
-
-<?php endif ?>
 
     <!-- show a form to login -->
     <a href="index.php">Back to Home</a>
     <h1>Password reset</h1>
+    <?php if (isset($_SESSION['message'])): ?>
+        <div class="error success">
+            <h3>
+                <?php
+                echo $_SESSION['message'];
+                unset($_SESSION['message']);
+                ?>
+            </h3>
+        </div>
+
+    <?php endif ?>
     <form method="post" action="resetpassword-token.php">
         <div class="input-group">
             <label>New password</label>
