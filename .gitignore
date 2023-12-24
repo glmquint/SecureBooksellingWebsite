@@ -6,3 +6,5 @@ composer.bat
 composer.phar
 Caddyfile*
 *.pem
+enc.sh
+dec.sh
