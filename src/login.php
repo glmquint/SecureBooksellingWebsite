@@ -8,7 +8,7 @@ $dotenv->load();
 $REMEMBERME_KEY = $_ENV['REMEMBERME_KEY'];
 $CIPHER = "aes-128-gcm";
 
-if (isset($_COOKIE['rememberme'])) {
+if (isset($_COOKIE['rememberme']) && $_COOKIE['rememberme'] != "") {
     $rememberme_token = unserialize(base64_decode($_COOKIE['rememberme']));
     $iv = $rememberme_token[0];
     $enc_email = $rememberme_token[1];
@@ -54,7 +54,6 @@ if (isset($_POST['email']) || isset($_POST['password'])) {
                 } else {
                     performLog("Error", "Cipher not supported", array("cipher" => $CIPHER));
                 }
-
             }
             // To Redirect the user to the home page or another secure page
             if (isset($_POST['redirect'])) {
@@ -91,10 +90,11 @@ if (isset($_POST['email']) || isset($_POST['password'])) {
             echo "<input type='hidden' value='" . $_GET['redirect'] . "' name='redirect'>";
         }
         ?>
-        <label for="remember">Remember me</label>
-        <input type="checkbox" name="remember" id="remember">
-        <br>
-        <br>
+        <article>
+            <label for="remember">Remember me for 30 days</label>
+            <input type="checkbox" name="remember" id="remember">
+            <p>Please note that there are potential security concerns related to leaving your account logged in for long periods of time; especially when using an insecure, shared or public device.</p>
+        </article>
         <button type="submit" name="login_btn">Login</button>
 
     </form>
