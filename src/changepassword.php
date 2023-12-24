@@ -6,24 +6,16 @@ session_start_or_expire();
 
 if (isset($_POST['OldPassword']) && isset($_POST['NewPassword'])&& isset($_SESSION['email'])) {
     // Get username and password from the form submitted by the user
+    $email = $_SESSION['email'];
     $OldPassword = $_POST['OldPassword'] ?? '';
     $NewPassword = $_POST['NewPassword'] ?? '';
     if($OldPassword == '' || $NewPassword == ''){
         performLog("Warning", "Empty password field in change", array("email" => $_SESSION['email']));
-        $_SESSION["warning"] = "Empty password field";
-        header('Location: changepassword.php');
-        exit();
-    }
-    if($OldPassword == $NewPassword){
+        $_SESSION["errorMsg"] = "Empty password field";
+    } elseif($OldPassword == $NewPassword){
         performLog("Warning", "Old and new password are the same", array("email" => $_SESSION['email']));
-        $_SESSION["warning"] = "Old and new password are the same";
-        header('Location: changepassword.php');
-        exit();
-    }
-    $email = $_SESSION['email'];
-    // Assume $username and $password are the submitted credentials
-    // You need to replace this with your actual login verification logic
-    if (verifyLogin($email, $OldPassword)) {
+        $_SESSION["errorMsg"] = "Old and new password are the same";
+    } elseif (verifyLogin($email, $OldPassword)) {
         // Hash the password using bcrypt
         if(changePassword($email, $NewPassword)){
             performLog("Info", "Password changed correctly", array("email" => $email));
@@ -65,8 +57,7 @@ if (isset($_POST['OldPassword']) && isset($_POST['NewPassword'])&& isset($_SESSI
         </h3>
         <a href="index.php">Back to Home</a>
     </div>
-<?php else: ?>
-    <?php if (isset($_SESSION['errorMsg'])): ?>
+<?php elseif (isset($_SESSION['errorMsg'])): ?>
         <div class="error warning">
             <h3>
                 <?php
@@ -75,7 +66,7 @@ if (isset($_POST['OldPassword']) && isset($_POST['NewPassword'])&& isset($_SESSI
                 ?>
             </h3>
         </div>
-    <?php endif ?>
+<?php endif ?>
     <!-- show a form to login -->
     <a href="index.php">Back to Home</a>
     <h1>Change Password</h1>
@@ -101,6 +92,5 @@ if (isset($_POST['OldPassword']) && isset($_POST['NewPassword'])&& isset($_SESSI
     <p id="warning"></p>
     <p id="suggestions"></p>
 
-<?php endif ?>
 
 </body>

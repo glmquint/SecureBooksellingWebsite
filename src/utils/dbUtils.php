@@ -194,7 +194,6 @@ function getUidFromToken($token): int
             return $row["user_id"];
         } else {
             //delete the token from the database
-            deleteToken($token);
             return 0;
         }
     } else {
@@ -208,7 +207,8 @@ function deleteToken($token): bool
 {
     $db = new DBConnection();
 
-    //create a prepare statement to delete the token from the database
+    //create a prepare statement to delete the current token from the database
+    // also remove all expired tokens to keep the database clean
     $db->stmt = $db->conn->prepare("DELETE FROM reset_token WHERE token=? OR expiration_date < NOW()");
     //bind the token parameter
     $db->stmt->bind_param("i", $token);

@@ -1,15 +1,28 @@
 function checkPasswordStrength (password) {
   const result = zxcvbn(password);
 
-  document.getElementById("btn").disabled = true;
   const warning = document.getElementById('warning') ;
   const suggestions = document.getElementById('suggestions') ;
   const strength = document.getElementById('strength') ;
 
-  strongenough = (result.score < 3);
-  warning.textContent = strongenough ? "Your password is weak: " + result.feedback.warning : '';
-  suggestions.textContent = strongenough ? "Suggestions: " + result.feedback.suggestions: '';
+  weakpwd = (result.score < 3);
+  warning.textContent = weakpwd ? "Your password is weak: " + result.feedback.warning : '';
+  suggestions.textContent = weakpwd ? "Suggestions: " + result.feedback.suggestions: '';
   strength.value = result.score;
 
-  document.getElementById("btn").disabled = strongenough;
+  try {
+    pwddiff = checkPasswordMatch()
+  } catch{
+    pwddiff = false
+  }
+  console.log(pwddiff)
+  document.getElementById("btn").disabled = weakpwd || pwddiff;
+}
+
+function checkPasswordMatch () {
+  const password = document.getElementById('newPassword').value;
+  const password2 = document.getElementById('newPasswordRetype').value;
+  const match = (password === password2);
+  document.getElementById("btn").disabled = !match;
+  return !match;
 }

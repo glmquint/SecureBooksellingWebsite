@@ -4,27 +4,30 @@ require_once 'utils/dbUtils.php';
 require_once 'utils/Logger.php';
 session_start_or_expire();
 
-
+$dotenv = Dotenv\Dotenv::createImmutable(__DIR__);
+$dotenv->load();
+if(str_contains($_SERVER['SERVER_NAME'], "PhpStorm")){
+    $DOMAIN = $_ENV['DEV_DOMAIN'];
+} else {
+    $DOMAIN = $_ENV['DOMAIN'];
+}
 
 if(isset($_POST['email'])){
     $token = random_int(100000, 999999999);
     $email = $_POST['email'];
     $userArray = getUser($email);
     if(count($userArray) > 0){
+        $userId = $userArray["id"];
         if(!$userArray["active"]){
             performLog("Warning", "Reset password for disabled user", array("email" => $email));
-            header('Location: resetpassword.php');
             $_SESSION['success'] = "Your account is disabled. Please activate your account first.";
-            exit();
-        }
-        $userId = $userArray["id"];
-        if(saveToken($token, $userId, 5)) {
+        } elseif (saveToken($token, $userId, 5)) { // user is active, we try to save the token and send mail
             $subject = "Reset Email";
             $message = "This is a reset email. Click on the link to reset your password\n"
-                . "http://localhost:63342/snh-securebooksellingwebsite/src/resetpassword-token.php?token=" . strval($token);
+                . $DOMAIN . "/resetpassword-token.php?token=" . strval($token);
 
             // Additional headers
-            $headers = "From: noreply@localhost.com";
+            $headers = "From: " . $_ENV['NO_REPLY_EMAIL'] . "\r\n";
 
             // Send email
             $mailSuccess = mail($email, $subject, $message, $headers);
@@ -32,24 +35,19 @@ if(isset($_POST['email'])){
             if ($mailSuccess) {
                 performLog("Info", "Password reset link sent to user", array("email" => $email));
                 $_SESSION['message'] = "Password reset link sent to your email";
-                header('Location: resetpassword.php');
             } else {
                 performLog("Warning", "Failed to send email", array("email" => $email));
                 $_SESSION['message'] = "Failed to send email";
             }
 
-        }
-        else{
+        } else { // user is active but cannot save token
             performLog("Error", "Failed to save token", array("email" => $email));
             $_SESSION['message'] = "Something went wrong with your request!";
         }
-    }
-    else{
-        //This is a fake success message is to avoid account enumeration
+    } else{ // cannot find user
+        //This is a fake success message to avoid account enumeration
         performLog("Warning", "Reset password for not existing user", array("email" => $email));
         $_SESSION['message'] = "Password reset link sent to your email";
-        header('Location: resetpassword.php');
-        exit();
     }
 
 
