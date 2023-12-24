@@ -4,3 +4,5 @@
 *.env
 composer.bat
 composer.phar
+Caddyfile*
+*.pem
