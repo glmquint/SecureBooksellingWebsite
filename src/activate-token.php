@@ -8,7 +8,7 @@ if (isset($_GET['token'])) {
         if(deleteToken($token)) {
             if(activateAccount($userid)){
                 $_SESSION['success'] = "Your account was successfully activated";
-                $_SESSION['$userid'] = $userid;
+                $_SESSION['userid'] = $userid;
                 header('Location: activate-token.php');
                 exit();
             }
