@@ -10,10 +10,8 @@
 <?php
 require_once 'utils/dbUtils.php';
 session_start_or_expire();
-if (isset($_SESSION['errorMsg'])){
-    echo '<h3>'.$_SESSION['errorMsg'].'</h3>';
-    unset($_SESSION['errorMsg']);
-}
+include 'utils/messages.php';
+
 if (!isset($_SESSION['email'])) {
     header('Location: login.php');
     exit();

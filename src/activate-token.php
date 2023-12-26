@@ -30,11 +30,8 @@ if (isset($_GET['token'])) {
     }
 }
 else {
-    if(!isset($_SESSION['success'])) {
-        performLog("Error", "Activate token not set", array());
-        $_SESSION['errorMsg'] = "Something went wrong with your request!";
-    }
-
+    performLog("Error", "Activate token not set", array());
+    $_SESSION['errorMsg'] = "Something went wrong with your request!";
 }
 
 
@@ -50,27 +47,8 @@ else {
 <body>
 
 <!-- if the user is logged in, show a message -->
-<?php if (isset($_SESSION['errorMsg'])): ?>
-    <div class="error warning">
-        <h3>
-            <?php
-            echo $_SESSION['errorMsg'];
-            unset($_SESSION['errorMsg']);
-            ?>
-        </h3>
-    </div>
-<?php endif ?>
-<?php if (isset($_SESSION['success'])): ?>
-    <div class="error success">
-        <h3>
-            <?php
-            echo $_SESSION['success'];
-            unset($_SESSION['success']);
-            ?>
-        </h3>
-    </div>
+<?php include 'utils/messages.php' ?>
 
-<?php endif ?>
     <a href="index.php">Back to Home</a>
 </body>
 <?php

@@ -47,26 +47,8 @@ if (isset($_POST['OldPassword']) && isset($_POST['NewPassword'])&& isset($_SESSI
 <body>
 
 <!-- if the user is logged in, show a message -->
-<?php if (isset($_SESSION['success'])): ?>
-    <div class="success">
-        <h3>
-            <?php
-            echo $_SESSION['success'];
-            unset($_SESSION['success']);
-            ?>
-        </h3>
-        <a href="index.php">Back to Home</a>
-    </div>
-<?php elseif (isset($_SESSION['errorMsg'])): ?>
-        <div class="error warning">
-            <h3>
-                <?php
-                echo $_SESSION['errorMsg'];
-                unset($_SESSION['errorMsg']);
-                ?>
-            </h3>
-        </div>
-<?php endif ?>
+    <?php include 'utils/messages.php' ?>
+
     <!-- show a form to login -->
     <a href="index.php">Back to Home</a>
     <h1>Change Password</h1>

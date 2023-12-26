@@ -81,16 +81,7 @@ if (isset($_POST['email']) || isset($_POST['password'])) {
     <!-- show a form to login -->
     <h1>Login</h1>
     <p>Back to <a href="index.php">Home</a></p>
-    <?php if (isset($_SESSION['errorMsg'])): ?>
-        <div class="error">
-            <h4>
-                <?php
-                echo $_SESSION['errorMsg'];
-                unset($_SESSION['errorMsg']);
-                ?>
-            </h4>
-        </div>
-    <?php endif ?>
+    <?php include 'utils/messages.php' ?>
     <form method="post" action="login.php">
         <label for="email">Email</label>
         <input type="email" name="email" id="email" required="required">

@@ -68,12 +68,12 @@
     <!-- show a form to login -->
     <a href="index.php">Back to Home</a>
     <h1>Password reset</h1>
-    <?php if (isset($_SESSION['message'])): ?>
+    <?php if (isset($_SESSION['success'])): ?>
         <div class="error success">
             <h3>
                 <?php
-                echo $_SESSION['message'];
-                unset($_SESSION['message']);
+                echo $_SESSION['success'];
+                unset($_SESSION['success']);
                 ?>
             </h3>
         </div>
