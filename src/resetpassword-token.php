@@ -2,52 +2,42 @@
     require_once 'utils/dbUtils.php';
     session_start_or_expire();
     require_once 'utils/Logger.php';
-    if (isset($_GET['token'])) {
-    $token = $_GET['token'];
-        $userid = getUidFromToken($token);
-        if($userid!=-1){
-            if(deleteToken($token)) {
-                $_SESSION['message'] = "You can now reset your password";
-                $_SESSION['$userid'] = $userid;
-                performLog("Info", "Request to reset password accepted", array("userid" => $userid));
-                header('Location: resetpassword-token.php');
-                exit();
-            }
-            else{
-                performLog("Error", "Failed to delete token", array("userid" => $userid));
-                $_SESSION['message'] = "Failed to reset password";
-            }
-        }
-        else{
-            // If 'token' is not wrong, return a 404 error
-            $_SESSION['message'] = "Failed to reset password";
-            performLog("Warning", "Invalid token", array("token" => $token));
-        }
-    }
-    else {
-            performLog("Warning", "Token not set", array());
-            // If 'token' is not set, return a 404 error
-            $_SESSION['message'] = "Something went wrong with your request!";
-
+    if (!isset($_REQUEST['token']) || $_REQUEST['token'] == "") {
+        performLog("Warning", "Token not set", array());
+        // If 'token' is not set, return a 404 error
+        $_SESSION['success'] = "Something went wrong with your request!";
+        header('Location: index.php');
+        exit();
     }
 
-    if(isset($_POST["newPassword"]) && isset($_POST["newPasswordRetype"])){
+    if(isset($_POST["newPassword"]) && isset($_POST["newPasswordRetype"]) && isset($_POST["token"])){
         $newPassword = $_POST["newPassword"];
         $newPasswordRetype = $_POST["newPasswordRetype"];
-        if($newPassword == $newPasswordRetype && $newPassword != "" && $newPasswordRetype != ""){
-            $userid = $_SESSION['$userid'];
-            if(changePasswordById($userid, $newPassword)){
-                session_destroy();
-                header('Location: index.php');
-                exit();
+        $token = $_POST["token"];
+        if($newPassword == $newPasswordRetype && $newPassword != "" && $newPasswordRetype != "") {
+            $userid = getUidFromToken($token);
+            if ($userid != -1) {
+                if (deleteToken($token)) {
+                    if (changePasswordById($userid, $newPassword)) {
+                        $_SESSION['success'] = "Your password was successfully reset";
+                        header('Location: login.php');
+                        exit();
+                    } else {
+                        performLog("Error", "Failed to reset password", array("userid" => $userid, "token" => $token));
+                        $_SESSION['success'] = "Something went wrong with your request!";
+
+                    }
+
+                } else {
+                    performLog("Error", "Failed to delete reset token", array("userid" => $userid, "token" => $token));
+                    $_SESSION['success'] = "Something went wrong with your request!";
+                }
+            } else {
+                performLog("Error", "missing user id in reset token", array("userid" => $userid, "token" => $token));
+                $_SESSION['success'] = "Something went wrong with your request!";
             }
-            else{
-                performLog("Error", "Failed to change password", array("userid" => $userid));
-                $_SESSION['message'] = "Failed to reset password";
-            }
-        }
-        else{
-            $_SESSION['message'] = "Passwords do not match";
+        } else{
+            $_SESSION['success'] = "Passwords do not match or are empty";
         }
     }
 
@@ -92,6 +82,7 @@
                 <input type="password" required="required" id="newPasswordRetype" name="newPasswordRetype" oninput=checkPasswordStrength(document.getElementById('newPassword').value)>
             </label>
         </div>
+        <input type="hidden" name="token" value="<?php echo $_GET['token'] ?? '' ; ?>" readonly>
         <div class="input-group">
             <button type="submit" id="btn" name="resetPassword_btn">Login</button>
         </div>
