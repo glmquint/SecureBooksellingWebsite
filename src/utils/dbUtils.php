@@ -1,11 +1,12 @@
 <?php
 require_once 'Logger.php';
-
+$dotenv = Dotenv\Dotenv::createImmutable(__DIR__.'/../');
+$dotenv->load();
 function session_start_or_expire()
 {
     session_start();
     // Expire the session if it hasn't been accessed for more than 30 minutes.
-    $maxlifetime =  30*60;
+    $maxlifetime =  $_ENV['SESSION_MAX_LIFETIME'];
     if (isset($_SESSION['last_access']) && ((time() - $_SESSION['last_access']) > $maxlifetime)) {
         session_unset();
         session_destroy();
