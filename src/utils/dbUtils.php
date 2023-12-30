@@ -193,10 +193,11 @@ function getUidFromToken($token): int
         if ($row["expiration_date"] > $currentDate) {
             return $row["user_id"];
         } else {
-            //delete the token from the database
+            // token exists but is expired
             return 0;
         }
     } else {
+        // token does not exist
         return 0;
     }
 
@@ -232,7 +233,7 @@ function activateAccount($userId): bool
     return ($stmt->affected_rows > 0);
 }
 
-// TODO: maybe refactor at login time -> set uid in session
+
 function getUserID($email): int
 {
     $db = new DBConnection();

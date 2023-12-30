@@ -19,9 +19,9 @@
         }
     }
     // dump content of cart
-    echo "<pre>";
-    print_r($_SESSION['cart']);
-    echo "</pre>";
+    //echo "<pre>";
+    //print_r($_SESSION['cart']);
+    //echo "</pre>";
     header('Location: cart.php');
 
     ?>

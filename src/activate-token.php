@@ -4,11 +4,12 @@ session_start();
 if (isset($_GET['token'])) {
     $token = $_GET['token'];
     $userid = getUidFromToken($token);
-    if($userid!=-1){
+    if($userid){
         if(deleteToken($token)) {
             if(activateAccount($userid)){
                 $_SESSION['success'] = "Your account was successfully activated";
                 $_SESSION['userid'] = $userid;
+                performLog("Info", "Account activated", array("userid" => $userid, "token" => $token));
                 header('Location: activate-token.php');
                 exit();
             }

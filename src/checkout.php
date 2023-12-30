@@ -38,7 +38,7 @@ if (!isset($_SESSION['email'])) {
         'status' => 'in transit'
     ];
 
-    echo print_r($_SESSION['order']);
+    //echo print_r($_SESSION['order']);
 
     // form to input delivery address
     echo "<h1>Delivery address</h1>";
@@ -74,7 +74,7 @@ if (!isset($_SESSION['email'])) {
         header('Location: checkout.php');
     }
 } elseif (!isset($_SESSION['payment']) || isset($_GET['updatepayment'])) {
-    echo print_r($_SESSION['delivery']);
+    //echo print_r($_SESSION['delivery']);
     unset($_SESSION['payment']);
     if (isset($_POST['cardnumber']) && isset($_POST['cardholder']) && isset($_POST['expirationdate']) && isset($_POST['cvv'])) {
         $_SESSION['payment'] = array();
