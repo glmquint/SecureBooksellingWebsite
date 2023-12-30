@@ -20,7 +20,7 @@ if (isset($_COOKIE['rememberme']) && $_COOKIE['rememberme'] != "") {
             header('Location: logout.php');
             exit();
         }
-        $_SESSION['email'] = $email;
+        $_SESSION['email'] = htmlspecialchars($email);
         performLog("Info", "User logged in via remember me cookie", array("email" => $_SESSION['email']));
     } catch (Exception $e){
         performLog("Error", "Failed to decrypt remember me cookie", array("cookie" => $rememberme_token, "cipher" => $CIPHER));
@@ -41,7 +41,7 @@ if (isset($_POST['email']) || isset($_POST['password'])) {
         }else {
             // Correct login
             performLog("Info", "User logged in", array("email" => $email));
-            $_SESSION['email'] = $email;
+            $_SESSION['email'] = htmlspecialchars($email);
             // change session id to prevent session fixation
             session_regenerate_id();
             if(isset($_POST['remember']) && $_POST['remember'] == "on"){
