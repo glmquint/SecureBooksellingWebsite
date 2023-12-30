@@ -64,12 +64,12 @@ if (!isset($_SESSION['email'])) {
     if (isset($_POST['firstname']) && isset($_POST['lastname']) && isset($_POST['address']) && isset($_POST['city']) && isset($_POST['postalcode']) && isset($_POST['country'])) {
         $_SESSION['delivery'] = array();
         $_SESSION['delivery'] = [
-            'firstname' => $_POST['firstname'] ?? '',
-            'lastname' => $_POST['lastname'] ?? '',
-            'address' => $_POST['address'] ?? '',
-            'city' => $_POST['city'] ?? '',
-            'postalcode' => $_POST['postalcode'] ?? '',
-            'country' => $_POST['country'] ?? '',
+            'firstname' => htmlspecialchars($_POST['firstname']) ?? '',
+            'lastname' => htmlspecialchars($_POST['lastname']) ?? '',
+            'address' => htmlspecialchars($_POST['address']) ?? '',
+            'city' => htmlspecialchars($_POST['city']) ?? '',
+            'postalcode' => htmlspecialchars($_POST['postalcode']) ?? '',
+            'country' => htmlspecialchars($_POST['country']) ?? '',
         ];
         header('Location: checkout.php');
     }
@@ -79,10 +79,10 @@ if (!isset($_SESSION['email'])) {
     if (isset($_POST['cardnumber']) && isset($_POST['cardholder']) && isset($_POST['expirationdate']) && isset($_POST['cvv'])) {
         $_SESSION['payment'] = array();
         $_SESSION['payment'] = [
-            'cardnumber' => $_POST['cardnumber'] ?? '',
-            'cardholder' => $_POST['cardholder'] ?? '',
-            'expirationdate' => $_POST['expirationdate'] ?? '',
-            'cvv' => $_POST['cvv'] ?? '',
+            'cardnumber' => htmlspecialchars($_POST['cardnumber']) ?? '',
+            'cardholder' => htmlspecialchars($_POST['cardholder']) ?? '',
+            'expirationdate' => htmlspecialchars($_POST['expirationdate']) ?? '',
+            'cvv' => htmlspecialchars($_POST['cvv']) ?? '',
         ];
         header('Location: checkout.php');
     }
@@ -92,7 +92,8 @@ if (!isset($_SESSION['email'])) {
     echo "<label for='cardnumber'>Card number</label>";
     echo "<input type='text' name='cardnumber' id='cardnumber' required='required' placeholder='XXXX-XXXX-XXXX-XXXX' pattern=\"\b\d{4}[\\- ]?\d{4}[\\- ]?\d{4}[\\- ]?\d{4}\b\">";
     echo "<label for='cardholder'>Card holder</label>";
-    echo "<input type='text' name='cardholder' id='cardholder' required='required' placeholder='Abbie Bernstein' pattern=\"[\\-'A-Z a-zÀ-ÿ]+\>";
+    //pattern=\"[\\-'A-Z a-zÀ-ÿ]+\
+    echo "<input type='text' name='cardholder' id='cardholder' required='required' placeholder='Abbie Bernstein' >";
     echo "<label for='expirationdate'>Expiration date</label>";
     echo "<input type='date' name='expirationdate' id='expirationdate' required='required'>";
     echo "<label for='cvv'>CVV</label>";
