@@ -16,7 +16,7 @@
         $token = $_POST["token"];
         if($newPassword == $newPasswordRetype && $newPassword != "" && $newPasswordRetype != "") {
             $userid = getUidFromToken($token);
-            if ($userid != -1) {
+            if ($userid) {
                 if (deleteToken($token)) {
                     if (changePasswordById($userid, $newPassword)) {
                         $_SESSION['success'] = "Your password was successfully reset";
