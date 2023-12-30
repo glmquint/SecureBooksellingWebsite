@@ -88,7 +88,7 @@ if (isset($_POST['email']) || isset($_POST['password'])) {
         <label for="password">Password</label>
         <input type="password" required="required" name="password" id="password">
         <?php if(isset($_GET['redirect'])) {
-            echo "<input type='hidden' value='" . $_GET['redirect'] . "' name='redirect'>";
+            echo "<input type='hidden' value='" . htmlspecialchars($_GET['redirect']) . "' name='redirect'>";
         }
         ?>
         <article>

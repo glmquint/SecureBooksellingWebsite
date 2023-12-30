@@ -92,7 +92,7 @@ if (!isset($_SESSION['email'])) {
     echo "<label for='cardnumber'>Card number</label>";
     echo "<input type='text' name='cardnumber' id='cardnumber' required='required' placeholder='XXXX-XXXX-XXXX-XXXX' pattern=\"\b\d{4}[\\- ]?\d{4}[\\- ]?\d{4}[\\- ]?\d{4}\b\">";
     echo "<label for='cardholder'>Card holder</label>";
-    echo "<input type='text' name='cardholder' id='cardholder' required='required' placeholder='Abbie Bernstein' pattern=\"[\\-'A-Z a-zÀ-ÿ]+\">";
+    echo "<input type='text' name='cardholder' id='cardholder' required='required' placeholder='Abbie Bernstein' pattern=\"[\\-'A-Z a-zÀ-ÿ]+\>";
     echo "<label for='expirationdate'>Expiration date</label>";
     echo "<input type='date' name='expirationdate' id='expirationdate' required='required'>";
     echo "<label for='cvv'>CVV</label>";
