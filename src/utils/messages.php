@@ -2,7 +2,7 @@
     <div class="success">
         <h3>
             <?php
-            echo $_SESSION['success'];
+            echo htmlspecialchars($_SESSION['success']);
             unset($_SESSION['success']);
             ?>
         </h3>
@@ -11,7 +11,7 @@
     <div class="error warning">
         <h3>
             <?php
-            echo $_SESSION['errorMsg'];
+            echo htmlspecialchars($_SESSION['errorMsg']);
             unset($_SESSION['errorMsg']);
             ?>
         </h3>

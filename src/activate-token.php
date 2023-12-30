@@ -10,15 +10,11 @@ if (isset($_GET['token'])) {
                 $_SESSION['success'] = "Your account was successfully activated";
                 $_SESSION['userid'] = $userid;
                 performLog("Info", "Account activated", array("userid" => $userid, "token" => $token));
-                header('Location: activate-token.php');
-                exit();
             }
             else{
                 performLog("Error", "Failed to activate account", array("userid" => $userid, "token" => $token));
                 $_SESSION['errorMsg'] = "Something went wrong with your request!";
-
             }
-
         }
         else{
             performLog("Error", "Failed to delete activation token", array("userid" => $userid, "token" => $token));
