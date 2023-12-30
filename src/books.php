@@ -13,7 +13,7 @@ session_start_or_expire();
 include 'utils/messages.php';
 
 if (!isset($_SESSION['email'])) {
-    header('Location: login.php');
+    header('Location: login.php?redirect=books.php');
     exit();
 }
 else {

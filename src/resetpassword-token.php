@@ -84,7 +84,7 @@
         </div>
         <input type="hidden" name="token" value="<?php echo $_GET['token'] ?? '' ; ?>" readonly>
         <div class="input-group">
-            <button type="submit" id="btn" name="resetPassword_btn">Login</button>
+            <button type="submit" id="btn" name="resetPassword_btn">Reset Password</button>
         </div>
     </form>
     <label for="strength">password strength: </label>

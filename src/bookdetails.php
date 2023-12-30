@@ -10,7 +10,7 @@
     // Purpose: Displays the details of a book
     // given the id passed as a GET parameter, the page shows the information about the book,
     // like the title, the author, the synopsis and the price
-    // finally, ther is a button for the user to add the book to its cart
+    // finally, there is a button for the user to add the book to its cart
 
     $bookid = $_GET['id'] ?? 0;
     // get the book list from the db, using prepared statements
@@ -28,7 +28,7 @@
 
  ?>
  </body>
-    <h1><?php echo $booktitle ?></h1>
+    <h1><?php echo htmlspecialchars($booktitle) ?></h1>
     <table>
         <tr>
             <th>Author</th>
@@ -36,18 +36,18 @@
             <th>Hard copies available</th>
         </tr>
         <tr>
-            <td><?php echo $bookauthor?></td>
-            <td><?php echo $bookprice / 100 ?>€</td>
-            <td><?php echo $bookavailable ?></td>
+            <td><?php echo htmlspecialchars($bookauthor) ?></td>
+            <td><?php echo $bookprice / 100 ?>€</td> <!-- price is guaranteed to be an integer in db -->
+            <td><?php echo htmlspecialchars($bookavailable) ?></td>
         </tr>
     </table>
     <form method="post" action="addtocart.php">
-        <input type="hidden" name="id" value="<?php echo $bookid ?>" readonly="readonly" >
+        <input type="hidden" name="id" value="<?php echo htmlspecialchars($bookid) ?>" readonly="readonly" >
         <button type="submit">Add to cart</button>
     </form>
     <p>
         <?php
-            echo $booksynopsis
+            echo htmlspecialchars($booksynopsis);
         ?>
     </p>
 

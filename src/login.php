@@ -56,8 +56,8 @@ if (isset($_POST['email']) || isset($_POST['password'])) {
                 }
             }
             // To Redirect the user to the home page or another secure page
-            if (isset($_POST['redirect'])) {
-                header('Location: ' . $_POST['redirect']);
+            if (isset($_REQUEST['redirect'])) {
+                header('Location: ' . $_REQUEST['redirect']);
                 exit();
             }
             header('Location: index.php');
