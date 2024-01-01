@@ -44,8 +44,8 @@ else {
         while ($row = mysqli_fetch_array($result, MYSQLI_ASSOC)) {
             // Display each row or perform operations with $row data
             echo "<tr>";
-            echo "<td><a href='bookdetails.php?id=" . $row['book'] . "'>" . $row['title'] . "</a></td>";
-            echo "<td><a href='download.php?id=" . $row['book'] . "'>Download</a></td>";
+            echo "<td><a href='bookdetails.php?id=" . htmlspecialchars($row['book']) . "'>" . htmlspecialchars($row['title']) . "</a></td>";
+            echo "<td><a href='download.php?id=" . htmlspecialchars($row['book']) . "'>Download</a></td>";
             echo "</tr>";
         }
     }

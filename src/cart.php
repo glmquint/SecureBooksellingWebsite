@@ -31,17 +31,20 @@ if (isset($_SESSION['cart'])) {
         $db->stmt->execute();
         $result = mysqli_stmt_get_result($db->stmt);
         $row = mysqli_fetch_array($result) ?? null;
+        if($row == null) { // book not found
+            continue;
+        }
         echo "<tr>";
         // title is a link to the book details page
-        echo "<td><a href='bookdetails.php?id=" . $row['id'] . "'>" . $row['title'] . "</a></td>";
-        echo "<td>" . $row['author'] . "</td>";
+        echo "<td><a href='bookdetails.php?id=" . htmlspecialchars($row['id']) . "'>" . htmlspecialchars($row['title']) . "</a></td>";
+        echo "<td>" . htmlspecialchars($row['author']) . "</td>";
         // price is divided by 100 to avoid floating point arithmetic
         echo "<td>" . $row['price'] / 100 . "€</td>";
         $quantity = $_SESSION['cart'][$row['id']];
         $total_price += $row['price'] * $quantity;
         echo "<td>" . $quantity . "</td>";
-        echo "<td><a href='addtocart.php?id=" . $row['id'] . "'>Add</a></td>";
-        echo "<td><a href='removefromcart.php?id=" . $row['id'] . "'>Remove</a></td>";
+        echo "<td><a href='addtocart.php?id=" . htmlspecialchars($row['id']) . "'>Add</a></td>";
+        echo "<td><a href='removefromcart.php?id=" . htmlspecialchars($row['id']) . "'>Remove</a></td>";
 
         echo "</tr>";
     }

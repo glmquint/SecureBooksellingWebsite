@@ -105,19 +105,19 @@ if (!isset($_SESSION['email'])) {
 } else {
     // order summary
     echo "<h1>Order summary</h1>";
-    echo "<p>Order ID: " . $_SESSION['order']['orderid'] . "</p>";
-    echo "<p>Email: " . $_SESSION['order']['email'] . "</p>";
+    echo "<p>Order ID: " . htmlspecialchars($_SESSION['order']['orderid']) . "</p>";
+    echo "<p>Email: " . htmlspecialchars($_SESSION['order']['email']) . "</p>";
     echo "<p>Total price: " . $_SESSION['order']['total_price'] / 100 . "€</p>";
     // TODO: maybe list also the cart
-    echo "<p>Delivery address: " . $_SESSION['delivery']['firstname'] . " " . $_SESSION['delivery']['lastname'] . "</p>";
-    echo "<p>Delivery address: " . $_SESSION['delivery']['address'] . "</p>";
-    echo "<p>Delivery address: " . $_SESSION['delivery']['city'] . "</p>";
-    echo "<p>Delivery address: " . $_SESSION['delivery']['postalcode'] . "</p>";
-    echo "<p>Delivery address: " . $_SESSION['delivery']['country'] . "</p>";
-    echo "<p>Payment card number: " . $_SESSION['payment']['cardnumber'] . "</p>";
-    echo "<p>Payment card holder: " . $_SESSION['payment']['cardholder'] . "</p>";
-    echo "<p>Payment card expiration date: " . $_SESSION['payment']['expirationdate'] . "</p>";
-    echo "<p>Payment card CVV: " . $_SESSION['payment']['cvv'] . "</p>";
+    echo "<p>Delivery address: " . htmlspecialchars($_SESSION['delivery']['firstname']) . " " . htmlspecialchars($_SESSION['delivery']['lastname']) . "</p>";
+    echo "<p>Delivery address: " . htmlspecialchars($_SESSION['delivery']['address']) . "</p>";
+    echo "<p>Delivery address: " . htmlspecialchars($_SESSION['delivery']['city']). "</p>";
+    echo "<p>Delivery address: " . htmlspecialchars($_SESSION['delivery']['postalcode']). "</p>";
+    echo "<p>Delivery address: " . htmlspecialchars($_SESSION['delivery']['country']). "</p>";
+    echo "<p>Payment card number: " . htmlspecialchars($_SESSION['payment']['cardnumber']). "</p>";
+    echo "<p>Payment card holder: " . htmlspecialchars($_SESSION['payment']['cardholder']). "</p>";
+    echo "<p>Payment card expiration date: " . htmlspecialchars($_SESSION['payment']['expirationdate']). "</p>";
+    echo "<p>Payment card CVV: " . htmlspecialchars($_SESSION['payment']['cvv']). "</p>";
     echo "<a href='checkout.php?updatepayment'>Back to payment</a>";
     echo "<a href='placeorder.php'>Continue</a>";
     echo "<a href='index.php'>Back to Home</a>";
