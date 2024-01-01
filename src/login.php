@@ -25,6 +25,11 @@ if (isset($_COOKIE['rememberme']) && $_COOKIE['rememberme'] != "") {
     } catch (Exception $e){
         performLog("Error", "Failed to decrypt remember me cookie", array("cookie" => $rememberme_token, "cipher" => $CIPHER));
     }
+    // To Redirect the user to the home page or another secure page
+    if (isset($_REQUEST['redirect'])) {
+        header('Location: ' . $_REQUEST['redirect']);
+        exit();
+    }
     header('Location: index.php');
     exit();
 }
