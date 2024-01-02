@@ -2,7 +2,7 @@
 require_once 'Logger.php';
 $dotenv = Dotenv\Dotenv::createImmutable(__DIR__.'/../');
 $dotenv->load();
-function session_start_or_expire()
+function session_start_or_expire() : void
 {
     session_start();
     // Expire the session if it hasn't been accessed for more than 30 minutes.
@@ -233,7 +233,6 @@ function activateAccount($userId): bool
     // check if insertion was successful
     return ($stmt->affected_rows > 0);
 }
-
 
 function getUserID($email): int
 {
