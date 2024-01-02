@@ -37,12 +37,12 @@ else {
         while ($row = mysqli_fetch_array($result, MYSQLI_ASSOC)) {
             // Display each row or perform operations with $row data
             echo "<tr>";
-            echo "<td>" . $row['id'] . "</td>";
-            echo "<td><a href='books.php?id=" . $row['cart'] . "'>Books</a></td>";
-            echo "<td>" . $row['address'] . "</td>";
+            echo "<td>" . htmlspecialchars($row['id']) . "</td>";
+            echo "<td><a href='books.php?id=" . htmlspecialchars($row['cart']) . "'>Books</a></td>";
+            echo "<td>" . htmlspecialchars($row['address']) . "</td>";
             // price is divided by 100 to avoid floating point arithmetic
-            echo "<td>" . $row['total_price'] / 100 . "€</td>";
-            echo "<td>" . $row['status'] . "</td>";
+            echo "<td>" . intval(htmlspecialchars($row['total_price']))/ 100 . "€</td>";
+            echo "<td>" . htmlspecialchars($row['status']) . "</td>";
             echo "</tr>";
         }
     }

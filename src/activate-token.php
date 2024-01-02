@@ -9,6 +9,7 @@ if (isset($_GET['token'])) {
             if(activateAccount($userid)){
                 $_SESSION['success'] = "Your account was successfully activated";
                 $_SESSION['userid'] = $userid;
+                performLog("Info", "Account activated", array("userid" => $userid, "token" => $token));
             }
             else{
                 performLog("Error", "Failed to activate account", array("userid" => $userid, "token" => $token));

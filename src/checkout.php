@@ -70,7 +70,6 @@ if (!isset($_SESSION['email'])) {
         'status' => 'in transit'
     ];
 
-
     //echo print_r($_SESSION['order']);
 
     // form to input delivery address

@@ -62,7 +62,7 @@
         <div class="error success">
             <h3>
                 <?php
-                echo $_SESSION['success'];
+                echo htmlspecialchars($_SESSION['success']);
                 unset($_SESSION['success']);
                 ?>
             </h3>
@@ -82,7 +82,7 @@
                 <input type="password" required="required" id="newPasswordRetype" name="newPasswordRetype" oninput=checkPasswordStrength(document.getElementById('newPassword').value)>
             </label>
         </div>
-        <input type="hidden" name="token" value="<?php echo $_GET['token'] ?? '' ; ?>" readonly>
+        <input type="hidden" name="token" value="<?php echo htmlspecialchars($_GET['token']) ?? '' ; ?>" readonly>
         <div class="input-group">
             <button type="submit" id="btn" name="resetPassword_btn">Reset Password</button>
         </div>

@@ -1,11 +1,12 @@
 <?php
 require_once 'Logger.php';
-
+$dotenv = Dotenv\Dotenv::createImmutable(__DIR__.'/../');
+$dotenv->load();
 function session_start_or_expire()
 {
     session_start();
     // Expire the session if it hasn't been accessed for more than 30 minutes.
-    $maxlifetime =  1*60; // TODO: change to 30*60
+    $maxlifetime =  $_ENV['SESSION_MAX_LIFETIME'];
     if (isset($_SESSION['last_access']) && ((time() - $_SESSION['last_access']) > $maxlifetime)) {
         session_unset();
         session_destroy();
@@ -193,10 +194,11 @@ function getUidFromToken($token): int
         if ($row["expiration_date"] > $currentDate) {
             return $row["user_id"];
         } else {
-            //delete the token from the database
+            // token exists but is expired
             return 0;
         }
     } else {
+        // token does not exist
         return 0;
     }
 
@@ -231,6 +233,7 @@ function activateAccount($userId): bool
     // check if insertion was successful
     return ($stmt->affected_rows > 0);
 }
+
 
 function getUserID($email): int
 {

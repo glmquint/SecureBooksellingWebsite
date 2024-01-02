@@ -12,7 +12,7 @@ if (isset($_POST['OldPassword']) && isset($_POST['NewPassword'])&& isset($_SESSI
     if($OldPassword == '' || $NewPassword == ''){
         performLog("Warning", "Empty password field in change", array("email" => $_SESSION['email']));
         $_SESSION["errorMsg"] = "Empty password field";
-    } elseif($OldPassword == $NewPassword){
+    } elseif($OldPassword === $NewPassword){
         performLog("Warning", "Old and new password are the same", array("email" => $_SESSION['email']));
         $_SESSION["errorMsg"] = "Old and new password are the same";
     } elseif (verifyLogin($email, $OldPassword)) {

@@ -2,7 +2,7 @@
     require_once 'utils/dbUtils.php';
     session_start_or_expire();
     $bookid = $_REQUEST['id'] ?? "";
-    echo "book id: " . $bookid . " removed from cart (WIP)";
+    echo "book id: " . htmlspecialchars($bookid) . " removed from cart (WIP)";
     if (!isset($_SESSION['cart'])){
         $_SESSION['cart'] = array();
     }
@@ -19,9 +19,9 @@
         }
     }
     // dump content of cart
-    echo "<pre>";
-    print_r($_SESSION['cart']);
-    echo "</pre>";
+    //echo "<pre>";
+    //print_r($_SESSION['cart']);
+    //echo "</pre>";
     header('Location: cart.php');
 
     ?>

@@ -58,7 +58,7 @@ if (isset($_POST['email']) || isset($_POST['password'])) {
         <div class="error success">
             <h3>
                 <?php
-                echo $_SESSION['success'];
+                echo htmlspecialchars($_SESSION['success']);
                 unset($_SESSION['success']);
                 ?>
             </h3>
