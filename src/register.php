@@ -9,12 +9,12 @@ if (isset($_POST['email']) || isset($_POST['password'])) {
     $user_input_password = $_POST['password'];
     $userId=registerUser($_POST['email'], $user_input_password);
     if($userId!=-1){
-        $token = random_int(100000, 999999999);
+        $token = random_bytes(16);
         if(saveToken($token, $userId, 60)) {
             $email = $_POST['email'];
             $subject = "Activation account";
             $message = "This is a activation email. Click on the link to activate your account\n"
-                . "http://localhost:63342/snh-securebooksellingwebsite/src/activate-token.php?token=" . strval($token);
+                . "http://localhost:63342/snh-securebooksellingwebsite/src/activate-token.php?token=" . bin2hex($token);
 
             // Additional headers
             $headers = "From: noreply@localhost.com";
@@ -32,7 +32,7 @@ if (isset($_POST['email']) || isset($_POST['password'])) {
         }
         else{
             $_SESSION['success'] = "Something went wrong with your request";
-            performLog("Error", "Failed to generate registration token", array( "mail" => $_POST['email'], "token" => $token));
+            performLog("Error", "Failed to generate registration token", array( "mail" => $_POST['email'], "token" => bin2hex($token)));
         }
 
     }

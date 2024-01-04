@@ -13,7 +13,7 @@
     if(isset($_POST["newPassword"]) && isset($_POST["newPasswordRetype"]) && isset($_POST["token"])){
         $newPassword = $_POST["newPassword"];
         $newPasswordRetype = $_POST["newPasswordRetype"];
-        $token = $_POST["token"];
+        $token = hex2bin($_POST["token"]);
         if($newPassword == $newPasswordRetype && $newPassword != "" && $newPasswordRetype != "") {
             $userid = getUidFromToken($token);
             if ($userid) {
@@ -23,17 +23,17 @@
                         header('Location: login.php');
                         exit();
                     } else {
-                        performLog("Error", "Failed to reset password", array("userid" => $userid, "token" => $token));
+                        performLog("Error", "Failed to reset password", array("userid" => $userid, "token" => $_POST['token']));
                         $_SESSION['success'] = "Something went wrong with your request!";
 
                     }
 
                 } else {
-                    performLog("Error", "Failed to delete reset token", array("userid" => $userid, "token" => $token));
+                    performLog("Error", "Failed to delete reset token", array("userid" => $userid, "token" => $_POST['token']));
                     $_SESSION['success'] = "Something went wrong with your request!";
                 }
             } else {
-                performLog("Error", "missing user id in reset token", array("userid" => $userid, "token" => $token));
+                performLog("Error", "missing user id in reset token", array("userid" => $userid, "token" => $_POST['token']));
                 $_SESSION['success'] = "Something went wrong with your request!";
             }
         } else{

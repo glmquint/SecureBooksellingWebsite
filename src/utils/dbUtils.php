@@ -165,7 +165,7 @@ function saveToken($token, $userId, $time): bool
     //create a prepared statemt to insert the token, the user and ttl into the database
     $db->stmt = $db->conn->prepare("INSERT INTO reset_token (token, user_id, expiration_date) VALUES (?, ?, ?)");
     //bind the parameters where token is an integer, username is a strings and ttl is datetime
-    $db->stmt->bind_param("iss", $token, $userId, $ttl);
+    $db->stmt->bind_param("sss", $token, $userId, $ttl);
     mysqli_stmt_execute($db->stmt);
     $result = mysqli_stmt_get_result($db->stmt);
     // check if insertion was successful
@@ -184,7 +184,7 @@ function getUidFromToken($token): int
     //create a prepare statement to get the token and the expiration_date
     $db->stmt = $db->conn->prepare("SELECT token, expiration_date, user_id FROM reset_token WHERE token=?");
     //bind the token parameter
-    $db->stmt->bind_param("i", $token);
+    $db->stmt->bind_param("s", $token);
     mysqli_stmt_execute($db->stmt);
     $result = mysqli_stmt_get_result($db->stmt);
     // check if insertion was successful
@@ -213,7 +213,7 @@ function deleteToken($token): bool
     // also remove all expired tokens to keep the database clean
     $db->stmt = $db->conn->prepare("DELETE FROM reset_token WHERE token=? OR expiration_date < NOW()");
     //bind the token parameter
-    $db->stmt->bind_param("i", $token);
+    $db->stmt->bind_param("s", $token);
     mysqli_stmt_execute($db->stmt);
     $result = mysqli_stmt_get_result($db->stmt);
     // check if insertion was successful

@@ -13,7 +13,7 @@ if(str_contains($_SERVER['SERVER_NAME'], "PhpStorm")){
 }
 
 if(isset($_POST['email'])){
-    $token = random_int(100000, 999999999);
+    $token = random_bytes(16);
     $email = $_POST['email'];
     $userArray = getUser($email);
     if(count($userArray) > 0){
@@ -24,7 +24,7 @@ if(isset($_POST['email'])){
         } elseif (saveToken($token, $userId, 5)) { // user is active, we try to save the token and send mail
             $subject = "Reset Email";
             $message = "This is a reset email. Click on the link to reset your password\n"
-                . $DOMAIN . "/resetpassword-token.php?token=" . strval($token);
+                . $DOMAIN . "/resetpassword-token.php?token=" . bin2hex($token);
 
             // Additional headers
             $headers = "From: " . $_ENV['NO_REPLY_EMAIL'] . "\r\n";

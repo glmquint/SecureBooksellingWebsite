@@ -42,6 +42,7 @@ if (isset($_POST['email']) || isset($_POST['password'])) {
     $userValidity = verifyLogin($email, $password);
     if ($userValidity) {
         if ($userValidity == 1) {
+            performLog("Info", "User didn't log in because it hasn't verified its email yet", array("email" => $email));
             $_SESSION['errorMsg'] = "Verify your email first!";
         }else {
             // Correct login
