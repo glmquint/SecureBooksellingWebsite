@@ -51,9 +51,9 @@ class DBConnection {
 
 function registerUser($mail, $user_input_password): array
 {
-    $id = getUserID($mail);
-    if($id > 0){
-        return array("id" => $id, "exists" => true);
+    $userArray = getUser($mail);
+    if(count($userArray) > 0){
+        return array("id" => $userArray['id'], "exists" => true);
     }
     $db = new DBConnection();
     if(!$db->conn){
