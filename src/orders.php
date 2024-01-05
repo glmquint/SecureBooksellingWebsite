@@ -12,6 +12,7 @@ require_once 'utils/dbUtils.php';
 session_start_or_expire();
 
 if (!isset($_SESSION['email'])) {
+    $_SESSION['errorMsg'] = 'something went wrong with your request';
     header('Location: login.php');
     exit();
 }

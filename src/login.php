@@ -38,6 +38,9 @@ if (isset($_POST['email']) || isset($_POST['password'])) {
     if ($userValidity) {
         if ($userValidity == 1) {
             $_SESSION['errorMsg'] = "Verify your email first!";
+            performLog("Warning", "Account not activated", array("email" => $email));
+            header('Location: index.php');
+            exit();
         }else {
             // Correct login
             performLog("Info", "User logged in", array("email" => $email));

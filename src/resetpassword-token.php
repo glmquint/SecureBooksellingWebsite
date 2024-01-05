@@ -5,7 +5,7 @@
     if (!isset($_REQUEST['token']) || $_REQUEST['token'] == "") {
         performLog("Warning", "Token not set", array());
         // If 'token' is not set, return a 404 error
-        $_SESSION['success'] = "Something went wrong with your request!";
+        $_SESSION['errorMsg'] = "Something went wrong with your request! Try to reset your password again.";
         header('Location: index.php');
         exit();
     }
@@ -24,20 +24,27 @@
                         exit();
                     } else {
                         performLog("Error", "Failed to reset password", array("userid" => $userid, "token" => $token));
-                        $_SESSION['success'] = "Something went wrong with your request!";
+                        $_SESSION['errorMsg'] = "Something went wrong with your request! Try to reset your password again.";
+                        header('Location: index.php');
+                        exit();
 
                     }
 
                 } else {
                     performLog("Error", "Failed to delete reset token", array("userid" => $userid, "token" => $token));
-                    $_SESSION['success'] = "Something went wrong with your request!";
+                    $_SESSION['errorMsg'] = "Something went wrong with your request! Try to reset your password again.";
+                    header('Location: index.php');
+                    exit();
+
                 }
             } else {
                 performLog("Error", "missing user id in reset token", array("userid" => $userid, "token" => $token));
-                $_SESSION['success'] = "Something went wrong with your request!";
+                $_SESSION['errorMsg'] = "Something went wrong with your request! Try to reset your password again.";
+                header('Location: index.php');
+                exit();
             }
         } else{
-            $_SESSION['success'] = "Passwords do not match or are empty";
+            $_SESSION['message'] = "Passwords do not match or are empty";
         }
     }
 
@@ -58,12 +65,12 @@
     <!-- show a form to login -->
     <a href="index.php">Back to Home</a>
     <h1>Password reset</h1>
-    <?php if (isset($_SESSION['success'])): ?>
-        <div class="error success">
+    <?php if (isset($_SESSION['message'])): ?>
+        <div class="error message">
             <h3>
                 <?php
-                echo htmlspecialchars($_SESSION['success']);
-                unset($_SESSION['success']);
+                echo htmlspecialchars($_SESSION['message']);
+                unset($_SESSION['message']);
                 ?>
             </h3>
         </div>
@@ -82,7 +89,8 @@
                 <input type="password" required="required" id="newPasswordRetype" name="newPasswordRetype" oninput=checkPasswordStrength(document.getElementById('newPassword').value)>
             </label>
         </div>
-        <input type="hidden" name="token" value="<?php echo htmlspecialchars($_GET['token']) ?? '' ; ?>" readonly>
+        <input type="hidden" name="token" value="<?php echo htmlspecialchars($_GET['token'] ?? '') ; ?>" readonly>
+        <!--input type="hidden" name="token" value=<?php if(isset($_GET['token']) && $_GET['token'] != '') echo htmlspecialchars($_GET['token']); else echo '' ; ?> readonly-->
         <div class="input-group">
             <button type="submit" id="btn" name="resetPassword_btn">Reset Password</button>
         </div>

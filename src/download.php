@@ -6,6 +6,7 @@ if (!isset($_SESSION['email'])) {
     exit();
 }
 if (!isset($_GET['id'])) {
+    $_SESSION['errorMsg'] = 'something went wrong with your request, please try again';
     header('Location: index.php');
     exit();
 }

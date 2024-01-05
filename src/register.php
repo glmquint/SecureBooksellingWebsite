@@ -24,10 +24,10 @@ if (isset($_POST['email']) || isset($_POST['password'])) {
             $mailSuccess = mail($email, $subject, $message, $headers);
 
             if ($mailSuccess) {
-                $_SESSION['success'] = "Account registered, a confirmation mail was send to your email address";
+                $_SESSION['message'] = "Account registered, a confirmation mail was send to your email address";
                 performLog("Info", "Password reset email sent", array("mail" => $_POST['email']));
             } else {
-                $_SESSION['success'] = "Failed to send email";
+                $_SESSION['message'] = "Failed to send email";
                 performLog("Error", "Failed to send email", array("mail" => $_POST['email']));
             }
         }
@@ -41,15 +41,15 @@ if (isset($_POST['email']) || isset($_POST['password'])) {
             $mailSuccess = mail($email, $subject, $message, $headers);
 
             if ($mailSuccess) {
-                $_SESSION['success'] = "Account registered, a confirmation mail was send to your email address";
+                $_SESSION['message'] = "Account registered, a confirmation mail was send to your email address";
                 performLog("Info", "New user registered, confirmation mail sent", array("mail" => $_POST['email']));
             } else {
-                $_SESSION['success'] = "Failed to send email";
+                $_SESSION['message'] = "Failed to send email";
                 performLog("Error", "Failed to send email", array("mail" => $_POST['email']));
             }
         }
         else{
-            $_SESSION['success'] = "Something went wrong with your request";
+            $_SESSION['message'] = "Something went wrong with your request";
             performLog("Error", "Failed to generate registration token", array( "mail" => $_POST['email'], "token" => $token));
         }
 
@@ -57,7 +57,7 @@ if (isset($_POST['email']) || isset($_POST['password'])) {
 
     else{
         performLog("Warning", "Invalid credentials during registration", array( "mail" => $_POST['email']));
-        $_SESSION['success'] = "Something went wrong with your request";
+        $_SESSION['message'] = "Something went wrong with your request";
     }
 
 }
@@ -73,12 +73,12 @@ if (isset($_POST['email']) || isset($_POST['password'])) {
         <script src="utils/checkPasswordStrength.js"></script>
     </head>
     <body>
-    <?php if (isset($_SESSION['success'])): ?>
-        <div class="error success">
+    <?php if (isset($_SESSION['message'])): ?>
+        <div class="message">
             <h3>
                 <?php
-                echo htmlspecialchars($_SESSION['success']);
-                unset($_SESSION['success']);
+                echo htmlspecialchars($_SESSION['message']);
+                unset($_SESSION['message']);
                 ?>
             </h3>
             <a href="index.php">Back to Home</a>

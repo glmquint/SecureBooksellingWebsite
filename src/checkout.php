@@ -13,6 +13,7 @@ if (!isset($_SESSION['email'])) {
     header('Location: login.php?redirect=checkout.php');
     exit();
 } elseif (!isset($_SESSION['cart'])) {
+    $_SESSION['errorMsg'] = 'something went wrong with your request, check your cart';
     header('Location: index.php');
     exit();
 } elseif (!isset($_SESSION['delivery']) || isset($_GET['updatedelivery'])) {
