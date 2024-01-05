@@ -12,4 +12,9 @@ localhost {
 		rewrite * /404.html
 		file_server
 	}
+	header {
+		X-Frame-Options "DENY"
+		-Server
+		-X-Powered-By
+	}
 }
