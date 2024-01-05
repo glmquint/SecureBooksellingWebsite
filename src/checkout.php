@@ -38,6 +38,7 @@ if (!isset($_SESSION['email'])) {
     exit();
 } elseif (!isset($_SESSION['cart'])) {
     performLog("Info", "Cart not set while in checkout", array());
+    $_SESSION['errorMsg'] = 'something went wrong with your request, check your cart';
     header('Location: index.php');
     exit();
 } elseif (!isset($_SESSION['delivery']) || isset($_GET['updatedelivery'])) {

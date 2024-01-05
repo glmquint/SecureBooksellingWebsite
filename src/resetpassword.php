@@ -20,7 +20,7 @@ if(isset($_POST['email'])){
         $userId = $userArray["id"];
         if(!$userArray["active"]){
             performLog("Warning", "Reset password for disabled user", array("email" => $email));
-            $_SESSION['success'] = "Your account is disabled. Please activate your account first.";
+            $_SESSION['message'] = "Your account is disabled. Please activate your account first.";
         } elseif (saveToken($token, $userId, 5)) { // user is active, we try to save the token and send mail
             $subject = "Reset Email";
             $message = "This is a reset email. Click on the link to reset your password\n"
@@ -34,20 +34,20 @@ if(isset($_POST['email'])){
 
             if ($mailSuccess) {
                 performLog("Info", "Password reset link sent to user", array("email" => $email));
-                $_SESSION['success'] = "Password reset link sent to your email";
+                $_SESSION['message'] = "Password reset link sent to your email";
             } else {
                 performLog("Warning", "Failed to send email", array("email" => $email));
-                $_SESSION['success'] = "Failed to send email";
+                $_SESSION['message'] = "Failed to send email";
             }
 
         } else { // user is active but cannot save token
             performLog("Error", "Failed to save token", array("email" => $email));
-            $_SESSION['success'] = "Something went wrong with your request!";
+            $_SESSION['message'] = "Password reset link sent to your email";
         }
     } else{ // cannot find user
-        //This is a fake success message to avoid account enumeration
+        //This is a fake message to avoid account enumeration
         performLog("Warning", "Reset password for not existing user", array("email" => $email));
-        $_SESSION['success'] = "Password reset link sent to your email";
+        $_SESSION['message'] = "Password reset link sent to your email";
     }
 
 
@@ -64,12 +64,12 @@ if(isset($_POST['email'])){
 <body>
 
 <!-- if the user is logged in, show a message -->
-<?php if (isset($_SESSION['success'])): ?>
-    <div class="error success">
+<?php if (isset($_SESSION['message'])): ?>
+    <div class="error message">
         <h3>
             <?php
-            echo htmlspecialchars($_SESSION['success']);
-            unset($_SESSION['success']);
+            echo htmlspecialchars($_SESSION['message']);
+            unset($_SESSION['message']);
             ?>
         </h3>
         <a href="index.php">Back to Home</a>

@@ -18,12 +18,15 @@ require_once 'utils/Logger.php';
 session_start_or_expire();
 
 if (!isset($_SESSION['email'])) {
+    $_SESSION['errorMsg'] = 'something went wrong with your request';
     header('Location: login.php');
     exit();
 } elseif (!isset($_SESSION['cart'])) {
+    $_SESSION['errorMsg'] = 'something went wrong with your request';
     header('Location: index.php');
     exit();
 } elseif (!isset($_SESSION['order'])) {
+    $_SESSION['errorMsg'] = 'something went wrong with your request';
     header('Location: index.php');
     exit();
 }

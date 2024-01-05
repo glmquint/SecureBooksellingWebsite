@@ -51,8 +51,12 @@ class DBConnection {
     }
 }
 
-function registerUser($mail, $user_input_password): int
+function registerUser($mail, $user_input_password): array
 {
+    $userArray = getUser($mail);
+    if(count($userArray) > 0){
+        return array("id" => $userArray['id'], "exists" => true);
+    }
     $db = new DBConnection();
     if(!$db->conn){
         die("Connection failed: " . $db->conn->connect_error);
@@ -63,14 +67,10 @@ function registerUser($mail, $user_input_password): int
     $stmt->execute();
     // check if insertion was successful
     if ($stmt->affected_rows > 0) {
-        $stmt = $db->conn->prepare("SELECT id FROM users WHERE email=?");
-        $stmt->bind_param("s", $mail);
-        $stmt->execute();
-        $result = $stmt->get_result();
-        $row = $result->fetch_assoc();
-        return $row["id"];
+        $id = getUserID($mail);
+        return array("id" =>$id, "exists" => false);
     } else {
-        return -1;
+        return [];
     }
 
 }
@@ -156,8 +156,24 @@ function getUser($email): array
     }
 }
 
+function countToken($userId): int
+{
+    $db = new DBConnection();
+    $db->stmt = $db->conn->prepare("SELECT COUNT(*) FROM reset_token WHERE user_id=? AND expiration_date > NOW()");
+    $db->stmt->bind_param("i", $userId);
+    mysqli_stmt_execute($db->stmt);
+    $result = mysqli_stmt_get_result($db->stmt);
+    $row = mysqli_fetch_array($result);
+    return $row[0];
+}
+
 function saveToken($token, $userId, $time): bool
 {
+    if(countToken($userId)>=3){
+        performLog("Warning", "Too many token request for a user", array("id" => $userId));
+        return false;
+    }
+
     date_default_timezone_set('Europe/Rome');
     //generate a time to live for the token express in datetime
     $ttl = date('Y-m-d H:i:s', strtotime('+'. $time .' minutes'));

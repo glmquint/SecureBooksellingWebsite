@@ -1,8 +1,6 @@
 <?php
 require_once 'utils/dbUtils.php';
 session_start_or_expire();
-// TODO: implement password change functionality in new page
-// TODO: implement download purchased books
 ?>
 <DOCTYPE html>
 <html lang="en">
@@ -15,7 +13,7 @@ session_start_or_expire();
     <?php include 'utils/messages.php' ?>
     <!-- if session is not started, show a link to the login page -->
     <?php if (!isset($_SESSION['email'])): ?>
-        <p>You are not logged in. <a href="login.php">Login here</a></p>
+        <p>To access your account <a href="login.php">login here</a></p>
     <?php endif ?>
     <!-- if session is started, show a link to the logout page -->
     <?php if (isset($_SESSION['email'])): ?>
