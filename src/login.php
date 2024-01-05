@@ -72,7 +72,7 @@ if (isset($_POST['email']) || isset($_POST['password'])) {
     } else {
         // Incorrect login
         performLog("Warning", "Incorrect login attempt ", array("email" => $email));
-        $_SESSION['errorMsg'] = "Invalid login credentials!";
+        $_SESSION['errorMsg'] = "Invalid login credentials! User could be suspended if multiple login failures occurred, please try later";
     }
 }
 ?>
