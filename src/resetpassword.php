@@ -42,7 +42,7 @@ if(isset($_POST['email'])){
 
         } else { // user is active but cannot save token
             performLog("Error", "Failed to save token", array("email" => $email));
-            $_SESSION['message'] = "Something went wrong with your request!";
+            $_SESSION['message'] = "Password reset link sent to your email";
         }
     } else{ // cannot find user
         //This is a fake message to avoid account enumeration

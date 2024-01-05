@@ -154,8 +154,24 @@ function getUser($email): array
     }
 }
 
+function countToken($userId): int
+{
+    $db = new DBConnection();
+    $db->stmt = $db->conn->prepare("SELECT COUNT(*) FROM reset_token WHERE user_id=? AND expiration_date > NOW()");
+    $db->stmt->bind_param("i", $userId);
+    mysqli_stmt_execute($db->stmt);
+    $result = mysqli_stmt_get_result($db->stmt);
+    $row = mysqli_fetch_array($result);
+    return $row[0];
+}
+
 function saveToken($token, $userId, $time): bool
 {
+    if(countToken($userId)>=3){
+        performLog("Warning", "Too many token request for a user", array("id" => $userId));
+        return false;
+    }
+
     date_default_timezone_set('Europe/Rome');
     //generate a time to live for the token express in datetime
     $ttl = date('Y-m-d H:i:s', strtotime('+'. $time .' minutes'));
