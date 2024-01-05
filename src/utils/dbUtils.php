@@ -49,8 +49,12 @@ class DBConnection {
     }
 }
 
-function registerUser($mail, $user_input_password): int
+function registerUser($mail, $user_input_password): array
 {
+    $id = getUserID($mail);
+    if($id > 0){
+        return array("id" => $id, "exists" => true);
+    }
     $db = new DBConnection();
     if(!$db->conn){
         die("Connection failed: " . $db->conn->connect_error);
@@ -61,14 +65,10 @@ function registerUser($mail, $user_input_password): int
     $stmt->execute();
     // check if insertion was successful
     if ($stmt->affected_rows > 0) {
-        $stmt = $db->conn->prepare("SELECT id FROM users WHERE email=?");
-        $stmt->bind_param("s", $mail);
-        $stmt->execute();
-        $result = $stmt->get_result();
-        $row = $result->fetch_assoc();
-        return $row["id"];
+        $id = getUserID($mail);
+        return array("id" =>$id, "exists" => false);
     } else {
-        return -1;
+        return [];
     }
 
 }

@@ -7,17 +7,35 @@ if (isset($_POST['email']) || isset($_POST['password'])) {
 
     // User's inputted password
     $user_input_password = $_POST['password'];
-    $userId=registerUser($_POST['email'], $user_input_password);
-    if($userId!=-1){
+    $userArray=registerUser($_POST['email'], $user_input_password);
+    if(count($userArray) > 0){
         $token = random_int(100000, 999999999);
-        if(saveToken($token, $userId, 60)) {
-            $email = $_POST['email'];
+        $email = $_POST['email'];
+        $headers = "From: noreply@localhost.com";
+        if($userArray['exists'] && saveToken($token, $userArray['id'], 5)){
+            performLog("Warning", "Invalid register", array("mail" => $_POST['email']));
+            $subject = "Invalid register attempt";
+            $message = "Someone tried to register with your email address. If it was you, click on the link to reset your password\n"
+                    . "http://localhost:63342/snh-securebooksellingwebsite/src/reset-password.php?token=" . strval($token). "\n"
+                    . "If it wasn't you, ignore this email";
+            // Additional headers
+
+            // Send email
+            $mailSuccess = mail($email, $subject, $message, $headers);
+
+            if ($mailSuccess) {
+                $_SESSION['success'] = "Account registered, a confirmation mail was send to your email address";
+                performLog("Info", "Password reset email sent", array("mail" => $_POST['email']));
+            } else {
+                $_SESSION['success'] = "Failed to send email";
+                performLog("Error", "Failed to send email", array("mail" => $_POST['email']));
+            }
+        }
+        else if(saveToken($token,  $userArray['id'], 60)) {
             $subject = "Activation account";
             $message = "This is a activation email. Click on the link to activate your account\n"
-                . "http://localhost:63342/snh-securebooksellingwebsite/src/activate-token.php?token=" . strval($token);
-
+                    . "http://localhost:63342/snh-securebooksellingwebsite/src/activate-token.php?token=" . strval($token);
             // Additional headers
-            $headers = "From: noreply@localhost.com";
 
             // Send email
             $mailSuccess = mail($email, $subject, $message, $headers);
@@ -36,6 +54,7 @@ if (isset($_POST['email']) || isset($_POST['password'])) {
         }
 
     }
+
     else{
         performLog("Warning", "Invalid credentials during registration", array( "mail" => $_POST['email']));
         $_SESSION['success'] = "Something went wrong with your request";
