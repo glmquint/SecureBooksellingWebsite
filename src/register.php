@@ -2,6 +2,13 @@
 require_once 'utils/dbUtils.php';
 require_once 'utils/Logger.php';
 
+$dotenv = Dotenv\Dotenv::createImmutable(__DIR__);
+$dotenv->load();
+if(str_contains($_SERVER['SERVER_NAME'], "PhpStorm")){
+    $DOMAIN = $_ENV['DEV_DOMAIN'];
+} else {
+    $DOMAIN = $_ENV['DOMAIN'];
+}
 
 if (isset($_POST['email']) || isset($_POST['password'])) {
 
@@ -16,7 +23,7 @@ if (isset($_POST['email']) || isset($_POST['password'])) {
             performLog("Warning", "Invalid register", array("mail" => $_POST['email']));
             $subject = "Invalid register attempt";
             $message = "Someone tried to register with your email address. If it was you, click on the link to reset your password\n"
-                    . "http://localhost:63342/snh-securebooksellingwebsite/src/resetpassword-token.php?token=" . bin2hex($token). "\n"
+                    . $DOMAIN . "/resetpassword-token.php?token=" . bin2hex($token). "\n"
                     . "If it wasn't you, ignore this email";
             // Additional headers
 
@@ -34,7 +41,7 @@ if (isset($_POST['email']) || isset($_POST['password'])) {
         else if(saveToken($token,  $userArray['id'], 60)) {
             $subject = "Activation account";
             $message = "This is a activation email. Click on the link to activate your account\n"
-                    . "http://localhost:63342/snh-securebooksellingwebsite/src/activate-token.php?token=" . bin2hex($token);
+                    . $DOMAIN . "/activate-token.php?token=" . bin2hex($token);
             // Additional headers
 
             // Send email
