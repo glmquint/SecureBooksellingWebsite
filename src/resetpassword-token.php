@@ -63,7 +63,7 @@
 <!-- if the user is logged in, show a message -->
 
     <!-- show a form to login -->
-    <a href="index.php">Back to Home</a>
+
     <h1>Password reset</h1>
     <?php if (isset($_SESSION['message'])): ?>
         <div class="error message">
@@ -76,6 +76,7 @@
         </div>
 
     <?php endif ?>
+    <a href="index.php">Back to Home</a>
     <form method="post" action="resetpassword-token.php">
         <div class="input-group">
             <label>New password</label>
