@@ -18,13 +18,15 @@ function session_start_or_expire() : void
 
 class DBConnection {
     private $servername = "localhost";
-    private $dbusername = "root";
-    private $dbpassword = "rootroot";
+    private $dbusername;
+    private $dbpassword;
     private $dbname = "securebooksellingdb";
     public $conn;
     public $stmt;
     function __construct()
     {
+        $this->dbusername = $_ENV['DB_USERNAME'];
+        $this->dbpassword = $_ENV['DB_PASSWORD'];
         if(!$this->conn){
             $this->connect();
         }
