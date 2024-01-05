@@ -1,0 +1,15 @@
+localhost {
+	root * src
+	encode gzip
+	php_fastcgi 127.0.0.1:9000 {
+		try_files {path} {path}/index.php =404
+	}
+	file_server
+	log {
+		output stdout
+	}
+	handle_errors {
+		rewrite * /404.html
+		file_server
+	}
+}
