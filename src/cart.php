@@ -14,8 +14,7 @@ session_start_or_expire();
 // print the cart contents in a table
 
 if (isset($_SESSION['cart'])) {
-    echo "<form name='addToCart' method='post' action='addtocart.php'>";
-    echo "<form name='removeFromCart' method='post' action='removefromcart.php'>";
+    echo "<form name='form' method='post'>";
     echo "<table>";
     echo "<tr>";
     echo "<th>Book name</th>";
@@ -52,7 +51,6 @@ if (isset($_SESSION['cart'])) {
         echo "</tr>";
     }
     echo "</table>";
-    echo "</form>";
     echo "</form>";
     echo "<p>Total price: " . $total_price / 100 . "€</p>";
     // button to empty the cart
