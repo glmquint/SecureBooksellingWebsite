@@ -10,8 +10,9 @@
 <?php
 require_once 'utils/dbUtils.php';
 session_start_or_expire();
-// print the cart contents in a table
+include 'utils/messages.php';
 
+// print the cart contents in a table
 if (isset($_SESSION['cart'])) {
     echo "<table>";
     echo "<tr>";

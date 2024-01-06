@@ -7,12 +7,16 @@ function session_start_or_expire() : void
     session_start();
     // Expire the session if it hasn't been accessed for more than 30 minutes.
     $maxlifetime =  $_ENV['SESSION_MAX_LIFETIME'];
-    if (isset($_SESSION['last_access']) && ((time() - $_SESSION['last_access']) > $maxlifetime)) {
+    if (!isset($_SESSION['last_access'])){
+        $_SESSION['last_access'] = time();
+        $_SESSION['csrf_token'] = array();
+    }
+    if ((time() - $_SESSION['last_access']) > $maxlifetime) {
         session_unset();
         session_destroy();
         session_start();
+        $_SESSION['csrf_token'] = array();
     }
-    $_SESSION['last_access'] = time();
 }
 
 
