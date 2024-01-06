@@ -30,6 +30,7 @@
  ?>
  </body>
     <h1><?php echo htmlspecialchars($booktitle) ?></h1>
+    <a href="index.php">Back to Home</a>
     <table>
         <tr>
             <th>Author</th>
@@ -43,9 +44,7 @@
         </tr>
     </table>
     <form method="post" action="addtocart.php">
-        <?php $reqid = uniqid(); $_SESSION['csrf_token'][$reqid] = bin2hex(random_bytes(16)); ?>
-        <input type="hidden" name="reqid" value="<?php echo $reqid ?>" readonly="readonly" >
-        <input type="hidden" name="csrf_token" value="<?php echo $_SESSION['csrf_token'][$reqid] ?>" readonly="readonly" >
+        <input type="hidden" name="csrf_token" value="<?php echo $_SESSION['csrf_token'] ?>" readonly="readonly" >
         <input type="hidden" name="id" value="<?php echo htmlspecialchars($bookid) ?>" readonly="readonly" >
         <button type="submit">Add to cart</button>
     </form>

@@ -24,7 +24,8 @@ session_start_or_expire();
     <?php endif ?>
     <p>Go to your <a href="cart.php">cart</a></p>
     <h2>Book list</h2>
-    <form name='addToCart' method='post' action='addtocart.php'>
+    <form name='addToCart' method='post'>
+    <input type='hidden' name='csrf_token' value='<?php echo $_SESSION['csrf_token'] ?>' readonly='readonly' >
     <table>
         <tr>
             <th>Book name</th>

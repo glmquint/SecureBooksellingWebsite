@@ -80,6 +80,7 @@ if (!isset($_SESSION['email'])) {
     // form to input delivery address
     echo "<h1>Delivery address</h1>";
     echo "<form method='post' action='checkout.php'>";
+    echo "<input type='hidden' name='csrf_token' value='" . $_SESSION['csrf_token'] . "' readonly='readonly' >";
     echo "<label for='firstname'>First name</label>";
     $firstname = $_SESSION['delivery']['firstname'] ?? '';
     echo "<input type='text' name='firstname' id='firstname' required='required' placeholder='Abbie' pattern=\"" . $regexes['firstname'] . "\" value='" . $firstname . "'>";
@@ -134,6 +135,7 @@ if (!isset($_SESSION['email'])) {
     // form to input payment details
     echo "<h1>Payment details</h1>";
     echo "<form method='post' action='checkout.php'>";
+    echo "<input type='hidden' name='csrf_token' value='" . $_SESSION['csrf_token'] . "' readonly='readonly' >";
     echo "<label for='cardnumber'>Card number</label>";
     $cardnumber = $_SESSION['payment']['cardnumber'] ?? '';
     echo "<input type='text' name='cardnumber' id='cardnumber' required='required' placeholder='XXXX-XXXX-XXXX-XXXX' pattern=\"" . $regexes['cardnumber'] . "\" value='" . $cardnumber . "'>";
@@ -209,7 +211,10 @@ if (!isset($_SESSION['email'])) {
     echo "<p>Payment card expiration date: " . $_SESSION['payment']['expirationdate']. "</p>";
     // echo "<p>Payment card CVV: " . $_SESSION['payment']['cvv']). "</p>";
     echo "<a href='checkout.php?updatepayment'>Back to payment</a>";
-    echo "<a href='placeorder.php'>Continue</a>";
+    echo "<form method='post' action='placeorder.php'>";
+    echo "<input type='hidden' name='csrf_token' value='" . $_SESSION['csrf_token'] . "' readonly='readonly' >";
+    echo "<button type='submit'>Continue</button>";
+    echo "</form>";
     echo "<a href='index.php'>Back to Home</a>";
 }
 

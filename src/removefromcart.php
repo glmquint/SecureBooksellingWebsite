@@ -1,6 +1,11 @@
 <?php
     require_once 'utils/dbUtils.php';
     session_start_or_expire();
+    if (!isset($_POST['csrf_token']) || $_POST['csrf_token'] != $_SESSION['csrf_token']) {
+        $_SESSION['errorMsg'] = "CSRF token mismatch";
+        header('Location: cart.php');
+        exit();
+    }
     $bookid = $_POST['id'] ?? "";
     #echo "book id: " . htmlspecialchars($bookid) . " removed from cart (WIP)";
     if (!isset($_SESSION['cart'])){
