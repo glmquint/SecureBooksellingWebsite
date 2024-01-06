@@ -1,8 +1,8 @@
 <?php
     require_once 'utils/dbUtils.php';
     session_start_or_expire();
-    $bookid = $_REQUEST['id'] ?? "";
-    if (!isset($_REQUEST['csrf_token']) || !isset($_REQUEST['reqid']) || $_REQUEST['csrf_token'] !== $_SESSION['csrf_token'][$_REQUEST['reqid']]) {
+    $bookid = $_POST['id'] ?? "";
+    if (!isset($_POST['csrf_token']) || !isset($_POST['reqid']) || $_POST['csrf_token'] !== $_SESSION['csrf_token'][$_POST['reqid']]) {
         $_SESSION['errorMsg'] = "CSRF token mismatch";
         header('Location: cart.php');
         exit();
