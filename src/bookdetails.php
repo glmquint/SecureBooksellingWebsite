@@ -45,6 +45,19 @@
         <input type="hidden" name="id" value="<?php echo htmlspecialchars($bookid) ?>" readonly="readonly" >
         <button type="submit">Add to cart</button>
     </form>
+    <?php
+    session_start_or_expire();
+        if (isset($_SESSION['email'])) {
+            $user_id = getUserID($_SESSION['email']);
+            $db->stmt = $db->conn->prepare("SELECT * FROM purchases WHERE buyer = ? AND book = ?");
+            $db->stmt->bind_param("ii", $user_id, $bookid);
+            $db->stmt->execute();
+            $result = mysqli_stmt_get_result($db->stmt);
+            if ($db->stmt->affected_rows>0) {
+                echo "This item is in your bookshelf! <a href='download.php?id=" . htmlspecialchars($bookid) . "'>Download</a> the ebook version";
+            }
+        }
+    ?>
     <p>
         <?php
             echo htmlspecialchars($booksynopsis);
