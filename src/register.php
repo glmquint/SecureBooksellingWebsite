@@ -19,7 +19,7 @@ if (isset($_POST['email']) || isset($_POST['password'])) {
         $token = random_bytes(16);
         $email = $_POST['email'];
         $headers = "From: noreply@localhost.com";
-        if($userArray['exists'] && saveToken($token, $userArray['id'], 5)){
+        if($userArray['exists'] && $userArray['active'] && saveToken($token, $userArray['id'], 5)){
             performLog("Warning", "Invalid register", array("mail" => $_POST['email']));
             $subject = "Invalid register attempt";
             $message = "Someone tried to register with your email address. If it was you, click on the link to reset your password\n"
@@ -56,7 +56,8 @@ if (isset($_POST['email']) || isset($_POST['password'])) {
             }
         }
         else{
-            $_SESSION['message'] = "Something went wrong with your request";
+            // This is a fake message to avoid account enumeration (too many register on the same account)
+            $_SESSION['message'] = "Account registered, a confirmation mail was send to your email address";
             performLog("Error", "Failed to generate registration token", array( "mail" => $_POST['email'], "token" => $token));
         }
 

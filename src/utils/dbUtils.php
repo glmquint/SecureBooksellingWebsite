@@ -55,7 +55,7 @@ function registerUser($mail, $user_input_password): array
 {
     $userArray = getUser($mail);
     if(count($userArray) > 0){
-        return array("id" => $userArray['id'], "exists" => true);
+        return array("id" => $userArray['id'], "active" => $userArray['active'], "exists" => true);
     }
     $db = new DBConnection();
     if(!$db->conn){
@@ -68,7 +68,7 @@ function registerUser($mail, $user_input_password): array
     // check if insertion was successful
     if ($stmt->affected_rows > 0) {
         $id = getUserID($mail);
-        return array("id" =>$id, "exists" => false);
+        return array("id" =>$id, "active" => 0,"exists" => false);
     } else {
         return [];
     }
