@@ -83,34 +83,42 @@ function verifyLogin($email, $password): int
 {
 // Retrieve the hashed password from the database based on the username
 // Replace the following lines with your database connection and query
-    $db = new DBConnection();
+    try {
+        $db = new DBConnection();
 
-    $db->stmt = $db->conn->prepare("SELECT password, active FROM users WHERE email=? 
+        $db->stmt = $db->conn->prepare("SELECT password, active FROM users WHERE email=? 
         AND (failed_login_attempts < 3 OR failed_login_time < DATE_SUB(NOW(), INTERVAL 1 MINUTE))");
-    $db->stmt->bind_param("s", $email);
-    mysqli_stmt_execute($db->stmt);
-    $result = mysqli_stmt_get_result($db->stmt);
-    // check if insertion was successful
-    if ($db->stmt->affected_rows > 0) {
-        // Password hash found in the database
-        $row = mysqli_fetch_array($result);
-        $stored_hashed_password = $row["password"];
-        $active = $row["active"];
-        // Verify the entered password against the stored hash
-        if (password_verify($password, $stored_hashed_password)) {
-            $db->stmt = $db->conn->prepare("UPDATE users SET failed_login_attempts=0 WHERE email=?");
-            $db->stmt->bind_param("s", $email);
-            mysqli_stmt_execute($db->stmt);
-            return 1 + $active; // 1 - registered but not yet activated, 2 - registered and mail activated
-        } else {
-            $db->stmt = $db->conn->prepare("UPDATE users SET failed_login_attempts=failed_login_attempts+1, 
+        $db->stmt->bind_param("s", $email);
+        mysqli_stmt_execute($db->stmt);
+        $result = mysqli_stmt_get_result($db->stmt);
+        // check if insertion was successful
+        if ($db->stmt->affected_rows > 0) {
+            // Password hash found in the database
+            $row = mysqli_fetch_array($result);
+            $stored_hashed_password = $row["password"];
+            $active = $row["active"];
+            // Verify the entered password against the stored hash
+            if (password_verify($password, $stored_hashed_password)) {
+                $db->stmt = $db->conn->prepare("UPDATE users SET failed_login_attempts=0 WHERE email=?");
+                $db->stmt->bind_param("s", $email);
+                mysqli_stmt_execute($db->stmt);
+                return 1 + $active; // 1 - registered but not yet activated, 2 - registered and mail activated
+            } else {
+                $db->stmt = $db->conn->prepare("UPDATE users SET failed_login_attempts=failed_login_attempts+1, 
                                                             failed_login_time=NOW() WHERE email=?");
-            $db->stmt->bind_param("s", $email);
-            mysqli_stmt_execute($db->stmt);
+                $db->stmt->bind_param("s", $email);
+                mysqli_stmt_execute($db->stmt);
+                return 0;
+            }
+        } else {
             return 0;
         }
-    } else {
-        return 0;
+    } catch (mysqli_sql_exception $e) {
+        performLog("Error", "Failed to connect to DB", array("error" => $e->getCode(), "message" => $e->getMessage()));
+        session_unset();
+        session_destroy();
+        header('Location: 404.html');
+        exit();
     }
 
 }
@@ -119,56 +127,89 @@ function changePassword($email, $newPassword): bool
 {
     // Store the hashed password in the database
     $hashed_password = password_hash($newPassword, PASSWORD_BCRYPT);
-    $db = new DBConnection();
+    try{
+        $db = new DBConnection();
 
-    // use prepared statements to change the password of a user
-    $db->stmt = $db->conn->prepare("UPDATE users SET password=? WHERE email=?");
-    $db->stmt->bind_param("ss", $hashed_password, $email);
-    $db->stmt->execute();
-    // check if insertion was successful
-    return ($db->stmt->affected_rows > 0);
+        // use prepared statements to change the password of a user
+        $db->stmt = $db->conn->prepare("UPDATE users SET password=? WHERE email=?");
+        $db->stmt->bind_param("ss", $hashed_password, $email);
+        $db->stmt->execute();
+        // check if insertion was successful
+        return ($db->stmt->affected_rows > 0);
+    } catch (mysqli_sql_exception $e) {
+        performLog("Error", "Failed to connect to DB", array("error" => $e->getCode(), "message" => $e->getMessage()));
+        session_unset();
+        session_destroy();
+        header('Location: 404.html');
+        exit();
+    }
 }
 
 function changePasswordById($userId, $newPassword): bool
 {
     // Store the hashed password in the database
     $hashed_password = password_hash($newPassword, PASSWORD_BCRYPT);
-    $db = new DBConnection();
+    try{
+        $db = new DBConnection();
 
-    $db->stmt = $db->conn->prepare("UPDATE users SET password=? WHERE id=?");
-    $db->stmt->bind_param("si", $hashed_password, $userId);
-    $db->stmt->execute();
-    // check if insertion was successful
-    return ($db->stmt->affected_rows > 0);
+        $db->stmt = $db->conn->prepare("UPDATE users SET password=? WHERE id=?");
+        $db->stmt->bind_param("si", $hashed_password, $userId);
+        $db->stmt->execute();
+        // check if insertion was successful
+        return ($db->stmt->affected_rows > 0);
+    } catch (mysqli_sql_exception $e) {
+        performLog("Error", "Failed to connect to DB", array("error" => $e->getCode(), "message" => $e->getMessage()));
+        session_unset();
+        session_destroy();
+        header('Location: 404.html');
+        exit();
+    }
 }
 
 // create a function to check if a user exists in the database
 function getUser($email): array
 {
-    $db = new DBConnection();
+    try{
+        $db = new DBConnection();
 
-    $db->stmt = $db->conn->prepare("SELECT * FROM users WHERE email=? ");
-    $db->stmt->bind_param("s", $email);
-    mysqli_stmt_execute($db->stmt);
-    $result = mysqli_stmt_get_result($db->stmt);
-    // check if insertion was successful
-    if ($db->stmt->affected_rows > 0) {
-        $row = mysqli_fetch_array($result);
-        return array("id" => $row["id"], "active" => $row["active"]);
-    } else {
-        return [];
+        $db->stmt = $db->conn->prepare("SELECT * FROM users WHERE email=? ");
+        $db->stmt->bind_param("s", $email);
+        mysqli_stmt_execute($db->stmt);
+        $result = mysqli_stmt_get_result($db->stmt);
+        // check if insertion was successful
+        if ($db->stmt->affected_rows > 0) {
+            $row = mysqli_fetch_array($result);
+            return array("id" => $row["id"], "active" => $row["active"]);
+        } else {
+            return [];
+        }
+    } catch (mysqli_sql_exception $e) {
+        performLog("Error", "Failed to connect to DB", array("error" => $e->getCode(), "message" => $e->getMessage()));
+        session_unset();
+        session_destroy();
+        header('Location: 404.html');
+        exit();
     }
 }
 
 function countToken($userId): int
 {
-    $db = new DBConnection();
-    $db->stmt = $db->conn->prepare("SELECT COUNT(*) FROM reset_token WHERE user_id=? AND expiration_date > NOW()");
-    $db->stmt->bind_param("i", $userId);
-    mysqli_stmt_execute($db->stmt);
-    $result = mysqli_stmt_get_result($db->stmt);
-    $row = mysqli_fetch_array($result);
-    return $row[0];
+    try {
+        $db = new DBConnection();
+        $db->stmt = $db->conn->prepare("SELECT COUNT(*) FROM reset_token WHERE user_id=? AND expiration_date > NOW()");
+        $db->stmt->bind_param("i", $userId);
+        mysqli_stmt_execute($db->stmt);
+        $result = mysqli_stmt_get_result($db->stmt);
+        $row = mysqli_fetch_array($result);
+        return $row[0];
+    }
+    catch (mysqli_sql_exception $e) {
+        performLog("Error", "Failed to connect to DB", array("error" => $e->getCode(), "message" => $e->getMessage()));
+        session_unset();
+        session_destroy();
+        header('Location: 404.html');
+        exit();
+    }
 }
 
 function saveToken($token, $userId, $time): bool
@@ -181,7 +222,7 @@ function saveToken($token, $userId, $time): bool
     date_default_timezone_set('Europe/Rome');
     //generate a time to live for the token express in datetime
     $ttl = date('Y-m-d H:i:s', strtotime('+'. $time .' minutes'));
-
+    try{
     $db = new DBConnection();
 
     //create a prepared statemt to insert the token, the user and ttl into the database
@@ -192,6 +233,13 @@ function saveToken($token, $userId, $time): bool
     $result = mysqli_stmt_get_result($db->stmt);
     // check if insertion was successful
     return ($db->stmt->affected_rows > 0);
+    } catch (mysqli_sql_exception $e) {
+        performLog("Error", "Failed to connect to DB", array("error" => $e->getCode(), "message" => $e->getMessage()));
+        session_unset();
+        session_destroy();
+        header('Location: 404.html');
+        exit();
+    }
 }
 
 //create a function to check if a token exists in the database
@@ -200,28 +248,36 @@ function getUidFromToken($token): int
     date_default_timezone_set('Europe/Rome');
     //get the current date and time
     $currentDate = date('Y-m-d H:i:s');
+    try {
+        $db = new DBConnection();
 
-    $db = new DBConnection();
-
-    //create a prepare statement to get the token and the expiration_date
-    $db->stmt = $db->conn->prepare("SELECT token, expiration_date, user_id FROM reset_token WHERE token=?");
-    //bind the token parameter
-    $db->stmt->bind_param("s", $token);
-    mysqli_stmt_execute($db->stmt);
-    $result = mysqli_stmt_get_result($db->stmt);
-    // check if insertion was successful
-    if ($db->stmt->affected_rows > 0) {
-        $row = mysqli_fetch_array($result);
-        //check if the token is expired
-        if ($row["expiration_date"] > $currentDate) {
-            return $row["user_id"];
+        //create a prepare statement to get the token and the expiration_date
+        $db->stmt = $db->conn->prepare("SELECT token, expiration_date, user_id FROM reset_token WHERE token=?");
+        //bind the token parameter
+        $db->stmt->bind_param("s", $token);
+        mysqli_stmt_execute($db->stmt);
+        $result = mysqli_stmt_get_result($db->stmt);
+        // check if insertion was successful
+        if ($db->stmt->affected_rows > 0) {
+            $row = mysqli_fetch_array($result);
+            //check if the token is expired
+            if ($row["expiration_date"] > $currentDate) {
+                return $row["user_id"];
+            } else {
+                // token exists but is expired
+                return 0;
+            }
         } else {
-            // token exists but is expired
+            // token does not exist
             return 0;
         }
-    } else {
-        // token does not exist
-        return 0;
+    }
+    catch (mysqli_sql_exception $e) {
+        performLog("Error", "Failed to connect to DB", array("error" => $e->getCode(), "message" => $e->getMessage()));
+        session_unset();
+        session_destroy();
+        header('Location: 404.html');
+        exit();
     }
 
 }
@@ -229,35 +285,53 @@ function getUidFromToken($token): int
 // delete a token from the database
 function deleteToken($token): bool
 {
-    $db = new DBConnection();
+    try {
+        $db = new DBConnection();
 
-    //create a prepare statement to delete the current token from the database
-    // also remove all expired tokens to keep the database clean
-    $db->stmt = $db->conn->prepare("DELETE FROM reset_token WHERE token=? OR expiration_date < NOW()");
-    //bind the token parameter
-    $db->stmt->bind_param("s", $token);
-    mysqli_stmt_execute($db->stmt);
-    $result = mysqli_stmt_get_result($db->stmt);
-    // check if insertion was successful
-    return ($db->stmt->affected_rows > 0);
+        //create a prepare statement to delete the current token from the database
+        // also remove all expired tokens to keep the database clean
+        $db->stmt = $db->conn->prepare("DELETE FROM reset_token WHERE token=? OR expiration_date < NOW()");
+        //bind the token parameter
+        $db->stmt->bind_param("s", $token);
+        mysqli_stmt_execute($db->stmt);
+        $result = mysqli_stmt_get_result($db->stmt);
+        // check if insertion was successful
+        return ($db->stmt->affected_rows > 0);
+    } catch (mysqli_sql_exception $e) {
+        performLog("Error", "Failed to connect to DB", array("error" => $e->getCode(), "message" => $e->getMessage()));
+        session_unset();
+        session_destroy();
+        header('Location: 404.html');
+        exit();
+    }
 }
 
 function activateAccount($userId): bool
 {
-    $db = new DBConnection();
+    try {
+        $db = new DBConnection();
 
-    //create a prepare statement to delete the token from the database
-    $stmt = $db->conn->prepare("UPDATE users SET active=1 WHERE id=?");
-    //bind the token parameter
-    $stmt->bind_param("i", $userId);
-    mysqli_stmt_execute($stmt);
-    $result = mysqli_stmt_get_result($stmt);
-    // check if insertion was successful
-    return ($stmt->affected_rows > 0);
+        //create a prepare statement to delete the token from the database
+        $stmt = $db->conn->prepare("UPDATE users SET active=1 WHERE id=?");
+        //bind the token parameter
+        $stmt->bind_param("i", $userId);
+        mysqli_stmt_execute($stmt);
+        $result = mysqli_stmt_get_result($stmt);
+        // check if insertion was successful
+        return ($stmt->affected_rows > 0);
+    }
+    catch (mysqli_sql_exception $e) {
+        performLog("Error", "Failed to connect to DB", array("error" => $e->getCode(), "message" => $e->getMessage(), "userid" => $userId));
+        session_unset();
+        session_destroy();
+        header('Location: 404.html');
+        exit();
+    }
 }
 
 function getUserID($email): int
 {
+    try{
     $db = new DBConnection();
     $db->stmt = $db->conn->prepare("SELECT id FROM users WHERE email=?");
 
@@ -268,6 +342,14 @@ function getUserID($email): int
     $row = $result->fetch_assoc();
 
     return $row['id'];
+    } catch (mysqli_sql_exception $e) {
+        performLog("Error", "Failed to connect to DB", array("error" => $e->getCode(),
+            "message" => $e->getMessage()));
+        session_unset();
+        session_destroy();
+        header('Location: 404.html');
+        exit();
+    }
 }
 
 ?>

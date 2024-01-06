@@ -14,18 +14,25 @@
     // finally, there is a button for the user to add the book to its cart
 
     $bookid = $_GET['id'] ?? 0;
+    try{
     // get the book list from the db, using prepared statements
-    $db = new DBConnection();
-    $db->stmt = mysqli_prepare($db->conn, "SELECT * FROM books WHERE id = ?");
-    mysqli_stmt_bind_param($db->stmt, "i", $bookid);
-    mysqli_stmt_execute($db->stmt);
-    $result = mysqli_stmt_get_result($db->stmt);
-    $row = mysqli_fetch_array($result) ?? null;
-    $booktitle = $row['title'] ?? 'Unkown book';
-    $bookprice = $row['price'] ?? 0;
-    $bookauthor = $row['author'] ?? 'Unkown author';
-    $bookavailable = $row['available'] ?? 0;
-    $booksynopsis = $row['synopsis'] ?? 'No info available for unkown book';
+        $db = new DBConnection();
+        $db->stmt = mysqli_prepare($db->conn, "SELECT * FROM books WHERE id = ?");
+        mysqli_stmt_bind_param($db->stmt, "i", $bookid);
+        mysqli_stmt_execute($db->stmt);
+        $result = mysqli_stmt_get_result($db->stmt);
+        $row = mysqli_fetch_array($result) ?? null;
+        $booktitle = $row['title'] ?? 'Unkown book';
+        $bookprice = $row['price'] ?? 0;
+        $bookauthor = $row['author'] ?? 'Unkown author';
+        $bookavailable = $row['available'] ?? 0;
+        $booksynopsis = $row['synopsis'] ?? 'No info available for unkown book';
+    } catch (mysqli_sql_exception $e) {
+        performLog("Error", "Failed to get book list from DB", array("error" => $e->getCode(), "message" => $e->getMessage()));
+        session_unset();
+        session_destroy();
+        header('Location: 404.html');
+    }
 
  ?>
  </body>
@@ -50,13 +57,21 @@
     </form>
     <?php
         if (isset($_SESSION['email'])) {
-            $user_id = getUserID($_SESSION['email']);
-            $db->stmt = $db->conn->prepare("SELECT * FROM purchases WHERE buyer = ? AND book = ?");
-            $db->stmt->bind_param("ii", $user_id, $bookid);
-            $db->stmt->execute();
-            $result = mysqli_stmt_get_result($db->stmt);
-            if ($db->stmt->affected_rows>0) {
-                echo "This item is in your bookshelf! <a href='download.php?id=" . htmlspecialchars($bookid) . "'>Download</a> the ebook version";
+            try {
+                $user_id = getUserID($_SESSION['email']);
+                $db->stmt = $db->conn->prepare("SELECT * FROM purchases WHERE buyer = ? AND book = ?");
+                $db->stmt->bind_param("ii", $user_id, $bookid);
+                $db->stmt->execute();
+                $result = mysqli_stmt_get_result($db->stmt);
+                if ($db->stmt->affected_rows > 0) {
+                    echo "This item is in your bookshelf! <a href='download.php?id=" . htmlspecialchars($bookid) . "'>Download</a> the ebook version";
+                }
+            }
+            catch (mysqli_sql_exception $e) {
+                performLog("Error", "Failed to get book list from DB", array("error" => $e->getCode(), "message" => $e->getMessage()));
+                session_unset();
+                session_destroy();
+                header('Location: 404.html');
             }
         }
     ?>

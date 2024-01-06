@@ -43,27 +43,34 @@ if (!isset($_SESSION['email'])) {
     exit();
 } elseif (!isset($_SESSION['delivery']) || isset($_GET['updatedelivery'])) {
 // recompute total price
-    $db = new DBConnection();
-    $total_price = 0;
-    // if cart is not an array, get back to index
-    if (!is_array($_SESSION['cart'])) {
-        performLog("Error", "Cart is not an array", array("cart" => $_SESSION['cart']));
-        header('Location: index.php');
-        exit();
-    }
-    foreach ($_SESSION['cart'] as $bookid => $quantity) {
-        $db->stmt = $db->conn->prepare("SELECT * FROM books WHERE id = ?");
-        $db->stmt->bind_param("i", $bookid);
-        $db->stmt->execute();
-        $result = mysqli_stmt_get_result($db->stmt);
-        $row = mysqli_fetch_array($result);
-        if (!$row) {
-            performLog("Error", "Book not found in checkout", array("bookid" => $bookid));
+    try {
+        $db = new DBConnection();
+        $total_price = 0;
+        // if cart is not an array, get back to index
+        if (!is_array($_SESSION['cart'])) {
+            performLog("Error", "Cart is not an array", array("cart" => $_SESSION['cart']));
             header('Location: index.php');
             exit();
         }
-        $quantity = $_SESSION['cart'][$row['id']];
-        $total_price += $row['price'] * $quantity;
+        foreach ($_SESSION['cart'] as $bookid => $quantity) {
+            $db->stmt = $db->conn->prepare("SELECT * FROM books WHERE id = ?");
+            $db->stmt->bind_param("i", $bookid);
+            $db->stmt->execute();
+            $result = mysqli_stmt_get_result($db->stmt);
+            $row = mysqli_fetch_array($result);
+            if (!$row) {
+                performLog("Error", "Book not found in checkout", array("bookid" => $bookid));
+                header('Location: index.php');
+                exit();
+            }
+            $quantity = $_SESSION['cart'][$row['id']];
+            $total_price += $row['price'] * $quantity;
+        }
+    } catch (mysqli_sql_exception $e) {
+        performLog("Error", "Failed to connect to DB", array("error" => $e->getCode(), "message" => $e->getMessage()));
+        session_unset();
+        session_destroy();
+        header('Location: 404.html');
     }
 
     $_SESSION['order'] = array();
@@ -185,19 +192,26 @@ if (!isset($_SESSION['email'])) {
     echo "<hr>";
     // TODO: optimize book retrieval, maybe do it before checkout
     // TODO: also make it prettier
-    $db = new DBConnection();
-    $db->stmt = $db->conn->prepare("SELECT * FROM books WHERE id = ?");
-    foreach ($_SESSION['cart'] as $bookid => $quantity) {
-        $db->stmt->bind_param("i", $bookid);
-        $db->stmt->execute();
-        $result = mysqli_stmt_get_result($db->stmt);
-        $row = mysqli_fetch_array($result);
-        if (!$row) {
-            performLog("Error", "Book not found in checkout", array("bookid" => $bookid));
-            header('Location: index.php');
-            exit();
+    try{
+        $db = new DBConnection();
+        $db->stmt = $db->conn->prepare("SELECT * FROM books WHERE id = ?");
+        foreach ($_SESSION['cart'] as $bookid => $quantity) {
+            $db->stmt->bind_param("i", $bookid);
+            $db->stmt->execute();
+            $result = mysqli_stmt_get_result($db->stmt);
+            $row = mysqli_fetch_array($result);
+            if (!$row) {
+                performLog("Error", "Book not found in checkout", array("bookid" => $bookid));
+                header('Location: index.php');
+                exit();
+            }
+            echo "<p>" . htmlspecialchars($row['title']) . " x " . $quantity . "</p>";
         }
-        echo "<p>" . htmlspecialchars($row['title']) . " x " . $quantity . "</p>";
+    } catch (mysqli_sql_exception $e) {
+        performLog("Error", "Failed to connect to DB", array("error" => $e->getCode(), "message" => $e->getMessage()));
+        session_unset();
+        session_destroy();
+        header('Location: 404.html');
     }
     echo "<p>Total price: " . $_SESSION['order']['total_price'] / 100 . "€</p>";
     echo "<hr>";

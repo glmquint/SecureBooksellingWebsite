@@ -31,40 +31,46 @@ if (!isset($_SESSION['email'])) {
         header('Location: index.php');
         exit();
     }
-    $db = new DBConnection();
-    if (!paymentSuccessful($_SESSION['order'], $_SESSION['payment'])) {
-        echo "<h3>Payment failed</h3>";
-        echo "<a href='index.php'>Back to home</a>";
-        exit();
-    }
+    try {
+        $db = new DBConnection();
+        if (!paymentSuccessful($_SESSION['order'], $_SESSION['payment'])) {
+            echo "<h3>Payment failed</h3>";
+            echo "<a href='index.php'>Back to home</a>";
+            exit();
+        }
 
-    // TODO: check the insret ignore
-    // we want to insert the purchase only if it is not already present
-    // but currently all purchases by a user that already has a book, get discarded
-    $db->stmt = $db->conn->prepare("INSERT INTO purchases (buyer, book) VALUES (?, ?) ON DUPLICATE KEY UPDATE buyer = buyer");
-    $userid = getUserID($_SESSION['email']);
-    $db->stmt->bind_param("ii", $userid, $bookid); // bookid is defined and used just below.. it just works
-    foreach ($_SESSION['cart'] as $bookid => $quantity) {
+        // TODO: check the insret ignore
+        // we want to insert the purchase only if it is not already present
+        // but currently all purchases by a user that already has a book, get discarded
+        $db->stmt = $db->conn->prepare("INSERT INTO purchases (buyer, book) VALUES (?, ?) ON DUPLICATE KEY UPDATE buyer = buyer");
+        $userid = getUserID($_SESSION['email']);
+        $db->stmt->bind_param("ii", $userid, $bookid); // bookid is defined and used just below.. it just works
+        foreach ($_SESSION['cart'] as $bookid => $quantity) {
+            $db->stmt->execute();
+        }
+
+
+        $db->stmt = $db->conn->prepare("INSERT INTO carts (id,book, quantity) VALUES (?, ?, ?)");
+
+        $cart_id = random_int(100000, 999999);
+
+        $db->stmt->bind_param("iii", $cart_id, $bookid, $quantity);
+
+        foreach ($_SESSION['cart'] as $bookid => $quantity) {
+            $db->stmt->execute();
+        }
+
+        $db->stmt = $db->conn->prepare("INSERT INTO orders (id, user, cart, address, total_price, status) VALUES (?, ?, ?, ?, ?, ?)");
+
+        $db->stmt->bind_param("iiisis", $_SESSION['order']['orderid'], $userid, $cart_id, $_SESSION['delivery']['address'], $_SESSION['order']['total_price'], $_SESSION['order']['status']);
         $db->stmt->execute();
     }
-
-
-
-    $db->stmt = $db->conn->prepare("INSERT INTO carts (id,book, quantity) VALUES (?, ?, ?)");
-
-    $cart_id = random_int(100000, 999999);
-
-    $db->stmt->bind_param("iii", $cart_id, $bookid, $quantity);
-
-    foreach ($_SESSION['cart'] as $bookid => $quantity) {
-        $db->stmt->execute();
+    catch (mysqli_sql_exception $e) {
+        performLog("Error", "Failed to connect to DB", array("error" => $e->getCode(), "message" => $e->getMessage()));
+        session_unset();
+        session_destroy();
+        header('Location: 404.html');
     }
-
-    $db->stmt = $db->conn->prepare("INSERT INTO orders (id, user, cart, address, total_price, status) VALUES (?, ?, ?, ?, ?, ?)");
-
-    $db->stmt->bind_param("iiisis", $_SESSION['order']['orderid'], $userid, $cart_id, $_SESSION['delivery']['address'], $_SESSION['order']['total_price'], $_SESSION['order']['status']);
-    $db->stmt->execute();
-
     $db->conn->begin_transaction();
     try {
         $db->stmt = $db->conn->prepare("UPDATE books SET available = available - ? WHERE id = ?");

@@ -23,33 +23,40 @@ if (isset($_SESSION['cart'])) {
     echo "<th>Price</th>";
     echo "<th>Quantity</th>";
     echo "</tr>";
+    try{
     // connect to the database
-    $db = new DBConnection();
-    // get the book list from the db
-    // loop through the book list
-    $total_price = 0;
-    foreach ($_SESSION['cart'] as $bookid => $quantity){
-        $db->stmt = $db->conn->prepare("SELECT * FROM books WHERE id = ?");
-        $db->stmt->bind_param("i", $bookid);
-        $db->stmt->execute();
-        $result = mysqli_stmt_get_result($db->stmt);
-        $row = mysqli_fetch_array($result) ?? null;
-        if($row == null) { // book not found
-            continue;
-        }
-        echo "<tr>";
-        // title is a link to the book details page
-        echo "<td><a href='bookdetails.php?id=" . htmlspecialchars($row['id']) . "'>" . htmlspecialchars($row['title']) . "</a></td>";
-        echo "<td>" . htmlspecialchars($row['author']) . "</td>";
-        // price is divided by 100 to avoid floating point arithmetic
-        echo "<td>" . $row['price'] / 100 . "€</td>";
-        $quantity = $_SESSION['cart'][$row['id']];
-        $total_price += $row['price'] * $quantity;
-        echo "<td>" . $quantity . "</td>";
-        echo "<td><button name='id' formaction='addtocart.php' value=". htmlspecialchars($row['id']) .">Add</button></td>";
-        echo "<td><button name='id' formaction='removefromcart.php' value=". htmlspecialchars($row['id']) .">Remove</button></td>";
+        $db = new DBConnection();
+        // get the book list from the db
+        // loop through the book list
+        $total_price = 0;
+        foreach ($_SESSION['cart'] as $bookid => $quantity){
+            $db->stmt = $db->conn->prepare("SELECT * FROM books WHERE id = ?");
+            $db->stmt->bind_param("i", $bookid);
+            $db->stmt->execute();
+            $result = mysqli_stmt_get_result($db->stmt);
+            $row = mysqli_fetch_array($result) ?? null;
+            if($row == null) { // book not found
+                continue;
+            }
+            echo "<tr>";
+            // title is a link to the book details page
+            echo "<td><a href='bookdetails.php?id=" . htmlspecialchars($row['id']) . "'>" . htmlspecialchars($row['title']) . "</a></td>";
+            echo "<td>" . htmlspecialchars($row['author']) . "</td>";
+            // price is divided by 100 to avoid floating point arithmetic
+            echo "<td>" . $row['price'] / 100 . "€</td>";
+            $quantity = $_SESSION['cart'][$row['id']];
+            $total_price += $row['price'] * $quantity;
+            echo "<td>" . $quantity . "</td>";
+            echo "<td><button name='id' formaction='addtocart.php' value=". htmlspecialchars($row['id']) .">Add</button></td>";
+            echo "<td><button name='id' formaction='removefromcart.php' value=". htmlspecialchars($row['id']) .">Remove</button></td>";
 
-        echo "</tr>";
+            echo "</tr>";
+        }
+    } catch (mysqli_sql_exception $e) {
+        performLog("Error", "Failed to get book list from DB", array("error" => $e->getCode(), "message" => $e->getMessage()));
+        session_unset();
+        session_destroy();
+        header('Location: 404.html');
     }
     echo "</table>";
     echo "</form>";
