@@ -1,8 +1,8 @@
 <?php
     require_once 'utils/dbUtils.php';
     session_start_or_expire();
-    $bookid = $_REQUEST['id'] ?? "";
-    echo "book id: " . htmlspecialchars($bookid) . " removed from cart (WIP)";
+    $bookid = $_POST['id'] ?? "";
+    #echo "book id: " . htmlspecialchars($bookid) . " removed from cart (WIP)";
     if (!isset($_SESSION['cart'])){
         $_SESSION['cart'] = array();
     }

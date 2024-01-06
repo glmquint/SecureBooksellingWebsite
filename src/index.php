@@ -7,6 +7,7 @@ session_start_or_expire();
 <head>
     <title>Secure Book selling website</title>
     <link rel="stylesheet" href="https://cdn.simplecss.org/simple.min.css">
+    <script src="utils/submitForm.js"></script>
 </head>
 <body>
     <h1>Secure Book selling website</h1>
@@ -24,6 +25,7 @@ session_start_or_expire();
     <?php endif ?>
     <p>Go to your <a href="cart.php">cart</a></p>
     <h2>Book list</h2>
+    <form name='addToCart' method='post' action='addtocart.php'>
     <table>
         <tr>
             <th>Book name</th>
@@ -48,10 +50,11 @@ session_start_or_expire();
             // availables
             echo "<td>" . $row['available'] . "</td>";
             // button to add the book to the cart
-            echo "<td><a href='addtocart.php?id=" . $row['id'] . "'>Buy</a></td>";
+            echo "<td><button name='add' onclick='submitForm(this.value,this.name);' formaction='addtocart.php' value=". $row['id'] .">Buy</button></td>";
             echo "</tr>";
         }
+
         ?>
     </table>
-
+    </form>
 </body>

@@ -1,7 +1,7 @@
 <?php
     require_once 'utils/dbUtils.php';
     session_start_or_expire();
-    $bookid = $_REQUEST['id'] ?? "";
+    $bookid = $_POST['id'] ?? "";
     // echo "book id: " . $bookid . " added to cart (WIP)";
     if (!isset($_SESSION['cart']) || !is_array($_SESSION['cart'])){
         $_SESSION['cart'] = array();
