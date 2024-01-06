@@ -7,7 +7,6 @@ session_start_or_expire();
 <head>
     <title>Secure Book selling website</title>
     <link rel="stylesheet" href="https://cdn.simplecss.org/simple.min.css">
-    <script src="utils/submitForm.js"></script>
 </head>
 <body>
     <h1>Secure Book selling website</h1>
@@ -50,7 +49,7 @@ session_start_or_expire();
             // availables
             echo "<td>" . $row['available'] . "</td>";
             // button to add the book to the cart
-            echo "<td><button name='add' onclick='submitForm(this.value,this.name);' formaction='addtocart.php' value=". $row['id'] .">Buy</button></td>";
+            echo "<td><button name='id' formaction='addtocart.php' value=". $row['id'] .">Buy</button></td>";
             echo "</tr>";
         }
 
