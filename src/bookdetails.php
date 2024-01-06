@@ -7,6 +7,7 @@
     <body>
     <?php
     require_once 'utils/dbUtils.php';
+    session_start_or_expire();
     // Purpose: Displays the details of a book
     // given the id passed as a GET parameter, the page shows the information about the book,
     // like the title, the author, the synopsis and the price
@@ -29,6 +30,7 @@
  ?>
  </body>
     <h1><?php echo htmlspecialchars($booktitle) ?></h1>
+    <a href="index.php">Back to Home</a>
     <table>
         <tr>
             <th>Author</th>
@@ -42,9 +44,22 @@
         </tr>
     </table>
     <form method="post" action="addtocart.php">
+        <input type="hidden" name="csrf_token" value="<?php echo $_SESSION['csrf_token'] ?>" readonly="readonly" >
         <input type="hidden" name="id" value="<?php echo htmlspecialchars($bookid) ?>" readonly="readonly" >
         <button type="submit">Add to cart</button>
     </form>
+    <?php
+        if (isset($_SESSION['email'])) {
+            $user_id = getUserID($_SESSION['email']);
+            $db->stmt = $db->conn->prepare("SELECT * FROM purchases WHERE buyer = ? AND book = ?");
+            $db->stmt->bind_param("ii", $user_id, $bookid);
+            $db->stmt->execute();
+            $result = mysqli_stmt_get_result($db->stmt);
+            if ($db->stmt->affected_rows>0) {
+                echo "This item is in your bookshelf! <a href='download.php?id=" . htmlspecialchars($bookid) . "'>Download</a> the ebook version";
+            }
+        }
+    ?>
     <p>
         <?php
             echo htmlspecialchars($booksynopsis);

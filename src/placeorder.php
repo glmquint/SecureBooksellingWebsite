@@ -21,16 +21,16 @@ if (!isset($_SESSION['email'])) {
     $_SESSION['errorMsg'] = 'something went wrong with your request';
     header('Location: login.php');
     exit();
-} elseif (!isset($_SESSION['cart'])) {
+} elseif (!isset($_SESSION['cart']) || !isset($_SESSION['order']) || !isset($_SESSION['payment']) || !isset($_SESSION['delivery'])) {
     $_SESSION['errorMsg'] = 'something went wrong with your request';
     header('Location: index.php');
     exit();
-} elseif (!isset($_SESSION['order'])) {
-    $_SESSION['errorMsg'] = 'something went wrong with your request';
-    header('Location: index.php');
-    exit();
-}
-else {
+} else {
+    if (!isset($_POST['csrf_token']) || $_POST['csrf_token'] != $_SESSION['csrf_token']) {
+        $_SESSION['errorMsg'] = "CSRF token mismatch";
+        header('Location: index.php');
+        exit();
+    }
     $db = new DBConnection();
     if (!paymentSuccessful($_SESSION['order'], $_SESSION['payment'])) {
         echo "<h3>Payment failed</h3>";

@@ -5,6 +5,11 @@ session_start_or_expire();
 
 
 if (isset($_POST['OldPassword']) && isset($_POST['NewPassword'])&& isset($_SESSION['email'])) {
+    if (!isset($_POST['csrf_token']) || $_POST['csrf_token'] != $_SESSION['csrf_token']) {
+        $_SESSION['errorMsg'] = "CSRF token mismatch";
+        header('Location: index.php');
+        exit();
+    }
     // Get username and password from the form submitted by the user
     $email = $_SESSION['email'];
     $OldPassword = $_POST['OldPassword'] ?? '';
@@ -50,9 +55,10 @@ if (isset($_POST['OldPassword']) && isset($_POST['NewPassword'])&& isset($_SESSI
     <?php include 'utils/messages.php' ?>
 
     <!-- show a form to login -->
-    <a href="index.php">Back to Home</a>
     <h1>Change Password</h1>
+    <a href="index.php">Back to Home</a>
     <form method="post" action="changepassword.php">
+        <input type="hidden" name="csrf_token" value="<?php echo $_SESSION['csrf_token'] ?>" readonly="readonly" >
         <div class="input-group">
             <label>Old password</label>
             <label>

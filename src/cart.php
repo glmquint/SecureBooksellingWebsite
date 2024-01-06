@@ -3,7 +3,6 @@
 <head>
     <title>Secure Book selling website</title>
     <link rel="stylesheet" href="https://cdn.simplecss.org/simple.min.css">
-    <script src="utils/submitForm.js"></script>
 </head>
 <body>
 <h1>Cart</h1>
@@ -11,9 +10,11 @@
 <?php
 require_once 'utils/dbUtils.php';
 session_start_or_expire();
-// print the cart contents in a table
+include 'utils/messages.php';
 
+// print the cart contents in a table
 if (isset($_SESSION['cart'])) {
+    echo "<input type='hidden' name='csrf_token' value='" . $_SESSION['csrf_token'] . "' readonly='readonly' >";
     echo "<form name='form' method='post'>";
     echo "<table>";
     echo "<tr>";
@@ -45,8 +46,8 @@ if (isset($_SESSION['cart'])) {
         $quantity = $_SESSION['cart'][$row['id']];
         $total_price += $row['price'] * $quantity;
         echo "<td>" . $quantity . "</td>";
-        echo "<td><button name='add' onclick='submitForm(this.value, this.name);' formaction='addtocart.php' value=". htmlspecialchars($row['id']) .">Add</button></td>";
-        echo "<td><button name='remove' onclick='submitForm(this.value, this.name);' formaction='removefromcart.php' value=". htmlspecialchars($row['id']) .">Remove</button></td>";
+        echo "<td><button name='id' formaction='addtocart.php' value=". htmlspecialchars($row['id']) .">Add</button></td>";
+        echo "<td><button name='id' formaction='removefromcart.php' value=". htmlspecialchars($row['id']) .">Remove</button></td>";
 
         echo "</tr>";
     }
