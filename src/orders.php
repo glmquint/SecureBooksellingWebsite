@@ -11,7 +11,7 @@
 require_once 'utils/dbUtils.php';
 session_start_or_expire();
 
-if (!isset($_SESSION['email'])) {
+if (!isset($_SESSION['email']) || !is_string($_SESSION['email'])) {
     $_SESSION['errorMsg'] = 'something went wrong with your request';
     header('Location: login.php');
     exit();
@@ -29,6 +29,11 @@ else {
     $db = new DBConnection();
 
     $user_id = getUserID($_SESSION['email']);
+    if(!$user_id) {
+        $_SESSION['errorMsg'] = 'something went wrong with your request';
+        header('Location: login.php');
+        exit();
+    }
     $db->stmt = $db->conn->prepare("SELECT id,cart,address,total_price,status FROM orders WHERE user = ?");
     $db->stmt->bind_param("i", $user_id);
     $db->stmt->execute();

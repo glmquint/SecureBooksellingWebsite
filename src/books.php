@@ -12,7 +12,7 @@ require_once 'utils/dbUtils.php';
 session_start_or_expire();
 include 'utils/messages.php';
 
-if (!isset($_SESSION['email'])) {
+if (!isset($_SESSION['email']) || !is_string($_SESSION['email'])) {
     header('Location: login.php?redirect=books.php');
     exit();
 }

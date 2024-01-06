@@ -53,6 +53,10 @@ class DBConnection {
 
 function registerUser($mail, $user_input_password): array
 {
+    if (!is_string($mail) || !is_string($user_input_password)) {
+        performLog("Error", "Invalid type of email, not a string", array("mail" => $mail));
+        return [];
+    }
     $userArray = getUser($mail);
     if(count($userArray) > 0){
         return array("id" => $userArray['id'], "active" => $userArray['active'], "exists" => true);
@@ -77,8 +81,11 @@ function registerUser($mail, $user_input_password): array
 
 function verifyLogin($email, $password): int
 {
-// Retrieve the hashed password from the database based on the username
-// Replace the following lines with your database connection and query
+    if(!is_string($email) || !is_string($password)) {
+        performLog("Error", "Invalid type of email or password, not a string", array("mail" => $email));
+        return 0;
+    }
+
     $db = new DBConnection();
 
     $db->stmt = $db->conn->prepare("SELECT password, active FROM users WHERE email=? 
@@ -113,6 +120,10 @@ function verifyLogin($email, $password): int
 
 function changePassword($email, $newPassword): bool
 {
+    if(!is_string($email) || !is_string($newPassword)) {
+        performLog("Error", "Invalid type of email or password, not a string", array("mail" => $email));
+        return false;
+    }
     // Store the hashed password in the database
     $hashed_password = password_hash($newPassword, PASSWORD_BCRYPT);
     $db = new DBConnection();
@@ -127,6 +138,10 @@ function changePassword($email, $newPassword): bool
 
 function changePasswordById($userId, $newPassword): bool
 {
+    if (!is_string($newPassword)) {
+        performLog("Error", "Invalid type of password (not a string)", array("id" => $userId));
+        return false;
+    }
     // Store the hashed password in the database
     $hashed_password = password_hash($newPassword, PASSWORD_BCRYPT);
     $db = new DBConnection();
@@ -141,6 +156,10 @@ function changePasswordById($userId, $newPassword): bool
 // create a function to check if a user exists in the database
 function getUser($email): array
 {
+    if (!is_string($email)) {
+        performLog("Error", "Invalid type email, not a string", array("mail" => $email));
+        return [];
+    }
     $db = new DBConnection();
 
     $db->stmt = $db->conn->prepare("SELECT * FROM users WHERE email=? ");
@@ -193,6 +212,10 @@ function saveToken($token, $userId, $time): bool
 //create a function to check if a token exists in the database
 function getUidFromToken($token): int
 {
+    if(!$token || !is_string($token)) {
+        performLog("Error", "Invalid type of token", array("token" => $token));
+        return 0;
+    }
     date_default_timezone_set('Europe/Rome');
     //get the current date and time
     $currentDate = date('Y-m-d H:i:s');
@@ -225,6 +248,10 @@ function getUidFromToken($token): int
 // delete a token from the database
 function deleteToken($token): bool
 {
+    if(!$token || !is_string($token)) {
+        performLog("Error", "Invalid type of token", array("token" => $token));
+        return false;
+    }
     $db = new DBConnection();
 
     //create a prepare statement to delete the current token from the database
@@ -254,6 +281,10 @@ function activateAccount($userId): bool
 
 function getUserID($email): int
 {
+    if(!is_string($email)) {
+        performLog("Error", "Invalid type of email, not a string", array("mail" => $email));
+        return 0;
+    }
     $db = new DBConnection();
     $db->stmt = $db->conn->prepare("SELECT id FROM users WHERE email=?");
 

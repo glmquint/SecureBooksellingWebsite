@@ -17,15 +17,15 @@ require_once 'utils/dbUtils.php';
 require_once 'utils/Logger.php';
 session_start_or_expire();
 
-if (!isset($_SESSION['email'])) {
+if (!isset($_SESSION['email']) || !is_string($_SESSION['email'])) {
     $_SESSION['errorMsg'] = 'something went wrong with your request';
     header('Location: login.php');
     exit();
-} elseif (!isset($_SESSION['cart'])) {
+} elseif (!isset($_SESSION['cart']) || !is_array($_SESSION['cart'])) {
     $_SESSION['errorMsg'] = 'something went wrong with your request';
     header('Location: index.php');
     exit();
-} elseif (!isset($_SESSION['order'])) {
+} elseif (!isset($_SESSION['order']) || !is_array($_SESSION['order'])) {
     $_SESSION['errorMsg'] = 'something went wrong with your request';
     header('Location: index.php');
     exit();
@@ -38,7 +38,7 @@ else {
         exit();
     }
 
-    // TODO: check the insret ignore
+    // TODO: check the insert ignore
     // we want to insert the purchase only if it is not already present
     // but currently all purchases by a user that already has a book, get discarded
     $db->stmt = $db->conn->prepare("INSERT INTO purchases (buyer, book) VALUES (?, ?) ON DUPLICATE KEY UPDATE buyer = buyer");
@@ -51,7 +51,8 @@ else {
 
 
     $db->stmt = $db->conn->prepare("INSERT INTO carts (id,book, quantity) VALUES (?, ?, ?)");
-
+    // this random number is not critical if it's leaked, to see the content of the cart you need to be logged in
+    // as the user that ordered it. Access auth should be secure by now.
     $cart_id = random_int(100000, 999999);
 
     $db->stmt->bind_param("iii", $cart_id, $bookid, $quantity);
@@ -59,7 +60,14 @@ else {
     foreach ($_SESSION['cart'] as $bookid => $quantity) {
         $db->stmt->execute();
     }
-
+    if(!is_string($_SESSION['delivery']['address'])||!is_int($_SESSION['order']['total_price'])||!is_string($_SESSION['order']['status'])){
+        performLog("Error", "Wrong type in order field", array("email" => $_SESSION['email'],
+                    "orderid" => $_SESSION['order']['orderid'], "address"=>$_SESSION['delivery']['address'],
+                    "total_price"=>$_SESSION['order']['total_price'], "status"=>$_SESSION['order']['status']));
+        $_SESSION['errorMsg'] = 'something went wrong with your order request';
+        header('Location: index.php');
+        exit();
+    }
     $db->stmt = $db->conn->prepare("INSERT INTO orders (id, user, cart, address, total_price, status) VALUES (?, ?, ?, ?, ?, ?)");
 
     $db->stmt->bind_param("iiisis", $_SESSION['order']['orderid'], $userid, $cart_id, $_SESSION['delivery']['address'], $_SESSION['order']['total_price'], $_SESSION['order']['status']);

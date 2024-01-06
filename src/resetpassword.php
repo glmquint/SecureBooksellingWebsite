@@ -13,6 +13,12 @@ if(str_contains($_SERVER['SERVER_NAME'], "PhpStorm")){
 }
 
 if(isset($_POST['email'])){
+    if (!is_string($_POST['email'])) {
+        performLog("Error", "Invalid email (resetpassword), not a string", array("mail" => $_POST['email']));
+        $_SESSION['message'] = "Something went wrong with your request";
+        header("Location: resetpassword.php");
+        exit();
+    }
     $token = random_bytes(16);
     $email = $_POST['email'];
     $userArray = getUser($email);

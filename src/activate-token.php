@@ -3,6 +3,12 @@ require_once 'utils/dbUtils.php';
 session_start();
 if (isset($_GET['token'])) {
     $token = hex2bin($_GET['token']);
+    if(!$token || !is_string($token)){
+        performLog("Error", "Invalid token", array("token" => $_GET['token']));
+        $_SESSION['errorMsg'] = "Something went wrong with your request!";
+        header("Location: activate-token.php");
+        exit();
+    }
     $userid = getUidFromToken($token);
     if($userid){
         if(deleteToken($token)) {

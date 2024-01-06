@@ -32,11 +32,11 @@ function any($iterable) {
     }, false);
 }
 
-if (!isset($_SESSION['email'])) {
+if (!isset($_SESSION['email']) || !is_string($_SESSION['password'])) {
     performLog("Info", "User not logged in while in checkout", array());
     header('Location: login.php?redirect=checkout.php');
     exit();
-} elseif (!isset($_SESSION['cart'])) {
+} elseif (!isset($_SESSION['cart']) || !is_array($_SESSION['cart'])) {
     performLog("Info", "Cart not set while in checkout", array());
     $_SESSION['errorMsg'] = 'something went wrong with your request, check your cart';
     header('Location: index.php');

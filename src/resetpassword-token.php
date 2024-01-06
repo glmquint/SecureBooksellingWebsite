@@ -2,7 +2,7 @@
     require_once 'utils/dbUtils.php';
     session_start_or_expire();
     require_once 'utils/Logger.php';
-    if (!isset($_REQUEST['token']) || $_REQUEST['token'] == "") {
+    if (!isset($_REQUEST['token']) || $_REQUEST['token'] === "") {
         performLog("Warning", "Token not set", array());
         // If 'token' is not set, return a 404 error
         $_SESSION['errorMsg'] = "Something went wrong with your request! Try to reset your password again.";
@@ -11,10 +11,25 @@
     }
 
     if(isset($_POST["newPassword"]) && isset($_POST["newPasswordRetype"]) && isset($_POST["token"])){
+        if (!is_string($_POST['newPassword'])|| !is_string($_POST['newPasswordRetype'])) {
+            //Don't log the password and token
+            performLog("Error", "Invalid email or password, not a string", array("token" => "token"));
+            $_SESSION['errorMsg'] = "Something went wrong with your request";
+            header("Location: index.php");
+            exit();
+        }
         $newPassword = $_POST["newPassword"];
         $newPasswordRetype = $_POST["newPasswordRetype"];
         $token = hex2bin($_POST["token"]);
-        if($newPassword == $newPasswordRetype && $newPassword != "" && $newPasswordRetype != "") {
+
+        //hex2bin returns false if the input is not a valid hex string
+        if(!$token || !is_string($token)){
+            performLog("Error", "Invalid token, cannot convert", array("token" => $_POST["token"]));
+            $_SESSION['errorMsg'] = "Something went wrong with your request! Try to reset your password again.";
+            header('Location: index.php');
+            exit();
+        }
+        if($newPassword === $newPasswordRetype && $newPassword != "" && $newPasswordRetype != "") {
             $userid = getUidFromToken($token);
             if ($userid) {
                 if (deleteToken($token)) {

@@ -11,7 +11,12 @@ if(str_contains($_SERVER['SERVER_NAME'], "PhpStorm")){
 }
 
 if (isset($_POST['email']) || isset($_POST['password'])) {
-
+    if (!is_string($_POST['email'])|| !is_string($_POST['password'])) {
+        performLog("Error", "Invalid email or password, not a string", array("mail" => $_POST['email']));
+        $_SESSION['message'] = "Something went wrong with your request, please try again later with different email or password";
+        header("Location: register.php");
+        exit();
+    }
     // User's inputted password
     $user_input_password = $_POST['password'];
     $userArray=registerUser($_POST['email'], $user_input_password);

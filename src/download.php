@@ -1,12 +1,13 @@
 <?php
 require_once 'utils/dbUtils.php';
 session_start_or_expire();
-if (!isset($_SESSION['email'])) {
+if (!isset($_SESSION['email']) || !is_string($_SESSION['email'])) {
     header('Location: login.php');
     exit();
 }
-if (!isset($_GET['id'])) {
+if (!isset($_GET['id']) || !is_numeric($_GET['id']) || strpos($_GET['id'], '.') !== false || strpos($_GET['id'], 'e') !== false) {
     $_SESSION['errorMsg'] = 'something went wrong with your request, please try again';
+    performLog("Error", "Error while retrieving a book", ["book_id" => $_GET['id'], "email" => $_SESSION['email']]);
     header('Location: index.php');
     exit();
 }

@@ -4,11 +4,13 @@ require_once 'utils/dbUtils.php';
 session_start_or_expire();
 
 
-if (isset($_POST['OldPassword']) && isset($_POST['NewPassword'])&& isset($_SESSION['email'])) {
+if (isset($_POST['OldPassword']) && isset($_POST['NewPassword']) && isset($_SESSION['email'])
+    && is_string($_POST['OldPassword']) && is_string($_POST['NewPassword']) && is_string($_SESSION['email'])) {
     // Get username and password from the form submitted by the user
     $email = $_SESSION['email'];
     $OldPassword = $_POST['OldPassword'] ?? '';
     $NewPassword = $_POST['NewPassword'] ?? '';
+    // use == instead of === to avoid type juggling
     if($OldPassword == '' || $NewPassword == ''){
         performLog("Warning", "Empty password field in change", array("email" => $_SESSION['email']));
         $_SESSION["errorMsg"] = "Empty password field";

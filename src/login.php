@@ -34,6 +34,12 @@ if (isset($_COOKIE['rememberme']) && $_COOKIE['rememberme'] != "") {
     exit();
 }
 if (isset($_POST['email']) || isset($_POST['password'])) {
+    if (!is_string($_POST['email'])|| !is_string($_POST['password'])) {
+        performLog("Error", "Invalid email or password, not a string", array("mail" => $_POST['email']));
+        $_SESSION['errorMsg'] = "Something went wrong with your request, please try again later with different email or password";
+        header("Location: login.php");
+        exit();
+    }
     // Get username and password from the form submitted by the user
     $email = $_POST['email'] ?? '';
     $password = $_POST['password'] ?? '';
@@ -52,7 +58,7 @@ if (isset($_POST['email']) || isset($_POST['password'])) {
             $_SESSION['email'] = htmlspecialchars($email);
             // change session id to prevent session fixation
             session_regenerate_id();
-            if(isset($_POST['remember']) && $_POST['remember'] == "on"){
+            if(isset($_POST['remember']) && $_POST['remember'] === "on"){
                 // encrypt the email and store it in a cookie
                 if (in_array($CIPHER, openssl_get_cipher_methods())) {
                     $ivlen = openssl_cipher_iv_length($CIPHER);
