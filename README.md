@@ -31,7 +31,7 @@
 - [X] impose strong password (zxcvbn php)
   - [X] also on password reset/change
 - [X] add security lock in login 
-- [ ] add remember me in login
+- [X] add remember me in login
 - [X] add event logging
 - [ ] remove user from username in case of failure to register 
 ## Maybe
@@ -39,5 +39,5 @@
 - [ ] add an admin panel to manage books
 
 ## New questions
-- [ ] Email change
+- [X] Email change
 - [X] Rembember me
