@@ -60,7 +60,7 @@ if (isset($_SESSION['cart'])) {
     }
     echo "</table>";
     echo "</form>";
-    echo "<p>Total price: " . $total_price / 100 . "€</p>";
+    echo "<b>Total price: " . $total_price / 100 . "€</b>";
     // button to empty the cart
     echo "<a href='emptycart.php'>Empty cart</a>";
     // button to checkout
