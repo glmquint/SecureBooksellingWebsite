@@ -35,20 +35,12 @@ session_start_or_expire();
             // loop through the book list
             while ($row = mysqli_fetch_array($result)) {
                 echo "{";
-                // title is a link to the book details page
                 echo '"id":' . $row['id'] . ',';
-                echo '"title":"' . $row['title'] . '",';
-                // echo "<td><a href='bookdetails.php?id=" . $row['id'] . "'>" . $row['title'] . "</a></td>";
-                echo '"author":"' . $row['author'] . '",';
-                //echo "<td>" . $row['author'] . "</td>";
+                echo '"title":"' . htmlspecialchars($row['title']) . '",';
+                echo '"author":"' . htmlspecialchars($row['author']) . '",';
                 // price is divided by 100 to avoid floating point arithmetic
                 echo '"price":' . $row['price'] / 100 . ',';
-                //echo "<td>" . $row['price'] / 100 . "€</td>";
-                // availables
                 echo '"available":' . $row['available'];
-                //echo "<td>" . $row['available'] . "</td>";
-                // button to add the book to the cart
-                //echo "<td><button name='id' formaction='addtocart.php' value=". $row['id'] .">Buy</button></td>";
                 echo "},";
             }
 
