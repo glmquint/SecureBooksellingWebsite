@@ -11,14 +11,13 @@ if(str_contains($_SERVER['SERVER_NAME'], "PhpStorm")){
 } else {
     $DOMAIN = $_ENV['DOMAIN'];
 }
-
-if (!isset($_POST['csrf_token']) || $_POST['csrf_token'] != $_SESSION['csrf_token']) {
-    $_SESSION['errorMsg'] = "CSRF token mismatch";
-    header('Location: index.php');
-    exit();
-}
-
 if(isset($_POST['email'])){
+
+    if (!isset($_POST['csrf_token']) || $_POST['csrf_token'] != $_SESSION['csrf_token']) {
+        $_SESSION['errorMsg'] = "CSRF token mismatch";
+        header('Location: index.php');
+        exit();
+    }
     // Check if the email is a string for type juggling
     if (!is_string($_POST['email'])) {
         performLog("Error", "Invalid email (resetpassword), not a string", array("mail" => $_POST['email']));
@@ -99,6 +98,7 @@ if(isset($_POST['email'])){
     <a href="index.php">Back to Home</a>
     <h1>Reset Password</h1>
     <form method="post" action="resetpassword.php">
+        <input type="hidden" name="csrf_token" value="<?php echo $_SESSION['csrf_token'] ?>" readonly="readonly" >
         <label for="email">Email</label>
         <input type="email" name="email" id="email" required="required">
         <div class="input-group">
