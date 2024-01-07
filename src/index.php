@@ -22,7 +22,7 @@ session_start_or_expire();
     <?php if (!isset($_SESSION['email'])): ?>
         <a href="login.php">login</a>
     <?php endif ?>
-    <a href="cart.php">cart</a>
+    <a href="cart.php">Cart</a>
     </nav>
     </header>
     <?php if (isset($_SESSION['email'])): ?>
