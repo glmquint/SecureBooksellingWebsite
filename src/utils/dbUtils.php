@@ -69,23 +69,29 @@ function registerUser($mail, $user_input_password): array
     if(count($userArray) > 0){
         return array("id" => $userArray['id'], "active" => $userArray['active'], "exists" => true);
     }
-
+    try {
     // If not, register the user
-    $db = new DBConnection();
-    if(!$db->conn){
-        die("Connection failed: " . $db->conn->connect_error);
-    }
-    // hash the password
-    $hashed_password = password_hash($user_input_password, PASSWORD_BCRYPT);
-    $stmt = $db->conn->prepare("INSERT INTO users (email, password) VALUES (?, ?)");
-    $stmt->bind_param("ss",$mail, $hashed_password);
-    $stmt->execute();
-    // check if insertion was successful
-    if ($stmt->affected_rows > 0) {
-        $id = getUserID($mail);
-        return array("id" =>$id, "active" => 0,"exists" => false);
-    } else {
-        return [];
+        $db = new DBConnection();
+
+        // hash the password
+        $hashed_password = password_hash($user_input_password, PASSWORD_BCRYPT);
+        $stmt = $db->conn->prepare("INSERT INTO users (email, password) VALUES (?, ?)");
+        $stmt->bind_param("ss",$mail, $hashed_password);
+        $stmt->execute();
+        // check if insertion was successful
+        if ($stmt->affected_rows > 0) {
+            $id = getUserID($mail);
+            return array("id" =>$id, "active" => 0,"exists" => false);
+        } else {
+            return [];
+        }
+    } catch (mysqli_sql_exception $e) {
+        performLog("Error", "Failed to connect to DB in registerUser", array("error" => $e->getCode(), "message" => $e->getMessage()));
+        session_unset();
+        session_destroy();
+        header('Location: 500.html');
+        exit();
+
     }
 
 }
