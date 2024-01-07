@@ -14,8 +14,8 @@ include 'utils/messages.php';
 
 // print the cart contents in a table
 if (isset($_SESSION['cart'])) {
-    echo "<input type='hidden' name='csrf_token' value='" . $_SESSION['csrf_token'] . "' readonly='readonly' >";
     echo "<form name='form' method='post'>";
+    echo "<input type='hidden' name='csrf_token' value='" . $_SESSION['csrf_token'] . "' readonly='readonly' >";
     echo "<table>";
     echo "<tr>";
     echo "<th>Book name</th>";
