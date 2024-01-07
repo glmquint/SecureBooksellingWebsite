@@ -64,7 +64,7 @@
                 $db->stmt->execute();
                 $result = mysqli_stmt_get_result($db->stmt);
                 if ($db->stmt->affected_rows > 0) {
-                    echo "This item is in your bookshelf! <a href='download.php?id=" . htmlspecialchars($bookid) . "'>Download</a> the ebook version";
+                    echo "This item is in your bookshelf! You can <a href='download.php?id=" . htmlspecialchars($bookid) . "'>download</a> the ebook version";
                 }
             }
             catch (mysqli_sql_exception $e) {
