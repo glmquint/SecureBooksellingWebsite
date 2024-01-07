@@ -10,18 +10,26 @@ session_start_or_expire();
 </head>
 <body onload="loadBooks()">
     <h1>Secure Book selling website</h1>
+    <header>
+    <nav>
+    <?php if (isset($_SESSION['email'])): ?>
+        <a href="logout.php">Logout</a>
+        <a href="orders.php">My orders</a>
+        <a href="books.php">My books</a>
+        <a href="changepassword.php">Change password</a>
+    <?php endif ?>
     <!-- if session is not started, show a link to the login page -->
     <?php if (!isset($_SESSION['email'])): ?>
-        <p>To access your account <a href="login.php">login here</a></p>
+        <a href="login.php">login</a>
+    <?php endif ?>
+    <a href="cart.php">cart</a>
+    </nav>
+    </header>
+    <?php if (isset($_SESSION['email'])): ?>
+        <p>You are logged in as <?php echo htmlspecialchars($_SESSION['email']) ?></p>
     <?php endif ?>
     <!-- if session is started, show a link to the logout page -->
-    <?php if (isset($_SESSION['email'])): ?>
-        <p>You are logged in as <?php echo htmlspecialchars($_SESSION['email']) ?> <a href="logout.php">Logout</a></p>
-        <p><a href="orders.php">My orders</a> </p>
-        <p><a href="books.php">My books</a> </p>
-        <p><a href="changepassword.php">Change password</a></p>
-    <?php endif ?>
-    <p>Go to your <a href="cart.php">cart</a></p>
+    <?php include 'utils/messages.php' ?>
     <h2>Book list</h2>
     <script>
         books = [
@@ -102,5 +110,4 @@ session_start_or_expire();
         </tr>
     </table>
     </form>
-    <?php include 'utils/messages.php' ?>
 </body>
