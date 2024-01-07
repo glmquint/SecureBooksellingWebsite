@@ -3,10 +3,11 @@ require_once 'utils/Logger.php';
 require_once 'utils/dbUtils.php';
 session_start_or_expire();
 
-
+// Check if the user is logged in and if the form was submitted
+// Also check if the email and passwords are strings for type juggling
 if (isset($_POST['OldPassword']) && isset($_POST['NewPassword']) && isset($_SESSION['email'])
     && is_string($_POST['OldPassword']) && is_string($_POST['NewPassword']) && is_string($_SESSION['email'])) {
-    // Get username and password from the form submitted by the user
+
     $email = $_SESSION['email'];
     $OldPassword = $_POST['OldPassword'] ?? '';
     $NewPassword = $_POST['NewPassword'] ?? '';
@@ -17,8 +18,8 @@ if (isset($_POST['OldPassword']) && isset($_POST['NewPassword']) && isset($_SESS
     } elseif($OldPassword === $NewPassword){
         performLog("Warning", "Old and new password are the same", array("email" => $_SESSION['email']));
         $_SESSION["errorMsg"] = "Old and new password are the same";
-    } elseif (verifyLogin($email, $OldPassword)) {
-        // Hash the password using bcrypt
+    } elseif (verifyLogin($email, $OldPassword)) { // Use the VerifyLogin function to check if the user has inputted the correct OldPassword
+        // Change the password
         if(changePassword($email, $NewPassword)){
             performLog("Info", "Password changed correctly", array("email" => $email));
             $_SESSION['success'] = "Password changed successfully";
