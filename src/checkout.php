@@ -70,7 +70,7 @@ if (!isset($_SESSION['email'])) {
         performLog("Error", "Failed to connect to DB", array("error" => $e->getCode(), "message" => $e->getMessage()));
         session_unset();
         session_destroy();
-        header('Location: 404.html');
+        header('Location: 500.html');
     }
 
     $_SESSION['order'] = array();
@@ -211,7 +211,7 @@ if (!isset($_SESSION['email'])) {
         performLog("Error", "Failed to connect to DB", array("error" => $e->getCode(), "message" => $e->getMessage()));
         session_unset();
         session_destroy();
-        header('Location: 404.html');
+        header('Location: 500.html');
     }
     echo "<p>Total price: " . $_SESSION['order']['total_price'] / 100 . "€</p>";
     echo "<hr>";

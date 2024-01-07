@@ -8,7 +8,8 @@
         </h3>
     </div>
 <?php elseif (isset($_SESSION['errorMsg'])): ?>
-    <div class="error warning">
+
+    <div style="position: absolute; bottom: 0; right: 0;" class="error warning">
         <h3>
             <?php
             echo htmlspecialchars($_SESSION['errorMsg']);

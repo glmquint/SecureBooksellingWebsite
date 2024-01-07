@@ -117,7 +117,7 @@ function verifyLogin($email, $password): int
         performLog("Error", "Failed to connect to DB", array("error" => $e->getCode(), "message" => $e->getMessage()));
         session_unset();
         session_destroy();
-        header('Location: 404.html');
+        header('Location: 500.html');
         exit();
     }
 
@@ -140,7 +140,7 @@ function changePassword($email, $newPassword): bool
         performLog("Error", "Failed to connect to DB", array("error" => $e->getCode(), "message" => $e->getMessage()));
         session_unset();
         session_destroy();
-        header('Location: 404.html');
+        header('Location: 500.html');
         exit();
     }
 }
@@ -161,7 +161,7 @@ function changePasswordById($userId, $newPassword): bool
         performLog("Error", "Failed to connect to DB", array("error" => $e->getCode(), "message" => $e->getMessage()));
         session_unset();
         session_destroy();
-        header('Location: 404.html');
+        header('Location: 500.html');
         exit();
     }
 }
@@ -187,7 +187,7 @@ function getUser($email): array
         performLog("Error", "Failed to connect to DB", array("error" => $e->getCode(), "message" => $e->getMessage()));
         session_unset();
         session_destroy();
-        header('Location: 404.html');
+        header('Location: 500.html');
         exit();
     }
 }
@@ -207,7 +207,7 @@ function countToken($userId): int
         performLog("Error", "Failed to connect to DB", array("error" => $e->getCode(), "message" => $e->getMessage()));
         session_unset();
         session_destroy();
-        header('Location: 404.html');
+        header('Location: 500.html');
         exit();
     }
 }
@@ -237,7 +237,7 @@ function saveToken($token, $userId, $time): bool
         performLog("Error", "Failed to connect to DB", array("error" => $e->getCode(), "message" => $e->getMessage()));
         session_unset();
         session_destroy();
-        header('Location: 404.html');
+        header('Location: 500.html');
         exit();
     }
 }
@@ -276,7 +276,7 @@ function getUidFromToken($token): int
         performLog("Error", "Failed to connect to DB", array("error" => $e->getCode(), "message" => $e->getMessage()));
         session_unset();
         session_destroy();
-        header('Location: 404.html');
+        header('Location: 500.html');
         exit();
     }
 
@@ -301,7 +301,7 @@ function deleteToken($token): bool
         performLog("Error", "Failed to connect to DB", array("error" => $e->getCode(), "message" => $e->getMessage()));
         session_unset();
         session_destroy();
-        header('Location: 404.html');
+        header('Location: 500.html');
         exit();
     }
 }
@@ -324,7 +324,7 @@ function activateAccount($userId): bool
         performLog("Error", "Failed to connect to DB", array("error" => $e->getCode(), "message" => $e->getMessage(), "userid" => $userId));
         session_unset();
         session_destroy();
-        header('Location: 404.html');
+        header('Location: 500.html');
         exit();
     }
 }
@@ -347,7 +347,7 @@ function getUserID($email): int
             "message" => $e->getMessage()));
         session_unset();
         session_destroy();
-        header('Location: 404.html');
+        header('Location: 500.html');
         exit();
     }
 }

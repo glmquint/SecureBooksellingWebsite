@@ -27,7 +27,7 @@ try {
     performLog("Error", "Failed to connect to DB", array("error" => $e->getCode(), "message" => $e->getMessage()));
     session_unset();
     session_destroy();
-    header('Location: 404.html');
+    header('Location: 500.html');
 }
 performLog("Info", "EBook downloaded", ["book_id" => $_GET['id'], "user_id" => $user_id]);
 header("Content-type: application/pdf");

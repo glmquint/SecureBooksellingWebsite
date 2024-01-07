@@ -31,7 +31,7 @@
         performLog("Error", "Failed to get book list from DB", array("error" => $e->getCode(), "message" => $e->getMessage()));
         session_unset();
         session_destroy();
-        header('Location: 404.html');
+        header('Location: 500.html');
     }
 
  ?>
@@ -71,7 +71,7 @@
                 performLog("Error", "Failed to get book list from DB", array("error" => $e->getCode(), "message" => $e->getMessage()));
                 session_unset();
                 session_destroy();
-                header('Location: 404.html');
+                header('Location: 500.html');
             }
         }
     ?>

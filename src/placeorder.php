@@ -69,7 +69,7 @@ if (!isset($_SESSION['email'])) {
         performLog("Error", "Failed to connect to DB", array("error" => $e->getCode(), "message" => $e->getMessage()));
         session_unset();
         session_destroy();
-        header('Location: 404.html');
+        header('Location: 500.html');
     }
     $db->conn->begin_transaction();
     try {

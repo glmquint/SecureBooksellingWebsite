@@ -10,7 +10,6 @@ session_start_or_expire();
 </head>
 <body>
     <h1>Secure Book selling website</h1>
-    <?php include 'utils/messages.php' ?>
     <!-- if session is not started, show a link to the login page -->
     <?php if (!isset($_SESSION['email'])): ?>
         <p>To access your account <a href="login.php">login here</a></p>
@@ -56,10 +55,11 @@ session_start_or_expire();
         } catch (mysqli_sql_exception $e) {
             performLog("Error", "Failed to get book list from DB", array("error" => $e->getCode(), "message" => $e->getMessage()));
             $_SESSION['errorMsg'] = 'something went wrong with your request';
-            exit();
+            //exit();
         }
 
         ?>
     </table>
     </form>
+    <?php include 'utils/messages.php' ?>
 </body>
