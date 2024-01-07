@@ -28,7 +28,7 @@
         $bookavailable = $row['available'] ?? 0;
         $booksynopsis = $row['synopsis'] ?? 'No info available for unkown book';
     } catch (mysqli_sql_exception $e) {
-        performLog("Error", "Failed to get book list from DB", array("error" => $e->getCode(), "message" => $e->getMessage()));
+        performLog("Error", "Failed to get book list from DB in bookdetails.php", array("error" => $e->getCode(), "message" => $e->getMessage()));
         session_unset();
         session_destroy();
         header('Location: 500.html');
@@ -68,7 +68,7 @@
                 }
             }
             catch (mysqli_sql_exception $e) {
-                performLog("Error", "Failed to get book list from DB", array("error" => $e->getCode(), "message" => $e->getMessage()));
+                performLog("Error", "Failed to get purchesed book list from DB in bookdetails.php", array("error" => $e->getCode(), "message" => $e->getMessage()));
                 session_unset();
                 session_destroy();
                 header('Location: 500.html');

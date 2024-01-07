@@ -64,7 +64,6 @@ if (isset($_POST['email']) || isset($_POST['password'])) {
                 }
             }
             // To Redirect the user to the home page or another secure page
-            //TODO: check if GET['redirect'] is correct, maybe modify it using post request
             if (isset($_REQUEST['redirect'])) {
                 header('Location: ' . $_REQUEST['redirect']);
                 exit();

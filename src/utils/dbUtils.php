@@ -114,7 +114,7 @@ function verifyLogin($email, $password): int
             return 0;
         }
     } catch (mysqli_sql_exception $e) {
-        performLog("Error", "Failed to connect to DB", array("error" => $e->getCode(), "message" => $e->getMessage()));
+        performLog("Error", "Failed to connect to DB in verifyLogin", array("error" => $e->getCode(), "message" => $e->getMessage()));
         session_unset();
         session_destroy();
         header('Location: 500.html');
@@ -137,7 +137,7 @@ function changePassword($email, $newPassword): bool
         // check if insertion was successful
         return ($db->stmt->affected_rows > 0);
     } catch (mysqli_sql_exception $e) {
-        performLog("Error", "Failed to connect to DB", array("error" => $e->getCode(), "message" => $e->getMessage()));
+        performLog("Error", "Failed to connect to DB in changePassword", array("error" => $e->getCode(), "message" => $e->getMessage()));
         session_unset();
         session_destroy();
         header('Location: 500.html');
@@ -158,7 +158,7 @@ function changePasswordById($userId, $newPassword): bool
         // check if insertion was successful
         return ($db->stmt->affected_rows > 0);
     } catch (mysqli_sql_exception $e) {
-        performLog("Error", "Failed to connect to DB", array("error" => $e->getCode(), "message" => $e->getMessage()));
+        performLog("Error", "Failed to connect to DB in changePasswordById", array("error" => $e->getCode(), "message" => $e->getMessage()));
         session_unset();
         session_destroy();
         header('Location: 500.html');
@@ -184,7 +184,7 @@ function getUser($email): array
             return [];
         }
     } catch (mysqli_sql_exception $e) {
-        performLog("Error", "Failed to connect to DB", array("error" => $e->getCode(), "message" => $e->getMessage()));
+        performLog("Error", "Failed to connect to DB in getUser", array("error" => $e->getCode(), "message" => $e->getMessage()));
         session_unset();
         session_destroy();
         header('Location: 500.html');
@@ -204,7 +204,7 @@ function countToken($userId): int
         return $row[0];
     }
     catch (mysqli_sql_exception $e) {
-        performLog("Error", "Failed to connect to DB", array("error" => $e->getCode(), "message" => $e->getMessage()));
+        performLog("Error", "Failed to connect to DB in countToken", array("error" => $e->getCode(), "message" => $e->getMessage()));
         session_unset();
         session_destroy();
         header('Location: 500.html');
@@ -234,7 +234,7 @@ function saveToken($token, $userId, $time): bool
     // check if insertion was successful
     return ($db->stmt->affected_rows > 0);
     } catch (mysqli_sql_exception $e) {
-        performLog("Error", "Failed to connect to DB", array("error" => $e->getCode(), "message" => $e->getMessage()));
+        performLog("Error", "Failed to connect to DB in saveToken", array("error" => $e->getCode(), "message" => $e->getMessage()));
         session_unset();
         session_destroy();
         header('Location: 500.html');
@@ -273,7 +273,7 @@ function getUidFromToken($token): int
         }
     }
     catch (mysqli_sql_exception $e) {
-        performLog("Error", "Failed to connect to DB", array("error" => $e->getCode(), "message" => $e->getMessage()));
+        performLog("Error", "Failed to connect to DB in getUidFromToken", array("error" => $e->getCode(), "message" => $e->getMessage()));
         session_unset();
         session_destroy();
         header('Location: 500.html');
@@ -298,7 +298,7 @@ function deleteToken($token): bool
         // check if insertion was successful
         return ($db->stmt->affected_rows > 0);
     } catch (mysqli_sql_exception $e) {
-        performLog("Error", "Failed to connect to DB", array("error" => $e->getCode(), "message" => $e->getMessage()));
+        performLog("Error", "Failed to connect to DB in deleteToken", array("error" => $e->getCode(), "message" => $e->getMessage()));
         session_unset();
         session_destroy();
         header('Location: 500.html');
@@ -321,7 +321,7 @@ function activateAccount($userId): bool
         return ($stmt->affected_rows > 0);
     }
     catch (mysqli_sql_exception $e) {
-        performLog("Error", "Failed to connect to DB", array("error" => $e->getCode(), "message" => $e->getMessage(), "userid" => $userId));
+        performLog("Error", "Failed to connect to DB in activateAccount", array("error" => $e->getCode(), "message" => $e->getMessage(), "userid" => $userId));
         session_unset();
         session_destroy();
         header('Location: 500.html');
@@ -343,7 +343,7 @@ function getUserID($email): int
 
     return $row['id'];
     } catch (mysqli_sql_exception $e) {
-        performLog("Error", "Failed to connect to DB", array("error" => $e->getCode(),
+        performLog("Error", "Failed to connect to DB in getUserID", array("error" => $e->getCode(),
             "message" => $e->getMessage()));
         session_unset();
         session_destroy();

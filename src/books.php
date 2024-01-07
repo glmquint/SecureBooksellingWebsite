@@ -52,7 +52,7 @@ else {
         }
     }
     catch (mysqli_sql_exception $e) {
-        performLog("Error", "Failed to connect to DB", array("error" => $e->getCode(), "message" => $e->getMessage()));
+        performLog("Error", "Failed to connect to DB in books.php", array("error" => $e->getCode(), "message" => $e->getMessage()));
         session_unset();
         session_destroy();
         header('Location: 500.html');

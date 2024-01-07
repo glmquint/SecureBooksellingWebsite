@@ -53,7 +53,7 @@ if (isset($_SESSION['cart'])) {
             echo "</tr>";
         }
     } catch (mysqli_sql_exception $e) {
-        performLog("Error", "Failed to get book list from DB", array("error" => $e->getCode(), "message" => $e->getMessage()));
+        performLog("Error", "Failed to get book list from DB in cart.php", array("error" => $e->getCode(), "message" => $e->getMessage()));
         session_unset();
         session_destroy();
         header('Location: 500.html');
