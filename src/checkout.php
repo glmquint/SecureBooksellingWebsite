@@ -32,7 +32,7 @@ function any($iterable) {
     }, false);
 }
 
-if (!isset($_SESSION['email']) || !is_string($_SESSION['password'])) {
+if (!isset($_SESSION['email']) || !is_string($_SESSION['email'])) {
     performLog("Info", "User not logged in while in checkout", array());
     header('Location: login.php?redirect=checkout.php');
     exit();
@@ -224,6 +224,7 @@ if (!isset($_SESSION['email']) || !is_string($_SESSION['password'])) {
     try{
         $db = new DBConnection();
         $db->stmt = $db->conn->prepare("SELECT * FROM books WHERE id = ?");
+        $total_price = 0;
         foreach ($_SESSION['cart'] as $bookid => $quantity) {
             $db->stmt->bind_param("i", $bookid);
             $db->stmt->execute();
@@ -238,6 +239,7 @@ if (!isset($_SESSION['email']) || !is_string($_SESSION['password'])) {
             echo "<td>" . htmlspecialchars($row['title']) . "</td>";
             echo "<td>" . $quantity . "</td>";
             echo "</tr>";
+            $total_price += $row['price'] * $quantity;
         }
     } catch (mysqli_sql_exception $e) {
         performLog("Error", "Failed to connect to DB in checkout.php", array("error" => $e->getCode(), "message" => $e->getMessage()));
@@ -245,6 +247,7 @@ if (!isset($_SESSION['email']) || !is_string($_SESSION['password'])) {
         session_destroy();
         header('Location: 500.html');
     }
+    $_SESSION['order']['total_price'] = $total_price;
     echo "</table>";
     echo "<b>Total price: " . $_SESSION['order']['total_price'] / 100 . "€</b>";
     echo "<hr>";
