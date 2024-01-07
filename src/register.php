@@ -1,7 +1,7 @@
 <?php
 require_once 'utils/dbUtils.php';
 require_once 'utils/Logger.php';
-
+// Code used to get the domain to create the link in the email
 $dotenv = Dotenv\Dotenv::createImmutable(__DIR__);
 $dotenv->load();
 if(str_contains($_SERVER['SERVER_NAME'], "PhpStorm")){
@@ -11,27 +11,28 @@ if(str_contains($_SERVER['SERVER_NAME'], "PhpStorm")){
 }
 
 if (isset($_POST['email']) || isset($_POST['password'])) {
+    // Check if the email and password are strings for type juggling
     if (!is_string($_POST['email'])|| !is_string($_POST['password'])) {
         performLog("Error", "Invalid email or password, not a string", array("mail" => $_POST['email']));
         $_SESSION['message'] = "Something went wrong with your request, please try again later with different email or password";
         header("Location: register.php");
         exit();
     }
-    // User's inputted password
-    $user_input_password = $_POST['password'];
-    $userArray=registerUser($_POST['email'], $user_input_password);
+    // Register the user
+    // If [] is returned, something went wrong
+    $userArray=registerUser($_POST['email'], $_POST['password']);
     if(count($userArray) > 0){
+        // Generate a 16 random bytes token
         $token = random_bytes(16);
         $email = $_POST['email'];
         $headers = "From: noreply@localhost.com";
+        // If the user already exists and is active, send a password reset email (limit of active token)
         if($userArray['exists'] && $userArray['active'] && saveToken($token, $userArray['id'], 5)){
             performLog("Warning", "Invalid register", array("mail" => $_POST['email']));
             $subject = "Invalid register attempt";
             $message = "Someone tried to register with your email address. If it was you, click on the link to reset your password\n"
                     . $DOMAIN . "/resetpassword-token.php?token=" . bin2hex($token). "\n"
                     . "If it wasn't you, ignore this email";
-            // Additional headers
-
             // Send email
             $mailSuccess = mail($email, $subject, $message, $headers);
 
@@ -43,12 +44,11 @@ if (isset($_POST['email']) || isset($_POST['password'])) {
                 performLog("Error", "Failed to send email", array("mail" => $_POST['email']));
             }
         }
+        // Otherwise, send an activation email
         else if(saveToken($token,  $userArray['id'], 60)) {
             $subject = "Activation account";
             $message = "This is a activation email. Click on the link to activate your account\n"
                     . $DOMAIN . "/activate-token.php?token=" . bin2hex($token);
-            // Additional headers
-
             // Send email
             $mailSuccess = mail($email, $subject, $message, $headers);
 

@@ -11,6 +11,7 @@
     }
 
     if(isset($_POST["newPassword"]) && isset($_POST["newPasswordRetype"]) && isset($_POST["token"])){
+        // Check if the passwords are strings for type juggling
         if (!is_string($_POST['newPassword'])|| !is_string($_POST['newPasswordRetype'])) {
             //Don't log the password and token
             performLog("Error", "Invalid email or password, not a string", array("token" => "token"));
@@ -20,38 +21,44 @@
         }
         $newPassword = $_POST["newPassword"];
         $newPasswordRetype = $_POST["newPasswordRetype"];
-        $token = hex2bin($_POST["token"]);
 
         //hex2bin returns false if the input is not a valid hex string
-        if(!$token || !is_string($token)){
+        $token = hex2bin($_POST["token"]);
+        if(!$token || !is_string($token)){ // Also check for potential type juggling
             performLog("Error", "Invalid token, cannot convert", array("token" => $_POST["token"]));
             $_SESSION['errorMsg'] = "Something went wrong with your request! Try to reset your password again.";
             header('Location: index.php');
             exit();
         }
+        // Check if the passwords match and are not empty
         if($newPassword === $newPasswordRetype && $newPassword != "" && $newPasswordRetype != "") {
+            // Get the user id from the token, if it exists and is valid it is deleted and the password can be changed
             $userid = getUidFromToken($token);
             if ($userid) {
                 if (deleteToken($token)) {
                     if (changePasswordById($userid, $newPassword)) {
                         $_SESSION['success'] = "Your password was successfully reset";
                         header('Location: login.php');
-                        exit();
                     } else {
-                        performLog("Error", "Failed to reset password", array("userid" => $userid, "token" => $_POST['token']));
-                        $_SESSION['errorMsg'] = "Something went wrong with your request! Try to reset your password again.";
+                        // Can log the token because it is deleted and randomBytes is cryptographically secure
+                        performLog("Error", "Failed to reset password", array("userid" => $userid, "token" => $token));
+                        $_SESSION['errorMsg'] = "Something went wrong with your request! Request a new password reset.";
                         header('Location: index.php');
-                        exit();
 
                     }
+                    exit();
 
                 } else {
-                    performLog("Error", "Failed to delete reset token", array("userid" => $userid, "token" => $_POST['token']));
-                    $_SESSION['errorMsg'] = "Something went wrong with your request! Try to reset your password again.";
+                    // Do not log the token since it is not deleted, but it is in the database
+                    performLog("Error", "Failed to delete reset token", array("userid" => $userid));
+                    $_SESSION['errorMsg'] = "Something went wrong with your request! Request a new password reset.";
                     header('Location: index.php');
                     exit();
                 }
             } else {
+                // Can log the token since it is not a valid one (not in the DB)
+                // If the attacker exfiltrate the log to see the token not present in the DB, good luck finding
+                // a valid one by removing all the token that are not present (16 bytes)
                 performLog("Error", "missing user id in reset token", array("userid" => $userid, "token" => $_POST['token']));
                 $_SESSION['errorMsg'] = "Something went wrong with your request! Try to reset your password again.";
                 header('Location: index.php');

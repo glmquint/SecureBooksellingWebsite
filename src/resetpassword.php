@@ -3,7 +3,7 @@
 require_once 'utils/dbUtils.php';
 require_once 'utils/Logger.php';
 session_start_or_expire();
-
+// Code used to get the domain to create the link in the email
 $dotenv = Dotenv\Dotenv::createImmutable(__DIR__);
 $dotenv->load();
 if(str_contains($_SERVER['SERVER_NAME'], "PhpStorm")){
@@ -13,21 +13,26 @@ if(str_contains($_SERVER['SERVER_NAME'], "PhpStorm")){
 }
 
 if(isset($_POST['email'])){
+    // Check if the email is a string for type juggling
     if (!is_string($_POST['email'])) {
         performLog("Error", "Invalid email (resetpassword), not a string", array("mail" => $_POST['email']));
         $_SESSION['message'] = "Something went wrong with your request";
         header("Location: resetpassword.php");
         exit();
     }
+    // Generate a 16 random bytes token
     $token = random_bytes(16);
     $email = $_POST['email'];
+    // Check if the user exists
     $userArray = getUser($email);
     if(count($userArray) > 0){
+        // If the user exists, check if it is active
+        // If not, we don't send the email
         $userId = $userArray["id"];
         if(!$userArray["active"]){
             performLog("Warning", "Reset password for disabled user", array("email" => $email));
             $_SESSION['message'] = "Your account is disabled. Please activate your account first.";
-        } elseif (saveToken($token, $userId, 5)) { // user is active, we try to save the token and send mail
+        } elseif (saveToken($token, $userId, 5)) { // User is active, we try to save the token and send mail
             $subject = "Reset Email";
             $message = "This is a reset email. Click on the link to reset your password\n"
                 . $DOMAIN . "/resetpassword-token.php?token=" . bin2hex($token);
@@ -46,8 +51,9 @@ if(isset($_POST['email'])){
                 $_SESSION['message'] = "Failed to send email";
             }
 
-        } else { // user is active but cannot save token
+        } else { // user is active but cannot save token (limit of active token or other error)
             performLog("Error", "Failed to save token", array("email" => $email));
+            // This is a fake message to avoid account enumeration
             $_SESSION['message'] = "Password reset link sent to your email";
         }
     } else{ // cannot find user
