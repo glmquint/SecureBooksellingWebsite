@@ -187,11 +187,40 @@ if (!isset($_SESSION['email'])) {
 } else {
     // order summary
     echo "<h1>Order summary</h1>";
-    echo "<p>Order ID: " . $_SESSION['order']['orderid'] . "</p>";
-    echo "<p>Email: " . $_SESSION['order']['email'] . "</p>";
+    echo "<a href='index.php'>Back to Home</a>";
+
+    echo "<h3>Delivery summary</h3>";
+    echo "<table>";
+
+    echo "<tr><td>Order ID: </td><td>" . $_SESSION['order']['orderid'] . "</td></tr>";
+    echo "<tr><td>Email: </td><td>" . $_SESSION['order']['email'] . "</td></tr>";
+    echo "<tr><td>Firstname Lastname: </td><td>" . $_SESSION['delivery']['firstname'] . " " . $_SESSION['delivery']['lastname'] . "</td></tr>";
+    echo "<tr><td>Delivery address:  </td><td>" . $_SESSION['delivery']['address'] . "</td></tr>";
+    echo "<tr><td>Delivery city:  </td><td>" . $_SESSION['delivery']['city']. "</td></tr>";
+    echo "<tr><td>Delivery postalcode:  </td><td>" . $_SESSION['delivery']['postalcode']. "</td></tr>";
+    echo "<tr><td>Delivery country:  </td><td>" . $_SESSION['delivery']['country']. "</td></tr>";
+
+    echo "</table>";
+    echo "<a href='checkout.php?updatedelivery'>Back to delivery</a>";
+
+    echo "<h3>Payment summary</h3>";
+    echo "<table>";
+    $cart_obfuscated = substr_replace(str_repeat('*', strlen($_SESSION['payment']['cardnumber'])), substr($_SESSION['payment']['cardnumber'],-2), -2);
+
+    echo "<tr><td>Payment card number: </td><td>" . $cart_obfuscated. "</td></tr>";
+    echo "<tr><td>Payment card holder: </td><td>" . $_SESSION['payment']['cardholder']. "</td></tr>";
+    echo "<tr><td>Payment card expiration date: </td><td>" . $_SESSION['payment']['expirationdate']. "</td></tr>";
+    echo "</table>";
+    echo "<a href='checkout.php?updatepayment'>Back to payment</a>";
+    // echo "<p>Payment card CVV: " . $_SESSION['payment']['cvv']). "</p>";
     echo "<hr>";
     // TODO: optimize book retrieval, maybe do it before checkout
-    // TODO: also make it prettier
+    echo "<h3>Books summary</h3>";
+    echo "<table>";
+    echo "<tr>";
+    echo "<th>Book name</th>";
+    echo "<th>Quantity</th>";
+    echo "</tr>";
     try{
         $db = new DBConnection();
         $db->stmt = $db->conn->prepare("SELECT * FROM books WHERE id = ?");
@@ -205,7 +234,10 @@ if (!isset($_SESSION['email'])) {
                 header('Location: index.php');
                 exit();
             }
-            echo "<p>" . htmlspecialchars($row['title']) . " x " . $quantity . "</p>";
+            echo "<tr>";
+            echo "<td>" . htmlspecialchars($row['title']) . "</td>";
+            echo "<td>" . $quantity . "</td>";
+            echo "</tr>";
         }
     } catch (mysqli_sql_exception $e) {
         performLog("Error", "Failed to connect to DB in checkout.php", array("error" => $e->getCode(), "message" => $e->getMessage()));
@@ -213,23 +245,13 @@ if (!isset($_SESSION['email'])) {
         session_destroy();
         header('Location: 500.html');
     }
-    echo "<p>Total price: " . $_SESSION['order']['total_price'] / 100 . "€</p>";
+    echo "</table>";
+    echo "<b>Total price: " . $_SESSION['order']['total_price'] / 100 . "€</b>";
     echo "<hr>";
-    echo "<p>Name: " . $_SESSION['delivery']['firstname'] . " " . $_SESSION['delivery']['lastname'] . "</p>";
-    echo "<p>Delivery address: " . $_SESSION['delivery']['address'] . "</p>";
-    echo "<p>Delivery city: " . $_SESSION['delivery']['city']. "</p>";
-    echo "<p>Delivery postalcode: " . $_SESSION['delivery']['postalcode']. "</p>";
-    echo "<p>Delivery country: " . $_SESSION['delivery']['country']. "</p>";
-    echo "<p>Payment card number: " . $_SESSION['payment']['cardnumber']. "</p>"; // TODO: mask card number
-    echo "<p>Payment card holder: " . $_SESSION['payment']['cardholder']. "</p>";
-    echo "<p>Payment card expiration date: " . $_SESSION['payment']['expirationdate']. "</p>";
-    // echo "<p>Payment card CVV: " . $_SESSION['payment']['cvv']). "</p>";
-    echo "<a href='checkout.php?updatepayment'>Back to payment</a>";
     echo "<form method='post' action='placeorder.php'>";
     echo "<input type='hidden' name='csrf_token' value='" . $_SESSION['csrf_token'] . "' readonly='readonly' >";
     echo "<button type='submit'>Continue</button>";
     echo "</form>";
-    echo "<a href='index.php'>Back to Home</a>";
 }
 
 include 'utils/messages.php';
