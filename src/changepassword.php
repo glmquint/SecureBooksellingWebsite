@@ -7,18 +7,23 @@ session_start_or_expire();
 // Also check if the email and passwords are strings for type juggling
 if (isset($_POST['OldPassword']) && isset($_POST['NewPassword']) && isset($_SESSION['email'])
     && is_string($_POST['OldPassword']) && is_string($_POST['NewPassword']) && is_string($_SESSION['email'])) {
-
+    if (!isset($_POST['csrf_token']) || $_POST['csrf_token'] != $_SESSION['csrf_token']) {
+        $_SESSION['errorMsg'] = "CSRF token mismatch";
+        header('Location: index.php');
+        exit();
+    }
+    // Get username and password from the form submitted by the user
     $email = $_SESSION['email'];
     $OldPassword = $_POST['OldPassword'] ?? '';
     $NewPassword = $_POST['NewPassword'] ?? '';
-    // use == instead of === to avoid type juggling
+    // use == instead of === to have type juggling in case of missing or invalid input
     if($OldPassword == '' || $NewPassword == ''){
         performLog("Warning", "Empty password field in change", array("email" => $_SESSION['email']));
         $_SESSION["errorMsg"] = "Empty password field";
     } elseif($OldPassword === $NewPassword){
         performLog("Warning", "Old and new password are the same", array("email" => $_SESSION['email']));
         $_SESSION["errorMsg"] = "Old and new password are the same";
-    } elseif (verifyLogin($email, $OldPassword)) { // Use the VerifyLogin function to check if the user has inputted the correct OldPassword
+    } elseif (verifyLogin($email, $OldPassword)) { // Use the VerifyLogin function to check if the user has input the correct OldPassword
         // Change the password
         if(changePassword($email, $NewPassword)){
             performLog("Info", "Password changed correctly", array("email" => $email));
@@ -53,9 +58,10 @@ if (isset($_POST['OldPassword']) && isset($_POST['NewPassword']) && isset($_SESS
     <?php include 'utils/messages.php' ?>
 
     <!-- show a form to login -->
-    <a href="index.php">Back to Home</a>
     <h1>Change Password</h1>
+    <a href="index.php">Back to Home</a>
     <form method="post" action="changepassword.php">
+        <input type="hidden" name="csrf_token" value="<?php echo $_SESSION['csrf_token'] ?>" readonly="readonly" >
         <div class="input-group">
             <label>Old password</label>
             <label>

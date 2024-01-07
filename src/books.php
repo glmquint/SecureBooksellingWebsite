@@ -23,31 +23,39 @@ else {
     echo "</tr>";
     $cart_id = $_REQUEST['id'] ?? "";
     // connect to the database
-    $db = new DBConnection();
-    $user_id = getUserID($_SESSION['email']);
+    try {
+        $db = new DBConnection();
+        $user_id = getUserID($_SESSION['email']);
 
-    if($cart_id != ""){
-        $db->stmt = $db->conn->prepare("SELECT book,title FROM carts c
+        if ($cart_id != "") {
+            $db->stmt = $db->conn->prepare("SELECT book,title FROM carts c
                                                 INNER JOIN books b ON c.book=b.id
                                                 INNER JOIN orders o ON o.cart=c.id
                                                   WHERE c.id = ? AND o.user = ?");
-        $db->stmt->bind_param("ii", $cart_id, $user_id);
-    } else{
-        $db->stmt = $db->conn->prepare("SELECT book,title FROM purchases p INNER JOIN books b ON p.book=b.id WHERE p.buyer = ?");
-        $db->stmt->bind_param("i", $user_id);
-    }
-
-    $db->stmt->execute();
-    $result = mysqli_stmt_get_result($db->stmt);
-    if ($db->stmt->affected_rows>0) {
-        // Loop through each row
-        while ($row = mysqli_fetch_array($result, MYSQLI_ASSOC)) {
-            // Display each row or perform operations with $row data
-            echo "<tr>";
-            echo "<td><a href='bookdetails.php?id=" . htmlspecialchars($row['book']) . "'>" . htmlspecialchars($row['title']) . "</a></td>";
-            echo "<td><a href='download.php?id=" . htmlspecialchars($row['book']) . "'>Download</a></td>";
-            echo "</tr>";
+            $db->stmt->bind_param("ii", $cart_id, $user_id);
+        } else {
+            $db->stmt = $db->conn->prepare("SELECT book,title FROM purchases p INNER JOIN books b ON p.book=b.id WHERE p.buyer = ?");
+            $db->stmt->bind_param("i", $user_id);
         }
+
+        $db->stmt->execute();
+        $result = mysqli_stmt_get_result($db->stmt);
+        if ($db->stmt->affected_rows > 0) {
+            // Loop through each row
+            while ($row = mysqli_fetch_array($result, MYSQLI_ASSOC)) {
+                // Display each row or perform operations with $row data
+                echo "<tr>";
+                echo "<td><a href='bookdetails.php?id=" . htmlspecialchars($row['book']) . "'>" . htmlspecialchars($row['title']) . "</a></td>";
+                echo "<td><a href='download.php?id=" . htmlspecialchars($row['book']) . "'>Download</a></td>";
+                echo "</tr>";
+            }
+        }
+    }
+    catch (mysqli_sql_exception $e) {
+        performLog("Error", "Failed to connect to DB in books.php", array("error" => $e->getCode(), "message" => $e->getMessage()));
+        session_unset();
+        session_destroy();
+        header('Location: 500.html');
     }
 
 }

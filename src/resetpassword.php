@@ -12,6 +12,12 @@ if(str_contains($_SERVER['SERVER_NAME'], "PhpStorm")){
     $DOMAIN = $_ENV['DOMAIN'];
 }
 
+if (!isset($_POST['csrf_token']) || $_POST['csrf_token'] != $_SESSION['csrf_token']) {
+    $_SESSION['errorMsg'] = "CSRF token mismatch";
+    header('Location: index.php');
+    exit();
+}
+
 if(isset($_POST['email'])){
     // Check if the email is a string for type juggling
     if (!is_string($_POST['email'])) {

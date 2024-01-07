@@ -10,7 +10,6 @@ session_start_or_expire();
 </head>
 <body>
     <h1>Secure Book selling website</h1>
-    <?php include 'utils/messages.php' ?>
     <!-- if session is not started, show a link to the login page -->
     <?php if (!isset($_SESSION['email'])): ?>
         <p>To access your account <a href="login.php">login here</a></p>
@@ -24,6 +23,8 @@ session_start_or_expire();
     <?php endif ?>
     <p>Go to your <a href="cart.php">cart</a></p>
     <h2>Book list</h2>
+    <form name='addToCart' method='post'>
+    <input type='hidden' name='csrf_token' value='<?php echo $_SESSION['csrf_token'] ?>' readonly='readonly' >
     <table>
         <tr>
             <th>Book name</th>
@@ -32,26 +33,33 @@ session_start_or_expire();
             <th>#Avb</th>
         </tr>
         <?php
-        // connect to the database
-        $db = new DBConnection();
+        try {
+            $db = new DBConnection();
 
-        $result = $db->conn->query("SELECT * FROM books");
-        // get the book list from the db
-        // loop through the book list
-        while ($row = mysqli_fetch_array($result)) {
-            echo "<tr>";
-            // title is a link to the book details page
-            echo "<td><a href='bookdetails.php?id=" . $row['id'] . "'>" . $row['title'] . "</a></td>";
-            echo "<td>" . $row['author'] . "</td>";
-            // price is divided by 100 to avoid floating point arithmetic
-            echo "<td>" . $row['price'] / 100 . "€</td>";
-            // availables
-            echo "<td>" . $row['available'] . "</td>";
-            // button to add the book to the cart
-            echo "<td><a href='addtocart.php?id=" . $row['id'] . "'>Buy</a></td>";
-            echo "</tr>";
+            $result = $db->conn->query("SELECT * FROM books");
+            // get the book list from the db
+            // loop through the book list
+            while ($row = mysqli_fetch_array($result)) {
+                echo "<tr>";
+                // title is a link to the book details page
+                echo "<td><a href='bookdetails.php?id=" . $row['id'] . "'>" . $row['title'] . "</a></td>";
+                echo "<td>" . $row['author'] . "</td>";
+                // price is divided by 100 to avoid floating point arithmetic
+                echo "<td>" . $row['price'] / 100 . "€</td>";
+                // availables
+                echo "<td>" . $row['available'] . "</td>";
+                // button to add the book to the cart
+                echo "<td><button name='id' formaction='addtocart.php' value=". $row['id'] .">Buy</button></td>";
+                echo "</tr>";
+            }
+        } catch (mysqli_sql_exception $e) {
+            performLog("Error", "Failed to get book list from DB", array("error" => $e->getCode(), "message" => $e->getMessage()));
+            $_SESSION['errorMsg'] = 'something went wrong with your request';
+            //exit();
         }
+
         ?>
     </table>
-
+    </form>
+    <?php include 'utils/messages.php' ?>
 </body>
