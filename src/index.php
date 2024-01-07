@@ -13,10 +13,10 @@ session_start_or_expire();
     <header>
     <nav>
     <?php if (isset($_SESSION['email'])): ?>
-        <a href="logout.php">Logout</a>
         <a href="orders.php">My orders</a>
         <a href="books.php">My books</a>
         <a href="changepassword.php">Change password</a>
+        <a href="logout.php">Logout</a>
     <?php endif ?>
     <!-- if session is not started, show a link to the login page -->
     <?php if (!isset($_SESSION['email'])): ?>
