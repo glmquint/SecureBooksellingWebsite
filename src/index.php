@@ -20,7 +20,7 @@ session_start_or_expire();
     <?php endif ?>
     <!-- if session is not started, show a link to the login page -->
     <?php if (!isset($_SESSION['email'])): ?>
-        <a href="login.php">login</a>
+        <a href="login.php">Login</a>
     <?php endif ?>
     <a href="cart.php">Cart</a>
     </nav>
