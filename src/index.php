@@ -12,17 +12,15 @@ session_start_or_expire();
     <h1>Secure Book selling website</h1>
     <header>
     <nav>
+    <a href="cart.php">Cart</a>
     <?php if (isset($_SESSION['email'])): ?>
         <a href="orders.php">My orders</a>
         <a href="books.php">My books</a>
         <a href="changepassword.php">Change password</a>
         <a href="logout.php">Logout</a>
-    <?php endif ?>
-    <!-- if session is not started, show a link to the login page -->
-    <?php if (!isset($_SESSION['email'])): ?>
+    <?php else: ?>
         <a href="login.php">Login</a>
     <?php endif ?>
-    <a href="cart.php">Cart</a>
     </nav>
     </header>
     <?php if (isset($_SESSION['email'])): ?>
