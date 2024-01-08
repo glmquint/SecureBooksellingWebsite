@@ -42,6 +42,7 @@
     <a href="index.php">Back to Home</a>
     </nav>
     </header>
+    <img style="display: block; margin-left: auto; margin-right: auto; width: 50%;" src="images/<?php echo htmlspecialchars($bookid) ?>.png" alt="Book cover">
     <table>
         <tr>
             <th>Author</th>
