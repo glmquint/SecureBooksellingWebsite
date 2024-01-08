@@ -101,7 +101,7 @@ if(isset($_POST['email'])){
             <a href="index.php">Back to Home</a>
         </nav>
     </header>
-    <hr>
+    <br>
     <form method="post" action="resetpassword.php">
         <input type="hidden" name="csrf_token" value="<?php echo $_SESSION['csrf_token'] ?>" readonly="readonly" >
         <label for="email">Email</label>

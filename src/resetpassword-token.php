@@ -101,7 +101,7 @@
             </h3>
         </div>
     <?php endif ?>
-<hr>
+<br>
     <form method="post" action="resetpassword-token.php">
         <div class="input-group">
             <label>New password</label>

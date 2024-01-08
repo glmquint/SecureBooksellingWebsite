@@ -106,6 +106,7 @@ if (!isset($_SESSION['email']) || !is_string($_SESSION['email'])) {
     echo "<label for='country'>Country</label>";
     $country = $_SESSION['delivery']['country'] ?? '';
     echo "<input type='text' name='country' id='country' required='required' placeholder='United States' pattern=\"" . $regexes['country'] . "\" value='" . $country . "'>";
+    echo "<br>";
     echo "<button type='submit'>Submit</button>";
     echo "</form>";
 
@@ -155,6 +156,7 @@ if (!isset($_SESSION['email']) || !is_string($_SESSION['email'])) {
     echo "<label for='cvv'>CVV</label>";
     $cvv = $_SESSION['payment']['cvv'] ?? '';
     echo "<input type='text' name='cvv' id='cvv' required='required' placeholder='123' pattern=\"" . $regexes['cvv'] . "\" value='" . $cvv . "'>";
+    echo "<br>";
     echo "<button type='submit'>Submit</button>";
     echo "</form>";
     unset($_SESSION['payment']);
@@ -217,7 +219,7 @@ if (!isset($_SESSION['email']) || !is_string($_SESSION['email'])) {
     echo "</table>";
     echo "<a href='checkout.php?updatepayment'>Back to payment</a>";
     // echo "<p>Payment card CVV: " . $_SESSION['payment']['cvv']). "</p>";
-    echo "<hr>";
+    echo "<br>";
     // TODO: optimize book retrieval, maybe do it before checkout
     echo "<h3>Books summary</h3>";
     echo "<table>";
@@ -254,7 +256,7 @@ if (!isset($_SESSION['email']) || !is_string($_SESSION['email'])) {
     $_SESSION['order']['total_price'] = $total_price;
     echo "</table>";
     echo "<b>Total price: " . $_SESSION['order']['total_price'] / 100 . "€</b>";
-    echo "<hr>";
+    echo "<br>";
     echo "<form method='post' action='placeorder.php'>";
     echo "<input type='hidden' name='csrf_token' value='" . $_SESSION['csrf_token'] . "' readonly='readonly' >";
     echo "<button type='submit'>Continue</button>";

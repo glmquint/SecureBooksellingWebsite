@@ -100,7 +100,7 @@ if (isset($_POST['email']) || isset($_POST['password'])) {
         </nav>
     </header>
     <?php include 'utils/messages.php' ?>
-    <hr>
+    <br>
     <form method="post" action="login.php">
         <label for="email">Email</label>
         <input type="email" name="email" id="email" required="required">

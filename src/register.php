@@ -105,7 +105,7 @@ if (isset($_POST['email']) || isset($_POST['password'])) {
                 <a href="index.php">Back to Home</a>
             </nav>
     </header>
-    <hr>
+    <br>
         <form method="post" action="register.php">
             <label for="email">Email</label>
             <input type="email" name="email" id="email" required="required">
