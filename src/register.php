@@ -34,14 +34,24 @@ if (isset($_POST['email']) || isset($_POST['password'])) {
                     . $DOMAIN . "/resetpassword-token.php?token=" . bin2hex($token). "\n"
                     . "If it wasn't you, ignore this email";
             // Send email
-            $mailSuccess = mail($email, $subject, $message, $headers);
+            try{
+                $mailSuccess = mail($email, $subject, $message, $headers);
 
-            if ($mailSuccess) {
-                $_SESSION['message'] = "Account registered, a confirmation mail was send to your email address";
-                performLog("Info", "Password reset email sent", array("mail" => $_POST['email']));
-            } else {
-                $_SESSION['message'] = "Failed to send email";
-                performLog("Error", "Failed to send email", array("mail" => $_POST['email']));
+                if ($mailSuccess) {
+                    $_SESSION['message'] = "Account registered, a confirmation mail was send to your email address";
+                    performLog("Info", "Password reset email sent", array("mail" => $_POST['email']));
+                } else {
+                    $_SESSION['message'] = "Failed to send email";
+                    performLog("Error", "Failed to send email", array("mail" => $_POST['email']));
+                    throw new Exception("Email not existing");
+                }
+            }
+            catch (Exception $e){
+                performLog("Error", "Failed to send email", array("mail" => $_POST['email'], "error" => $e->getCode(), "message" => $e->getMessage()));
+                session_unset();
+                session_destroy();
+                header('Location: 500.html');
+                exit();
             }
         }
         // Otherwise, send an activation email
@@ -49,21 +59,32 @@ if (isset($_POST['email']) || isset($_POST['password'])) {
             $subject = "Activation account";
             $message = "This is a activation email. Click on the link to activate your account\n"
                     . $DOMAIN . "/activate-token.php?token=" . bin2hex($token);
-            // Send email
-            $mailSuccess = mail($email, $subject, $message, $headers);
 
-            if ($mailSuccess) {
-                $_SESSION['message'] = "Account registered, a confirmation mail was send to your email address";
-                performLog("Info", "New user registered, confirmation mail sent", array("mail" => $_POST['email']));
-            } else {
-                $_SESSION['message'] = "Failed to send email";
-                performLog("Error", "Failed to send email", array("mail" => $_POST['email']));
+            try{
+                // Send email
+                $mailSuccess = mail($email, $subject, $message, $headers);
+
+                if ($mailSuccess) {
+                    $_SESSION['message'] = "Account registered, a confirmation mail was send to your email address";
+                    performLog("Info", "New user registered, confirmation mail sent", array("mail" => $_POST['email']));
+                } else {
+                    $_SESSION['message'] = "Failed to send email";
+                    performLog("Error", "Failed to send email", array("mail" => $_POST['email']));
+                    throw new Exception("Email not existing");
+                }
+            } catch (Exception $e) {
+                performLog("Error", "Failed to send email", array("mail" => $_POST['email'], "error" => $e->getCode(), "message" => $e->getMessage()));
+                session_unset();
+                session_destroy();
+                header('Location: 500.html');
+                exit();
             }
+
         }
         else{
             // This is a fake message to avoid account enumeration (too many register on the same account)
             $_SESSION['message'] = "Account registered, a confirmation mail was send to your email address";
-            performLog("Error", "Failed to generate registration token", array( "mail" => $_POST['email'], "token" => $token));
+            performLog("Error", "Failed to generate registration token", array( "mail" => $_POST['email'], "token" => bin2hex($token)));
         }
 
     }
