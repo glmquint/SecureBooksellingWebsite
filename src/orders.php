@@ -5,8 +5,12 @@
     <link rel="stylesheet" href="https://cdn.simplecss.org/simple.min.css">
 </head>
 <body>
-<h1>My orders</h1>
-<a href="index.php">Back to Home</a>
+<header>
+    <h1>My orders</h1>
+    <nav>
+        <a href="index.php">Back to Home</a>
+    </nav>
+</header>
 <?php
 require_once 'utils/dbUtils.php';
 session_start_or_expire();
@@ -26,31 +30,39 @@ else {
     echo "<th>Status</th>";
     echo "</tr>";
     // connect to the database
-    $db = new DBConnection();
+    try {
+        $db = new DBConnection();
 
-    $user_id = getUserID($_SESSION['email']);
-    if(!$user_id) {
-        $_SESSION['errorMsg'] = 'something went wrong with your request';
-        header('Location: login.php');
-        exit();
-    }
-    $db->stmt = $db->conn->prepare("SELECT id,cart,address,total_price,status FROM orders WHERE user = ?");
-    $db->stmt->bind_param("i", $user_id);
-    $db->stmt->execute();
-    $result = mysqli_stmt_get_result($db->stmt);
-    if (mysqli_num_rows($result) > 0) {
-        // Loop through each row
-        while ($row = mysqli_fetch_array($result, MYSQLI_ASSOC)) {
-            // Display each row or perform operations with $row data
-            echo "<tr>";
-            echo "<td>" . htmlspecialchars($row['id']) . "</td>";
-            echo "<td><a href='books.php?id=" . htmlspecialchars($row['cart']) . "'>Books</a></td>";
-            echo "<td>" . htmlspecialchars($row['address']) . "</td>";
-            // price is divided by 100 to avoid floating point arithmetic
-            echo "<td>" . intval(htmlspecialchars($row['total_price']))/ 100 . "€</td>";
-            echo "<td>" . htmlspecialchars($row['status']) . "</td>";
-            echo "</tr>";
+        $user_id = getUserID($_SESSION['email']);
+        if(!$user_id) {
+            $_SESSION['errorMsg'] = 'something went wrong with your request';
+            header('Location: login.php');
+            exit();
         }
+        $db->stmt = $db->conn->prepare("SELECT id,cart,address,total_price,status FROM orders WHERE user = ?");
+        $db->stmt->bind_param("i", $user_id);
+        $db->stmt->execute();
+        $result = mysqli_stmt_get_result($db->stmt);
+        if (mysqli_num_rows($result) > 0) {
+            // Loop through each row
+            while ($row = mysqli_fetch_array($result, MYSQLI_ASSOC)) {
+                // Display each row or perform operations with $row data
+                echo "<tr>";
+                echo "<td>" . htmlspecialchars($row['id']) . "</td>";
+                echo "<td><a href='books.php?id=" . htmlspecialchars($row['cart']) . "'>Books</a></td>";
+                echo "<td>" . htmlspecialchars($row['address']) . "</td>";
+                // price is divided by 100 to avoid floating point arithmetic
+                echo "<td>" . intval(htmlspecialchars($row['total_price']))/ 100 . "€</td>";
+                echo "<td>" . htmlspecialchars($row['status']) . "</td>";
+                echo "</tr>";
+            }
+        }
+    }
+    catch (mysqli_sql_exception $e) {
+        performLog("Error", "Failed to connect to DB in orders.php", array("error" => $e->getCode(), "message" => $e->getMessage()));
+        session_unset();
+        session_destroy();
+        header('Location: 500.html');
     }
 }
 

@@ -97,7 +97,7 @@ if (isset($_POST['email']) || isset($_POST['password'])) {
 
 ?>
 
-<DOCTYPE html>
+<!DOCTYPE html>
     <html lang="en">
     <head>
         <title>Secure Book selling website</title>
@@ -107,19 +107,26 @@ if (isset($_POST['email']) || isset($_POST['password'])) {
     </head>
     <body>
     <?php if (isset($_SESSION['message'])): ?>
-        <div class="message">
+        <header>
             <h3>
                 <?php
                 echo htmlspecialchars($_SESSION['message']);
                 unset($_SESSION['message']);
                 ?>
             </h3>
-            <a href="index.php">Back to Home</a>
-        </div>
+            <nav>
+                <a href="index.php">Back to Home</a>
+            </nav>
+        </header>
 
     <?php else: ?>
+    <header>
         <h1>Register</h1>
-        <p>Back to <a href="index.php">Home</a></p>
+            <nav>
+                <a href="index.php">Back to Home</a>
+            </nav>
+    </header>
+    <hr>
         <form method="post" action="register.php">
             <label for="email">Email</label>
             <input type="email" name="email" id="email" required="required">

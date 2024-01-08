@@ -93,9 +93,14 @@ if (isset($_POST['email']) || isset($_POST['password'])) {
 </head>
 <body>
     <!-- show a form to login -->
-    <h1>Login</h1>
-    <p>Back to <a href="index.php">Home</a></p>
+    <header>
+        <h1>Login</h1>
+        <nav>
+            <a href="index.php">Back to Home</a>
+        </nav>
+    </header>
     <?php include 'utils/messages.php' ?>
+    <hr>
     <form method="post" action="login.php">
         <label for="email">Email</label>
         <input type="email" name="email" id="email" required="required">

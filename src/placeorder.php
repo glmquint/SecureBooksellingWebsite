@@ -21,59 +21,81 @@ if (!isset($_SESSION['email']) || !is_string($_SESSION['email'])) {
     $_SESSION['errorMsg'] = 'something went wrong with your request';
     header('Location: login.php');
     exit();
-} elseif (!isset($_SESSION['cart']) || !is_array($_SESSION['cart'])) {
+} elseif (!isset($_SESSION['cart']) || !is_array($_SESSION['cart']) || !isset($_SESSION['order']) || !is_array($_SESSION['order']) || !isset($_SESSION['payment']) || !is_array($_SESSION['payment']) || !isset($_SESSION['delivery']) || !is_array($_SESSION['delivery'])) {
     $_SESSION['errorMsg'] = 'something went wrong with your request';
     header('Location: index.php');
     exit();
-} elseif (!isset($_SESSION['order']) || !is_array($_SESSION['order'])) {
-    $_SESSION['errorMsg'] = 'something went wrong with your request';
-    header('Location: index.php');
-    exit();
-}
-else {
-    $db = new DBConnection();
-    if (!paymentSuccessful($_SESSION['order'], $_SESSION['payment'])) {
-        echo "<h3>Payment failed</h3>";
-        echo "<a href='index.php'>Back to home</a>";
-        exit();
-    }
-
-    // TODO: check the insert ignore
-    // we want to insert the purchase only if it is not already present
-    // but currently all purchases by a user that already has a book, get discarded
-    $db->stmt = $db->conn->prepare("INSERT INTO purchases (buyer, book) VALUES (?, ?) ON DUPLICATE KEY UPDATE buyer = buyer");
-    $userid = getUserID($_SESSION['email']);
-    $db->stmt->bind_param("ii", $userid, $bookid); // bookid is defined and used just below.. it just works
-    foreach ($_SESSION['cart'] as $bookid => $quantity) {
-        $db->stmt->execute();
-    }
-
-
-
-    $db->stmt = $db->conn->prepare("INSERT INTO carts (id,book, quantity) VALUES (?, ?, ?)");
-    // this random number is not critical if it's leaked, to see the content of the cart you need to be logged in
-    // as the user that ordered it. Access auth should be secure by now.
-    $cart_id = random_int(100000, 999999);
-
-    $db->stmt->bind_param("iii", $cart_id, $bookid, $quantity);
-
-    foreach ($_SESSION['cart'] as $bookid => $quantity) {
-        $db->stmt->execute();
-    }
-    if(!is_string($_SESSION['delivery']['address'])||!is_int($_SESSION['order']['total_price'])||!is_string($_SESSION['order']['status'])){
-        performLog("Error", "Wrong type in order field", array("email" => $_SESSION['email'],
-                    "orderid" => $_SESSION['order']['orderid'], "address"=>$_SESSION['delivery']['address'],
-                    "total_price"=>$_SESSION['order']['total_price'], "status"=>$_SESSION['order']['status']));
-        $_SESSION['errorMsg'] = 'something went wrong with your order request';
+} else {
+    if (!isset($_POST['csrf_token']) || $_POST['csrf_token'] != $_SESSION['csrf_token']) {
+        $_SESSION['errorMsg'] = "CSRF token mismatch";
         header('Location: index.php');
         exit();
     }
-    $db->stmt = $db->conn->prepare("INSERT INTO orders (id, user, cart, address, total_price, status) VALUES (?, ?, ?, ?, ?, ?)");
+    $cart_id = random_int(100000, 999999);
+    try {
+        $db = new DBConnection();
+        if (!paymentSuccessful($_SESSION['order'], $_SESSION['payment'])) {
+            echo "<h3>Payment failed</h3>";
+            echo "<a href='index.php'>Back to home</a>";
+            exit();
+        }
 
-    $db->stmt->bind_param("iiisis", $_SESSION['order']['orderid'], $userid, $cart_id, $_SESSION['delivery']['address'], $_SESSION['order']['total_price'], $_SESSION['order']['status']);
-    $db->stmt->execute();
+        // TODO: check the insert ignore
+        // we want to insert the purchase only if it is not already present
+        // but currently all purchases by a user that already has a book, get discarded
+        $db->stmt = $db->conn->prepare("INSERT INTO purchases (buyer, book) VALUES (?, ?) ON DUPLICATE KEY UPDATE buyer = buyer");
+        $userid = getUserID($_SESSION['email']);
+        $db->stmt->bind_param("ii", $userid, $bookid); // bookid is defined and used just below.. it just works
+        foreach ($_SESSION['cart'] as $bookid => $quantity) {
+            $db->stmt->execute();
+        }
 
+
+        $db->stmt = $db->conn->prepare("INSERT INTO carts (id,book, quantity) VALUES (?, ?, ?)");
+        // this random number is not critical if it's leaked, to see the content of the cart you need to be logged in
+        // as the user that ordered it. Access auth should be secure by now.
+        $db->stmt->bind_param("iii", $cart_id, $bookid, $quantity);
+        foreach ($_SESSION['cart'] as $bookid => $quantity) {
+            $db->stmt->execute();
+        }
+
+        if(!is_string($_SESSION['delivery']['address'])||!is_int($_SESSION['order']['total_price'])||!is_string($_SESSION['order']['status'])){
+            performLog("Error", "Wrong type in order field", array("email" => $_SESSION['email'],
+                        "orderid" => $_SESSION['order']['orderid'], "address"=>$_SESSION['delivery']['address'],
+                        "total_price"=>$_SESSION['order']['total_price'], "status"=>$_SESSION['order']['status']));
+            $_SESSION['errorMsg'] = 'something went wrong with your order request';
+            header('Location: index.php');
+            exit();
+        }
+        $db->stmt = $db->conn->prepare("INSERT INTO orders (id, user, cart, address, total_price, status) VALUES (?, ?, ?, ?, ?, ?)");
+
+        $db->stmt->bind_param("iiisis", $_SESSION['order']['orderid'], $userid, $cart_id, $_SESSION['delivery']['address'], $_SESSION['order']['total_price'], $_SESSION['order']['status']);
+        $db->stmt->execute();
+    }
+    catch (mysqli_sql_exception $e) {
+        performLog("Error", "Failed to connect to DB in placeorder.php", array("error" => $e->getCode(), "message" => $e->getMessage()));
+        session_unset();
+        session_destroy();
+        header('Location: 500.html');
+    }
     $db->conn->begin_transaction();
+
+    $dotenv = Dotenv\Dotenv::createImmutable(__DIR__);
+    $dotenv->load();
+    if(str_contains($_SERVER['SERVER_NAME'], "PhpStorm")){
+        $DOMAIN = $_ENV['DEV_DOMAIN'];
+    } else {
+        $DOMAIN = $_ENV['DOMAIN'];
+    }
+
+    $subject = "Your order [#" . $_SESSION['order']['orderid'] . "] has been placed";
+    $message = "Thanks for buying our books!\n"
+        . "Total price: " . $_SESSION['order']['total_price'] / 100 . "€\n\n"
+        . "You can see your order here: \n"
+        . $DOMAIN . "/books.php?id=" . $cart_id . "\n";
+
+    // Additional headers
+    $headers = "From: " . $_ENV['NO_REPLY_EMAIL'] . "\r\n";
     try {
         $db->stmt = $db->conn->prepare("UPDATE books SET available = available - ? WHERE id = ?");
         $db->stmt->bind_param("ii", $quantity, $bookid);
@@ -91,18 +113,26 @@ else {
         unset($_SESSION['payment']);
         unset($_SESSION['delivery']);
 
+        echo "<header>";
         echo "<h3>Order placed successfully</h3>";
-        //header('Location: index.php');
+        echo "<nav>";
         echo "<a href='index.php'>Back to home</a>";
+        echo "</nav>";
+        echo "</header>";
+        //header('Location: index.php');
         //exit();
     } catch (mysqli_sql_exception $ex) {
-        echo "Error in placing order";
         $db->conn->rollback();
         // echo out the error
 
         if ($ex->getCode() == 3819){
-            echo "<p>A book that you ordered is currently not available. You can still read the digital version from <a href='books.php'>your books</a>. 
-            We will let you know when your book will get back in stock!</p>";
+            echo "<header>";
+            echo "<h3>Order placed successfully</h3>";
+            echo "<nav>";
+            echo "<a href='index.php'>Back to home</a>";
+            echo "</nav>";
+            echo "</header>";
+            echo "<p>A book that you ordered is currently not available. You can still read the digital version from <a href='books.php?id=" . $cart_id . "'>your books</a>. We will let you know when your book will get back in stock!</p>";
 
             performLog("Warning", "Book not in stock", array("email" => $_SESSION['email'], "orderid" => $_SESSION['order']['orderid']));
 
@@ -112,18 +142,40 @@ else {
             $db->stmt->bind_param("i", $_SESSION['order']['orderid']);
             $db->stmt->execute();
 
+            $message = "Thanks for buying our books!\n"
+                . "Unfortunately, a book that you ordered is currently not available.\n"
+                . "We will let you know when your book will get back in stock!\n"
+                . "Total price: " . $_SESSION['order']['total_price'] / 100 . "€\n\n"
+                . "You can still read the digital version from : \n"
+                . $DOMAIN . "/books.php?id=" . $cart_id . "\n";
 
-            //TODO: handle not available book and generic MySQL error
+            //cannot factor out this unset because we need to keep the cart if an error occured while placing the order (different from the book not in stock error)
             unset($_SESSION['cart']);
             unset($_SESSION['order']);
             unset($_SESSION['payment']);
             unset($_SESSION['delivery']);
             //header('Location: index.php');
-            echo "<a href='index.php'>Back to home</a>";
         }else{
             performLog("Error", "Error while placing order", ["db_msg"=>$ex->getMessage(), "db_error_code"=>$ex->getCode(), "email" => $_SESSION['email'], "orderid" => $_SESSION['order']['orderid']]);
+            echo "<header>";
+            echo "<h3>A problem occured while placing the order</h3>";
+            echo "<nav>";
+            echo "<a href='index.php'>Back to home</a>";
+            echo "</nav>";
+            echo "</header>";
+            echo "<p>Please try again later</p>";
+            exit();
         }
-        exit();
+    }
+    // Send email
+    $mailSuccess = mail($_SESSION['email'], $subject, $message, $headers);
+
+    if ($mailSuccess) {
+        performLog("Info", "Mail order confirmation sent successfully", array("email" => $_SESSION['email']));
+        echo "<p>Order confirmation sent to " . $_SESSION['email'] . "</p>";
+    } else {
+        performLog("Warning", "Failed to send mail order confirmation", array("email" => $_SESSION['email']));
+        echo "<p>Failed to send order confirmation to " . $_SESSION['email'] . "</p>";
     }
 }
 ?>
