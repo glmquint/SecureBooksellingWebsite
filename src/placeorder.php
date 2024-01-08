@@ -174,8 +174,12 @@ if (!isset($_SESSION['email']) || !is_string($_SESSION['email'])) {
         performLog("Info", "Mail order confirmation sent successfully", array("email" => $_SESSION['email']));
         echo "<p>Order confirmation sent to " . $_SESSION['email'] . "</p>";
     } else {
-        performLog("Warning", "Failed to send mail order confirmation", array("email" => $_SESSION['email']));
-        echo "<p>Failed to send order confirmation to " . $_SESSION['email'] . "</p>";
+        $_SESSION['errorMsg'] = "Failed to send order confirmation to " . $_SESSION['email'];
+        performLog("Error", "Failed to send email confirmation", array("email" => $_SESSION['email']));
+        session_unset();
+        session_destroy();
+        header('Location: 500.html');
+        exit();
     }
 }
 ?>

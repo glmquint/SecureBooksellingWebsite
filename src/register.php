@@ -42,6 +42,10 @@ if (isset($_POST['email']) || isset($_POST['password'])) {
             } else {
                 $_SESSION['message'] = "Failed to send email";
                 performLog("Error", "Failed to send email", array("mail" => $_POST['email']));
+                session_unset();
+                session_destroy();
+                header('Location: 500.html');
+                exit();
             }
         }
         // Otherwise, send an activation email
@@ -49,6 +53,7 @@ if (isset($_POST['email']) || isset($_POST['password'])) {
             $subject = "Activation account";
             $message = "This is a activation email. Click on the link to activate your account\n"
                     . $DOMAIN . "/activate-token.php?token=" . bin2hex($token);
+
             // Send email
             $mailSuccess = mail($email, $subject, $message, $headers);
 
@@ -58,12 +63,16 @@ if (isset($_POST['email']) || isset($_POST['password'])) {
             } else {
                 $_SESSION['message'] = "Failed to send email";
                 performLog("Error", "Failed to send email", array("mail" => $_POST['email']));
+                session_unset();
+                session_destroy();
+                header('Location: 500.html');
+                exit();
             }
         }
         else{
             // This is a fake message to avoid account enumeration (too many register on the same account)
             $_SESSION['message'] = "Account registered, a confirmation mail was send to your email address";
-            performLog("Error", "Failed to generate registration token", array( "mail" => $_POST['email'], "token" => $token));
+            performLog("Error", "Failed to generate registration token", array( "mail" => $_POST['email'], "token" => bin2hex($token)));
         }
 
     }

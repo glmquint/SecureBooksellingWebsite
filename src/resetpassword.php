@@ -44,7 +44,6 @@ if(isset($_POST['email'])){
 
             // Additional headers
             $headers = "From: " . $_ENV['NO_REPLY_EMAIL'] . "\r\n";
-
             // Send email
             $mailSuccess = mail($email, $subject, $message, $headers);
 
@@ -52,9 +51,14 @@ if(isset($_POST['email'])){
                 performLog("Info", "Password reset link sent to user", array("email" => $email));
                 $_SESSION['message'] = "Password reset link sent to your email";
             } else {
-                performLog("Warning", "Failed to send email", array("email" => $email));
                 $_SESSION['message'] = "Failed to send email";
+                performLog("Error", "Failed to send email", array("email" => $email));
+                session_unset();
+                session_destroy();
+                header('Location: 500.html');
+                exit();
             }
+
 
         } else { // user is active but cannot save token (limit of active token or other error)
             performLog("Error", "Failed to save token", array("email" => $email));
