@@ -2,15 +2,15 @@
 require_once 'utils/dbUtils.php';
 session_start_or_expire();
 ?>
-<DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <title>Secure Book selling website</title>
     <link rel="stylesheet" href="https://cdn.simplecss.org/simple.min.css">
 </head>
 <body onload="loadBooks()">
-    <h1>Secure Book selling website</h1>
     <header>
+    <h1>Secure Book selling website</h1>
     <nav>
     <a href="cart.php">Cart</a>
     <?php if (isset($_SESSION['email'])): ?>

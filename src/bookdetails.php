@@ -1,4 +1,4 @@
-<DOCTYPE html>
+<!DOCTYPE html>
     <html lang="en">
     <head>
         <title>Secure Book selling website</title>
@@ -36,8 +36,12 @@
 
  ?>
  </body>
+    <header>
     <h1><?php echo htmlspecialchars($booktitle) ?></h1>
+    <nav>
     <a href="index.php">Back to Home</a>
+    </nav>
+    </header>
     <table>
         <tr>
             <th>Author</th>
@@ -64,7 +68,7 @@
                 $db->stmt->execute();
                 $result = mysqli_stmt_get_result($db->stmt);
                 if ($db->stmt->affected_rows > 0) {
-                    echo "This item is in your bookshelf! You can <a href='download.php?id=" . htmlspecialchars($bookid) . "'>download</a> the ebook version";
+                    echo "<p>This item is in your bookshelf! You can <a href='download.php?id=" . htmlspecialchars($bookid) . "'>download</a> the ebook version</p>";
                 }
             }
             catch (mysqli_sql_exception $e) {

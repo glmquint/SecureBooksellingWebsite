@@ -5,8 +5,12 @@
     <link rel="stylesheet" href="https://cdn.simplecss.org/simple.min.css">
 </head>
 <body>
-<h1>My Books</h1>
-<a href="index.php">Back to Home</a>
+<header>
+    <h1>My Books</h1>
+    <nav>
+        <a href="index.php">Back to Home</a>
+    </nav>
+</header>
 <?php
 require_once 'utils/dbUtils.php';
 session_start_or_expire();

@@ -58,8 +58,13 @@ if (isset($_POST['OldPassword']) && isset($_POST['NewPassword']) && isset($_SESS
     <?php include 'utils/messages.php' ?>
 
     <!-- show a form to login -->
+<header>
     <h1>Change Password</h1>
-    <a href="index.php">Back to Home</a>
+    <nav>
+        <a href="index.php">Back to Home</a>
+    </nav>
+</header>
+<hr>
     <form method="post" action="changepassword.php">
         <input type="hidden" name="csrf_token" value="<?php echo $_SESSION['csrf_token'] ?>" readonly="readonly" >
         <div class="input-group">

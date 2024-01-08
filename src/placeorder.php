@@ -113,8 +113,12 @@ if (!isset($_SESSION['email']) || !is_string($_SESSION['email'])) {
         unset($_SESSION['payment']);
         unset($_SESSION['delivery']);
 
+        echo "<header>";
         echo "<h3>Order placed successfully</h3>";
+        echo "<nav>";
         echo "<a href='index.php'>Back to home</a>";
+        echo "</nav>";
+        echo "</header>";
         //header('Location: index.php');
         //exit();
     } catch (mysqli_sql_exception $ex) {
@@ -122,8 +126,12 @@ if (!isset($_SESSION['email']) || !is_string($_SESSION['email'])) {
         // echo out the error
 
         if ($ex->getCode() == 3819){
+            echo "<header>";
             echo "<h3>Order placed successfully</h3>";
+            echo "<nav>";
             echo "<a href='index.php'>Back to home</a>";
+            echo "</nav>";
+            echo "</header>";
             echo "<p>A book that you ordered is currently not available. You can still read the digital version from <a href='books.php?id=" . $cart_id . "'>your books</a>. We will let you know when your book will get back in stock!</p>";
 
             performLog("Warning", "Book not in stock", array("email" => $_SESSION['email'], "orderid" => $_SESSION['order']['orderid']));
@@ -149,9 +157,13 @@ if (!isset($_SESSION['email']) || !is_string($_SESSION['email'])) {
             //header('Location: index.php');
         }else{
             performLog("Error", "Error while placing order", ["db_msg"=>$ex->getMessage(), "db_error_code"=>$ex->getCode(), "email" => $_SESSION['email'], "orderid" => $_SESSION['order']['orderid']]);
+            echo "<header>";
             echo "<h3>A problem occured while placing the order</h3>";
-            echo "<p>Please try again later</p>";
+            echo "<nav>";
             echo "<a href='index.php'>Back to home</a>";
+            echo "</nav>";
+            echo "</header>";
+            echo "<p>Please try again later</p>";
             exit();
         }
     }

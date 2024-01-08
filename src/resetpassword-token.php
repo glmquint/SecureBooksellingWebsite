@@ -85,7 +85,12 @@
 
     <!-- show a form to login -->
 
+<header>
     <h1>Password reset</h1>
+    <nav>
+    <a href="index.php">Back to Home</a>
+    </nav>
+</header>
     <?php if (isset($_SESSION['message'])): ?>
         <div class="error message">
             <h3>
@@ -95,9 +100,8 @@
                 ?>
             </h3>
         </div>
-
     <?php endif ?>
-    <a href="index.php">Back to Home</a>
+<hr>
     <form method="post" action="resetpassword-token.php">
         <div class="input-group">
             <label>New password</label>

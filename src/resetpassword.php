@@ -95,15 +95,18 @@ if(isset($_POST['email'])){
 <?php else: ?>
 
     <!-- show a form to login -->
-    <a href="index.php">Back to Home</a>
-    <h1>Reset Password</h1>
+    <header>
+        <h1>Reset Password</h1>
+        <nav>
+            <a href="index.php">Back to Home</a>
+        </nav>
+    </header>
+    <hr>
     <form method="post" action="resetpassword.php">
         <input type="hidden" name="csrf_token" value="<?php echo $_SESSION['csrf_token'] ?>" readonly="readonly" >
         <label for="email">Email</label>
         <input type="email" name="email" id="email" required="required">
-        <div class="input-group">
-            <button type="submit" name="reset_btn">Reset</button>
-        </div>
+        <button type="submit" name="reset_btn">Reset</button>
     </form>
 
 <?php endif ?>

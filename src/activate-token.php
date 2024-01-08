@@ -57,10 +57,11 @@ else {
     <link rel="stylesheet" href="https://cdn.simplecss.org/simple.min.css">
 </head>
 <body>
-
-<!-- if the user is logged in, show a message -->
-<?php include 'utils/messages.php' ?>
-
-    <a href="index.php">Back to Home</a>
+    <header>
+        <nav>
+            <a href="index.php">Back to Home</a>
+        </nav>
+    </header>
+    <?php include 'utils/messages.php' ?>
 </body>
 <?php

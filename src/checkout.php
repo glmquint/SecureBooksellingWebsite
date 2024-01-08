@@ -85,7 +85,7 @@ if (!isset($_SESSION['email']) || !is_string($_SESSION['email'])) {
     //echo print_r($_SESSION['order']);
 
     // form to input delivery address
-    echo "<h1>Delivery address</h1>";
+    echo "<h1>Shipping information</h1>";
     echo "<form method='post' action='checkout.php'>";
     echo "<input type='hidden' name='csrf_token' value='" . $_SESSION['csrf_token'] . "' readonly='readonly' >";
     echo "<label for='firstname'>First name</label>";
@@ -186,8 +186,12 @@ if (!isset($_SESSION['email']) || !is_string($_SESSION['email'])) {
     echo "<a href='checkout.php?updatedelivery'>Back to delivery</a>";
 } else {
     // order summary
+    echo "<header>";
     echo "<h1>Order summary</h1>";
+    echo "<nav>";
     echo "<a href='index.php'>Back to Home</a>";
+    echo "</nav>";
+    echo "</header>";
 
     echo "<h3>Delivery summary</h3>";
     echo "<table>";
