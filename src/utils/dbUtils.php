@@ -195,9 +195,8 @@ function getUser($email): array
         if ($db->stmt->affected_rows > 0) {
             $row = mysqli_fetch_array($result);
             return array("id" => $row["id"], "active" => $row["active"]);
-        } else {
-            return [];
         }
+        return [];
     } catch (mysqli_sql_exception $e) {
         performLog("Error", "Failed to connect to DB in getUser", array("error" => $e->getCode(), "message" => $e->getMessage()));
         session_unset();
@@ -206,6 +205,8 @@ function getUser($email): array
         exit();
     }
 }
+
+// count the number of non-expired tokens
 function countToken($userId): int
 {
     try {
@@ -228,23 +229,21 @@ function countToken($userId): int
 function saveToken($token, $userId, $time): bool
 {
     // Check if the there are too many token for a user
+    // This prevents an attacker from filling the database with tokens and spamming the user's email
     if (countToken($userId) >= 3) {
         performLog("Warning", "Too many token request for a user", array("id" => $userId));
         return false;
     }
     date_default_timezone_set('Europe/Rome');
+    // get the current date and time and add the expiration time in minutes
     $ttl = date('Y-m-d H:i:s', strtotime('+' . $time . ' minutes'));
     try {
-        // Store the token in the database
         $db = new DBConnection();
 
-        //create a prepared statemt to insert the token, the user and ttl into the database
         $db->stmt = $db->conn->prepare("INSERT INTO reset_token (token, user_id, expiration_date) VALUES (?, ?, ?)");
-        //bind the parameters where token is an integer, username is a strings and ttl is datetime
         $db->stmt->bind_param("sss", $token, $userId, $ttl);
         mysqli_stmt_execute($db->stmt);
         $result = mysqli_stmt_get_result($db->stmt);
-        // Check if insertion was successful
         return ($db->stmt->affected_rows > 0);
     } catch (mysqli_sql_exception $e) {
         performLog("Error", "Failed to connect to DB in saveToken", array("error" => $e->getCode(), "message" => $e->getMessage()));
@@ -262,14 +261,10 @@ function getUidFromToken($token): int
         performLog("Error", "Invalid type of token", array("token" => $token));
         return 0;
     }
-    // Get the current date and time
-    date_default_timezone_set('Europe/Rome');
-    //get the current date and time
-    $currentDate = date('Y-m-d H:i:s');
     try {
         // Get the token from the database
         $db = new DBConnection();
-        $db->stmt = $db->conn->prepare("SELECT token, expiration_date, user_id FROM reset_token WHERE token=?");
+        $db->stmt = $db->conn->prepare("SELECT token, expiration_date, user_id FROM reset_token WHERE token=? AND expiration_date > NOW()");
         $db->stmt->bind_param("s", $token);
         mysqli_stmt_execute($db->stmt);
         $result = mysqli_stmt_get_result($db->stmt);
@@ -277,16 +272,10 @@ function getUidFromToken($token): int
         if ($db->stmt->affected_rows > 0) {
             $row = mysqli_fetch_array($result);
             // Check if the token is expired
-            if ($row["expiration_date"] > $currentDate) {
-                return $row["user_id"];
-            } else {
-                // Token exists but is expired
-                return 0;
-            }
-        } else {
-            // Token does not exist
-            return 0;
+            return $row["user_id"];
         }
+        // Token does not exist
+        return 0;
     } catch (mysqli_sql_exception $e) {
         performLog("Error", "Failed to connect to DB in getUidFromToken", array("error" => $e->getCode(), "message" => $e->getMessage()));
         session_unset();
@@ -307,8 +296,8 @@ function deleteToken($token): bool
     try {
         $db = new DBConnection();
 
-        //create a prepare statement to delete the current token from the database
-        // also remove all expired tokens to keep the database clean
+        // We use OR to also delete expired tokens
+        // This helps in keeping the database clean
         $db->stmt = $db->conn->prepare("DELETE FROM reset_token WHERE token=? OR expiration_date < NOW()");
         //bind the token parameter
         $db->stmt->bind_param("s", $token);
