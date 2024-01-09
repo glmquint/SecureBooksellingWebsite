@@ -120,8 +120,8 @@ if (!isset($_SESSION['email']) || !is_string($_SESSION['email'])) {
         if (any(array_map(function ($field) use ($regexes) {
             return !preg_match("/" . $regexes[$field] . "/", $_POST[$field]);
         }, $delivery_fields))) {
-            $_SESSION['errorMsg'] = "Invalid delivery address";
-            performLog("Warning", "Invalid delivery address", array("preg_matched" => array_map(function ($field) use ($regexes) {
+            $_SESSION['errorMsg'] = "Invalid delivery information";
+            performLog("Warning", "Invalid delivery information", array("preg_matched" => array_map(function ($field) use ($regexes) {
                 return !preg_match("/" . $regexes[$field] . "/", $_POST[$field]);
             }, $delivery_fields)));
             header('Location: checkout.php');
@@ -169,7 +169,7 @@ if (!isset($_SESSION['email']) || !is_string($_SESSION['email'])) {
             return !preg_match("/" . $regexes[$field] . "/", $_POST[$field]);
         }, $payment_fields))) {
             $_SESSION['errorMsg'] = "Invalid payment information";
-            performLog("Warning", "Invalid payment address", array("preg_matched" => array_map(function ($field) use ($regexes) {
+            performLog("Warning", "Invalid payment information", array("preg_matched" => array_map(function ($field) use ($regexes) {
                 return !preg_match("/" . $regexes[$field] . "/", $_POST[$field]);
             }, $payment_fields)));
             header('Location: checkout.php');
