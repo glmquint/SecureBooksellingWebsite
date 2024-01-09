@@ -57,8 +57,8 @@
                 }
             } else {
                 // Can log the token since it is not a valid one (not in the DB)
-                // If the attacker exfiltrate the log to see the token not present in the DB, good luck finding
-                // a valid one by removing all the token that are not present (16 bytes)
+                // Even if attackers have access to the log, and can infer which tokens are not present in the DB,
+                // they still need to bruteforce ~O(16 bytes) of information
                 performLog("Error", "missing user id in reset token", array("userid" => $userid, "token" => $_POST['token']));
                 $_SESSION['errorMsg'] = "Something went wrong with your request! Try to reset your password again.";
                 header('Location: index.php');
