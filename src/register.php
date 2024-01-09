@@ -42,7 +42,7 @@ if (isset($_POST['email']) || isset($_POST['password'])) {
     if($userId){
         if (!saveToken($token, $userId, 60)){
             // This is a fake message to avoid account enumeration (too many register on the same account)
-            $_SESSION['message'] = "Account registered, a confirmation mail was send to your email address";
+            $_SESSION['message'] = "Account registered, a confirmation mail was sent to your email address";
             performLog("Error", "Failed to generate registration token", array( "mail" => $_POST['email']));
         }
         else {
@@ -54,7 +54,7 @@ if (isset($_POST['email']) || isset($_POST['password'])) {
             $mailSuccess = mail($email, $subject, $message, $headers);
 
             if ($mailSuccess) {
-                $_SESSION['message'] = "Account registered, a confirmation mail was send to your email address";
+                $_SESSION['message'] = "Account registered, a confirmation mail was sent to your email address";
                 performLog("Info", "New user registered, confirmation mail sent", array("mail" => $_POST['email']));
             } else {
                 $_SESSION['message'] = "Failed to send email";
@@ -78,7 +78,7 @@ if (isset($_POST['email']) || isset($_POST['password'])) {
                 $mailSuccess = mail($email, $subject, $message, $headers);
 
                 if ($mailSuccess) {
-                    $_SESSION['message'] = "Account registered, a confirmation mail was send to your email address";
+                    $_SESSION['message'] = "Account registered, a confirmation mail was sent to your email address";
                     performLog("Info", "Password reset email sent", array("mail" => $_POST['email']));
                 } else {
                     $_SESSION['message'] = "Failed to send email";
@@ -106,7 +106,7 @@ if (isset($_POST['email']) || isset($_POST['password'])) {
                 $mailSuccess = mail($email, $subject, $message, $headers);
 
                 if ($mailSuccess) {
-                    $_SESSION['message'] = "Account registered, a confirmation mail was send to your email address";
+                    $_SESSION['message'] = "Account registered, a confirmation mail was sent to your email address";
                     performLog("Info", "New user registered, confirmation mail sent", array("mail" => $_POST['email']));
                 } else {
                     $_SESSION['message'] = "Failed to send email";

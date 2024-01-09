@@ -66,7 +66,6 @@ function registerUser($mail, $user_input_password): int
     }
 
     try {
-    // If not, register the user
         $db = new DBConnection();
 
         // hash the password
@@ -74,27 +73,19 @@ function registerUser($mail, $user_input_password): int
         $stmt = $db->conn->prepare("INSERT INTO users (email, password) VALUES (?, ?)");
         $stmt->bind_param("ss",$mail, $hashed_password);
         $stmt->execute();
-        // check if insertion was successful
-        if ($stmt->affected_rows > 0) {
-            return $stmt->insert_id;
-        } else {
-            return 0;
-        }
+        return $stmt->insert_id;
     } catch (mysqli_sql_exception $e) {
-        if($e->getCode() == 1062){
-            // Duplicate entry
+        if($e->getCode() == 1062){ // Duplicate entry
             performLog("Warning", "User already present", array("mail" => $mail));
             return 0;
         }
-
+        // Other db errors
         performLog("Error", "Failed to connect to DB in registerUser", array("error" => $e->getCode(), "message" => $e->getMessage()));
         session_unset();
         session_destroy();
         header('Location: 500.html');
         exit();
-
     }
-
 }
 
 function verifyLogin($email, $password): int
@@ -112,7 +103,7 @@ function verifyLogin($email, $password): int
         $db->stmt->bind_param("s", $email);
         mysqli_stmt_execute($db->stmt);
         $result = mysqli_stmt_get_result($db->stmt);
-        // check if insertion was successful
+        // check if select was successful
         if ($db->stmt->affected_rows > 0) {
             // Password hash found in the database
             $row = mysqli_fetch_array($result);
@@ -126,13 +117,13 @@ function verifyLogin($email, $password): int
                 return 1 + $active; // 1 - registered but not yet activated, 2 - registered and mail activated
             } else {
                 // Wrong password, update the failed login attempts
-            $db->stmt = $db->conn->prepare("UPDATE users SET failed_login_attempts=failed_login_attempts+1, 
+                $db->stmt = $db->conn->prepare("UPDATE users SET failed_login_attempts=failed_login_attempts+1, 
                                                             failed_login_time=NOW() WHERE email=?");
                 $db->stmt->bind_param("s", $email);
                 mysqli_stmt_execute($db->stmt);
                 return 0;
             }
-        } else {
+        } else { // user not found or too many failed login attempts
             return 0;
         }
     } catch (mysqli_sql_exception $e) {
@@ -145,45 +136,15 @@ function verifyLogin($email, $password): int
 
 }
 
-function changePassword($email, $newPassword): bool
+function changePasswordCommon($identifier, $newPassword, $query, $bind): bool
 {
-    // Check if the email and password are strings for type safety
-    if(!is_string($email) || !is_string($newPassword)) {
-        performLog("Error", "Invalid type of email or password, not a string", array("mail" => $email));
-        return false;
-    }
-    // Store the hashed password in the database
-    $hashed_password = password_hash($newPassword, PASSWORD_BCRYPT);
-    try{
-        $db = new DBConnection();
-        $db->stmt = $db->conn->prepare("UPDATE users SET password=? WHERE email=?");
-        $db->stmt->bind_param("ss", $hashed_password, $email);
-        $db->stmt->execute();
-        // check if insertion was successful
-        return ($db->stmt->affected_rows > 0);
-    } catch (mysqli_sql_exception $e) {
-        performLog("Error", "Failed to connect to DB in changePassword", array("error" => $e->getCode(), "message" => $e->getMessage()));
-        session_unset();
-        session_destroy();
-        header('Location: 500.html');
-        exit();
-    }
-}
-
-function changePasswordById($userId, $newPassword): bool
-{
-    // Check if the password are strings for type safety
-    if (!is_string($newPassword)) {
-        performLog("Error", "Invalid type of password (not a string)", array("id" => $userId));
-        return false;
-    }
     // Store the hashed password in the database
     $hashed_password = password_hash($newPassword, PASSWORD_BCRYPT);
     try{
         $db = new DBConnection();
 
-        $db->stmt = $db->conn->prepare("UPDATE users SET password=? WHERE id=?");
-        $db->stmt->bind_param("si", $hashed_password, $userId);
+        $db->stmt = $db->conn->prepare($query);
+        $db->stmt->bind_param($bind, $hashed_password, $identifier);
         $db->stmt->execute();
         // check if insertion was successful
         return ($db->stmt->affected_rows > 0);
@@ -194,6 +155,26 @@ function changePasswordById($userId, $newPassword): bool
         header('Location: 500.html');
         exit();
     }
+}
+
+function changePassword($email, $newPassword): bool
+{
+    // Check if the email and password are strings for type safety
+    if(!is_string($email) || !is_string($newPassword)) {
+        performLog("Error", "Invalid type of email or password: not a string", array("mail" => $email));
+        return false;
+    }
+    return changePasswordCommon($email, $newPassword, "UPDATE users SET password=? WHERE email=?", "ss");
+}
+
+function changePasswordById($userId, $newPassword): bool
+{
+    // Check if the password are strings for type safety
+    if (!is_numeric($userId) || !is_string($newPassword)) {
+        performLog("Error", "Invalid type of userid or password: not a string", array("id" => $userId));
+        return false;
+    }
+    return changePasswordCommon($userId, $newPassword, "UPDATE users SET password=? WHERE id=?", "si");
 }
 
 function getUser($email): array
