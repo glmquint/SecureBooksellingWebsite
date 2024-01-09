@@ -72,7 +72,7 @@ if (isset($_POST['email']) || isset($_POST['password'])) {
         else{
             // This is a fake message to avoid account enumeration (too many register on the same account)
             $_SESSION['message'] = "Account registered, a confirmation mail was send to your email address";
-            performLog("Error", "Failed to generate registration token", array( "mail" => $_POST['email'], "token" => bin2hex($token)));
+            performLog("Error", "Failed to generate registration token", array( "mail" => $_POST['email']));
         }
 
     }
