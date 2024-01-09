@@ -26,8 +26,23 @@ if (isset($_POST['OldPassword']) && isset($_POST['NewPassword']) && isset($_SESS
     } elseif (verifyLogin($email, $OldPassword)) { // Use the VerifyLogin function to check if the user has input the correct OldPassword
         // Change the password
         if(changePassword($email, $NewPassword)){
-            performLog("Info", "Password changed correctly", array("email" => $email));
-            $_SESSION['success'] = "Password changed successfully";
+
+            $subject = "Password changed successfully";
+            $message = "Your password has been changed successfully. You can now login with your new credentials\n";
+
+            // Additional headers
+            $headers = "From: " . $_ENV['NO_REPLY_EMAIL'] . "\r\n";
+            // Send email
+            $mailSuccess = mail($email, $subject, $message, $headers);
+
+            if ($mailSuccess) {
+                performLog("Info", "Password changed correctly, confirmation email sent", array("email" => $email));
+                $_SESSION['success'] = "Password changed successfully, a confirmation email has been sent to your email";
+            } else {
+                $_SESSION['success'] = "Password changed successfully, but there was an error sending the confirmation email";
+                performLog("Error", "Password changed correctly, confirmation email not sent", array("mail" => $_POST['email']));
+
+            }
             header('Location: logout.php');
             exit();
         }
