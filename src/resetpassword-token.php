@@ -14,7 +14,7 @@
         // Check if the passwords are strings for type juggling
         if (!is_string($_POST['newPassword'])|| !is_string($_POST['newPasswordRetype'])) {
             //Don't log the password and token
-            performLog("Error", "Invalid email or password, not a string", array("token" => "token"));
+            performLog("Error", "Invalid email or password, not a string", array());
             $_SESSION['errorMsg'] = "Something went wrong with your request";
             header("Location: index.php");
             exit();
