@@ -57,18 +57,14 @@ class DBConnection {
     }
 }
 
-function registerUser($mail, $user_input_password): array
+function registerUser($mail, $user_input_password): int
 {
     // Check if the email and password are strings for type safety
     if (!is_string($mail) || !is_string($user_input_password)) {
         performLog("Error", "Invalid type of email, not a string", array("mail" => $mail));
-        return [];
+        return 0;
     }
-    // Check if the user already exists in the database
-    $userArray = getUser($mail);
-    if(count($userArray) > 0){
-        return array("id" => $userArray['id'], "active" => $userArray['active'], "exists" => true);
-    }
+
     try {
     // If not, register the user
         $db = new DBConnection();
@@ -80,12 +76,17 @@ function registerUser($mail, $user_input_password): array
         $stmt->execute();
         // check if insertion was successful
         if ($stmt->affected_rows > 0) {
-            $id = $stmt->insert_id;
-            return array("id" =>$id, "active" => 0,"exists" => false);
+            return $stmt->insert_id;
         } else {
-            return [];
+            return 0;
         }
     } catch (mysqli_sql_exception $e) {
+        if($e->getCode() == 1062){
+            // Duplicate entry
+            performLog("Warning", "User already present", array("mail" => $mail));
+            return 0;
+        }
+
         performLog("Error", "Failed to connect to DB in registerUser", array("error" => $e->getCode(), "message" => $e->getMessage()));
         session_unset();
         session_destroy();

@@ -34,45 +34,21 @@ if (isset($_POST['email']) || isset($_POST['password'])) {
 
     // Register the user
     // If [] is returned, something went wrong
-    $userArray=registerUser($_POST['email'], $_POST['password']);
-    if(count($userArray) > 0){
-        // Generate a 16 random bytes token
-        $token = random_bytes(16);
-        $email = $_POST['email'];
-        $headers = "From: noreply@localhost.com";
-        // If the user already exists and is active, send a password reset email (limit of active token)
-        if($userArray['exists'] && $userArray['active']) {
-            if (!saveToken($token, $userArray['id'], 5)){
-                // This is a fake message to avoid account enumeration (too many register on the same account)
-                $_SESSION['message'] = "Account registered, a confirmation mail was send to your email address";
-                performLog("Error", "Failed to generate registration token", array( "mail" => $_POST['email']));
-            } else {
-                performLog("Warning", "Invalid register", array("mail" => $_POST['email']));
-                $subject = "Invalid register attempt";
-                $message = "Someone tried to register with your email address. If it was you, click on the link to reset your password\n"
-                        . $DOMAIN . "/resetpassword-token.php?token=" . bin2hex($token). "\n"
-                        . "If it wasn't you, ignore this email";
-                // Send email
-                $mailSuccess = mail($email, $subject, $message, $headers);
-
-                if ($mailSuccess) {
-                    $_SESSION['message'] = "Account registered, a confirmation mail was send to your email address";
-                    performLog("Info", "Password reset email sent", array("mail" => $_POST['email']));
-                } else {
-                    $_SESSION['message'] = "Failed to send email";
-                    performLog("Error", "Failed to send email", array("mail" => $_POST['email']));
-                    session_unset();
-                    session_destroy();
-                    header('Location: 500.html');
-                    exit();
-                }
-            }
+    $email = $_POST['email'];
+    // Generate a 16 random bytes token
+    $token = random_bytes(16);
+    $headers = "From: noreply@localhost.com";
+    $userId=registerUser($email, $_POST['password']);
+    if($userId){
+        if (!saveToken($token, $userId, 60)){
+            // This is a fake message to avoid account enumeration (too many register on the same account)
+            $_SESSION['message'] = "Account registered, a confirmation mail was send to your email address";
+            performLog("Error", "Failed to generate registration token", array( "mail" => $_POST['email']));
         }
-        // Otherwise, send an activation email
-        else if(saveToken($token,  $userArray['id'], 60)) {
+        else {
             $subject = "Activation account";
             $message = "This is a activation email. Click on the link to activate your account\n"
-                    . $DOMAIN . "/activate-token.php?token=" . bin2hex($token);
+                . $DOMAIN . "/activate-token.php?token=" . bin2hex($token);
 
             // Send email
             $mailSuccess = mail($email, $subject, $message, $headers);
@@ -89,19 +65,77 @@ if (isset($_POST['email']) || isset($_POST['password'])) {
                 exit();
             }
         }
+    }
+    else if (($userArray = getUser($email)) && count($userArray) > 0){
+        if($userArray['active']){
+            if(saveToken($token,  $userArray['id'], 5)){
+                performLog("Warning", "Invalid register", array("mail" => $_POST['email']));
+                $subject = "Invalid register attempt";
+                $message = "Someone tried to register with your email address. If it was you, click on the link to reset your password\n"
+                    . $DOMAIN . "/resetpassword-token.php?token=" . bin2hex($token). "\n"
+                    . "If it wasn't you, ignore this email";
+                // Send email
+                $mailSuccess = mail($email, $subject, $message, $headers);
+
+                if ($mailSuccess) {
+                    $_SESSION['message'] = "Account registered, a confirmation mail was send to your email address";
+                    performLog("Info", "Password reset email sent", array("mail" => $_POST['email']));
+                } else {
+                    $_SESSION['message'] = "Failed to send email";
+                    performLog("Error", "Failed to send email", array("mail" => $_POST['email']));
+                    session_unset();
+                    session_destroy();
+                    header('Location: 500.html');
+                    exit();
+                }
+            }
+            else{
+                // This is a fake message to avoid account enumeration (too many register on the same account)
+                $_SESSION['message'] = "Something went wrong with your request";
+                performLog("Warning", "Invalid credentials during registration", array( "mail" => $_POST['email']));
+            }
+
+        }
         else{
-            // This is a fake message to avoid account enumeration (too many register on the same account)
-            $_SESSION['message'] = "Account registered, a confirmation mail was send to your email address";
-            performLog("Error", "Failed to generate registration token", array( "mail" => $_POST['email']));
+            if(saveToken($token,  $userArray['id'], 60)){
+                $subject = "Activation account";
+                $message = "This is a activation email. Click on the link to activate your account\n"
+                    . $DOMAIN . "/activate-token.php?token=" . bin2hex($token);
+
+                // Send email
+                $mailSuccess = mail($email, $subject, $message, $headers);
+
+                if ($mailSuccess) {
+                    $_SESSION['message'] = "Account registered, a confirmation mail was send to your email address";
+                    performLog("Info", "New user registered, confirmation mail sent", array("mail" => $_POST['email']));
+                } else {
+                    $_SESSION['message'] = "Failed to send email";
+                    performLog("Error", "Failed to send email", array("mail" => $_POST['email']));
+                    session_unset();
+                    session_destroy();
+                    header('Location: 500.html');
+                    exit();
+                }
+            }
+            else{
+                // This is a fake message to avoid account enumeration (too many register on the same account)
+                $_SESSION['message'] = "Something went wrong with your request";
+                performLog("Warning", "Invalid credentials during registration", array( "mail" => $_POST['email']));
+            }
+
         }
 
     }
     else{
+        // This is a fake message to avoid account enumeration (too many register on the same account)
         $_SESSION['message'] = "Something went wrong with your request";
         performLog("Warning", "Invalid credentials during registration", array( "mail" => $_POST['email']));
     }
 
+
 }
+
+
 
 ?>
 
