@@ -25,12 +25,14 @@ try {
         performLog("Error", "Error while retrieving a book", ["book_id" => $_GET['id'], "user_id" => $user_id]);
         $_SESSION['errorMsg'] = "Something went wrong with your request!";
         header('Location: books.php');
+        exit();
     }
 } catch (mysqli_sql_exception $e) {
     performLog("Error", "Failed to connect to DB in download.php", array("error" => $e->getCode(), "message" => $e->getMessage()));
     session_unset();
     session_destroy();
     header('Location: 500.html');
+    exit();
 }
 performLog("Info", "EBook downloaded", ["book_id" => $_GET['id'], "user_id" => $user_id]);
 header("Content-type: application/pdf");
