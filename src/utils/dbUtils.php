@@ -80,7 +80,7 @@ function registerUser($mail, $user_input_password): array
         $stmt->execute();
         // check if insertion was successful
         if ($stmt->affected_rows > 0) {
-            $id = getUserID($mail);
+            $id = $stmt->insert_id;
             return array("id" =>$id, "active" => 0,"exists" => false);
         } else {
             return [];
