@@ -36,22 +36,17 @@ if (!isset($_SESSION['email']) || !is_string($_SESSION['email'])) {
     performLog("Info", "User not logged in while in checkout", array());
     header('Location: login.php?redirect=checkout.php');
     exit();
-} elseif (!isset($_SESSION['cart']) || !is_array($_SESSION['cart'])) {
+} elseif (!isset($_SESSION['cart']) || !is_array($_SESSION['cart']) || count($_SESSION['cart']) == 0) {
     performLog("Info", "Cart not set while in checkout", array());
     $_SESSION['errorMsg'] = 'something went wrong with your request, check your cart';
     header('Location: index.php');
     exit();
 } elseif (!isset($_SESSION['delivery']) || isset($_GET['updatedelivery'])) {
-// recompute total price
+    $_SESSION['bookdetails'] = array();
+    // recompute total price
+    $total_price = 0;
     try {
         $db = new DBConnection();
-        $total_price = 0;
-        // if cart is not an array, get back to index
-        if (!is_array($_SESSION['cart'])) {
-            performLog("Error", "Cart is not an array", array("cart" => $_SESSION['cart']));
-            header('Location: index.php');
-            exit();
-        }
         foreach ($_SESSION['cart'] as $bookid => $quantity) {
             $db->stmt = $db->conn->prepare("SELECT * FROM books WHERE id = ?");
             $db->stmt->bind_param("i", $bookid);
@@ -63,6 +58,7 @@ if (!isset($_SESSION['email']) || !is_string($_SESSION['email'])) {
                 header('Location: index.php');
                 exit();
             }
+            $_SESSION['bookdetails'][$bookid] = $row;
             $quantity = $_SESSION['cart'][$row['id']];
             $total_price += $row['price'] * $quantity;
         }
@@ -82,12 +78,9 @@ if (!isset($_SESSION['email']) || !is_string($_SESSION['email'])) {
         'status' => 'in transit'
     ];
 
-    //echo print_r($_SESSION['order']);
-
     // form to input delivery address
     echo "<h1>Shipping information</h1>";
     echo "<form method='post' action='checkout.php'>";
-    echo "<input type='hidden' name='csrf_token' value='" . $_SESSION['csrf_token'] . "' readonly='readonly' >";
     echo "<label for='firstname'>First name</label>";
     $firstname = $_SESSION['delivery']['firstname'] ?? '';
     echo "<input type='text' name='firstname' id='firstname' required='required' placeholder='Abbie' pattern=\"" . $regexes['firstname'] . "\" value='" . $firstname . "'>";
@@ -143,7 +136,6 @@ if (!isset($_SESSION['email']) || !is_string($_SESSION['email'])) {
     // form to input payment details
     echo "<h1>Payment details</h1>";
     echo "<form method='post' action='checkout.php'>";
-    echo "<input type='hidden' name='csrf_token' value='" . $_SESSION['csrf_token'] . "' readonly='readonly' >";
     echo "<label for='cardnumber'>Card number</label>";
     $cardnumber = $_SESSION['payment']['cardnumber'] ?? '';
     echo "<input type='text' name='cardnumber' id='cardnumber' required='required' placeholder='XXXX-XXXX-XXXX-XXXX' pattern=\"" . $regexes['cardnumber'] . "\" value='" . $cardnumber . "'>";
@@ -161,7 +153,7 @@ if (!isset($_SESSION['email']) || !is_string($_SESSION['email'])) {
     echo "</form>";
     unset($_SESSION['payment']);
     //echo print_r($_SESSION['payment']);
-    $payment_fields = ['cardnumber', 'cardholder', 'expirationdate', 'cvv'];
+    $payment_fields = ['cardnumber', 'cardholder', 'cvv'];
     if (all(array_map(function ($field) {
         return isset($_POST[$field]);
     }, $payment_fields))) {
@@ -220,38 +212,25 @@ if (!isset($_SESSION['email']) || !is_string($_SESSION['email'])) {
     echo "<a href='checkout.php?updatepayment'>Back to payment</a>";
     // echo "<p>Payment card CVV: " . $_SESSION['payment']['cvv']). "</p>";
     echo "<br>";
-    // TODO: optimize book retrieval, maybe do it before checkout
     echo "<h3>Books summary</h3>";
     echo "<table>";
     echo "<tr>";
     echo "<th>Book name</th>";
     echo "<th>Quantity</th>";
     echo "</tr>";
-    try{
-        $db = new DBConnection();
-        $db->stmt = $db->conn->prepare("SELECT * FROM books WHERE id = ?");
-        $total_price = 0;
-        foreach ($_SESSION['cart'] as $bookid => $quantity) {
-            $db->stmt->bind_param("i", $bookid);
-            $db->stmt->execute();
-            $result = mysqli_stmt_get_result($db->stmt);
-            $row = mysqli_fetch_array($result);
-            if (!$row) {
-                performLog("Error", "Book not found in checkout", array("bookid" => $bookid));
-                header('Location: index.php');
-                exit();
-            }
-            echo "<tr>";
-            echo "<td>" . htmlspecialchars($row['title']) . "</td>";
-            echo "<td>" . $quantity . "</td>";
-            echo "</tr>";
-            $total_price += $row['price'] * $quantity;
+    $total_price = 0;
+    foreach ($_SESSION['cart'] as $bookid => $quantity) {
+        $row = $_SESSION['bookdetails'][$bookid];
+        if (!$row) {
+            performLog("Error", "Book not found in checkout", array("bookid" => $bookid));
+            header('Location: index.php');
+            exit();
         }
-    } catch (mysqli_sql_exception $e) {
-        performLog("Error", "Failed to connect to DB in checkout.php", array("error" => $e->getCode(), "message" => $e->getMessage()));
-        session_unset();
-        session_destroy();
-        header('Location: 500.html');
+        echo "<tr>";
+        echo "<td>" . htmlspecialchars($row['title']) . "</td>";
+        echo "<td>" . $quantity . "</td>";
+        echo "</tr>";
+        $total_price += $row['price'] * $quantity;
     }
     $_SESSION['order']['total_price'] = $total_price;
     echo "</table>";
