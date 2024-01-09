@@ -18,6 +18,20 @@ if (isset($_POST['email']) || isset($_POST['password'])) {
         header("Location: register.php");
         exit();
     }
+
+    /*
+     *  if registerUser(mail, pwd): # insert with unique mail
+     *     mail(activate account)
+     *  elif userExists(mail):
+     *     if userActive(mail):
+     *        mail(possible hijack or reset password)
+     *     else:
+     *        mail(activate account)
+     *  else:
+     *     error
+     */
+
+
     // Register the user
     // If [] is returned, something went wrong
     $userArray=registerUser($_POST['email'], $_POST['password']);
@@ -27,25 +41,31 @@ if (isset($_POST['email']) || isset($_POST['password'])) {
         $email = $_POST['email'];
         $headers = "From: noreply@localhost.com";
         // If the user already exists and is active, send a password reset email (limit of active token)
-        if($userArray['exists'] && $userArray['active'] && saveToken($token, $userArray['id'], 5)){
-            performLog("Warning", "Invalid register", array("mail" => $_POST['email']));
-            $subject = "Invalid register attempt";
-            $message = "Someone tried to register with your email address. If it was you, click on the link to reset your password\n"
-                    . $DOMAIN . "/resetpassword-token.php?token=" . bin2hex($token). "\n"
-                    . "If it wasn't you, ignore this email";
-            // Send email
-            $mailSuccess = mail($email, $subject, $message, $headers);
-
-            if ($mailSuccess) {
+        if($userArray['exists'] && $userArray['active']) {
+            if (!saveToken($token, $userArray['id'], 5)){
+                // This is a fake message to avoid account enumeration (too many register on the same account)
                 $_SESSION['message'] = "Account registered, a confirmation mail was send to your email address";
-                performLog("Info", "Password reset email sent", array("mail" => $_POST['email']));
+                performLog("Error", "Failed to generate registration token", array( "mail" => $_POST['email']));
             } else {
-                $_SESSION['message'] = "Failed to send email";
-                performLog("Error", "Failed to send email", array("mail" => $_POST['email']));
-                session_unset();
-                session_destroy();
-                header('Location: 500.html');
-                exit();
+                performLog("Warning", "Invalid register", array("mail" => $_POST['email']));
+                $subject = "Invalid register attempt";
+                $message = "Someone tried to register with your email address. If it was you, click on the link to reset your password\n"
+                        . $DOMAIN . "/resetpassword-token.php?token=" . bin2hex($token). "\n"
+                        . "If it wasn't you, ignore this email";
+                // Send email
+                $mailSuccess = mail($email, $subject, $message, $headers);
+
+                if ($mailSuccess) {
+                    $_SESSION['message'] = "Account registered, a confirmation mail was send to your email address";
+                    performLog("Info", "Password reset email sent", array("mail" => $_POST['email']));
+                } else {
+                    $_SESSION['message'] = "Failed to send email";
+                    performLog("Error", "Failed to send email", array("mail" => $_POST['email']));
+                    session_unset();
+                    session_destroy();
+                    header('Location: 500.html');
+                    exit();
+                }
             }
         }
         // Otherwise, send an activation email
@@ -77,8 +97,8 @@ if (isset($_POST['email']) || isset($_POST['password'])) {
 
     }
     else{
-        performLog("Warning", "Invalid credentials during registration", array( "mail" => $_POST['email']));
         $_SESSION['message'] = "Something went wrong with your request";
+        performLog("Warning", "Invalid credentials during registration", array( "mail" => $_POST['email']));
     }
 
 }
