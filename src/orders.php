@@ -17,7 +17,7 @@ session_start_or_expire();
 
 if (!isset($_SESSION['email']) || !is_string($_SESSION['email'])) {
     $_SESSION['errorMsg'] = 'something went wrong with your request';
-    header('Location: login.php');
+    header('Location: login.php?redirect=orders.php');
     exit();
 }
 else {
@@ -35,8 +35,9 @@ else {
 
         $user_id = getUserID($_SESSION['email']);
         if(!$user_id) {
+            performLog("Error", "Failed to get user id from DB", array("email" => $_SESSION['email']));
             $_SESSION['errorMsg'] = 'something went wrong with your request';
-            header('Location: login.php');
+            header('Location: index.php');
             exit();
         }
         $db->stmt = $db->conn->prepare("SELECT id,cart,address,total_price,status FROM orders WHERE user = ?");

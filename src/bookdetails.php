@@ -8,14 +8,9 @@
     <?php
     require_once 'utils/dbUtils.php';
     session_start_or_expire();
-    // Purpose: Displays the details of a book
-    // given the id passed as a GET parameter, the page shows the information about the book,
-    // like the title, the author, the synopsis and the price
-    // finally, there is a button for the user to add the book to its cart
 
     $bookid = $_GET['id'] ?? 0;
     try{
-    // get the book list from the db, using prepared statements
         $db = new DBConnection();
         $db->stmt = mysqli_prepare($db->conn, "SELECT * FROM books WHERE id = ?");
         mysqli_stmt_bind_param($db->stmt, "i", $bookid);
@@ -52,7 +47,7 @@
         </tr>
         <tr>
             <td><?php echo htmlspecialchars($bookauthor) ?></td>
-            <td><?php echo $bookprice / 100 ?>€</td> <!-- price is guaranteed to be an integer in db -->
+            <td><?php echo $bookprice / 100 /* price is guaranteed to be an integer in db */?>€</td>
             <td><?php echo htmlspecialchars($bookavailable) ?></td>
         </tr>
     </table>

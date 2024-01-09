@@ -18,7 +18,7 @@ include 'utils/messages.php';
 
 // print the cart contents in a table
 if (isset($_SESSION['cart'])) {
-    echo "<form name='form' method='post'>";
+    echo "<form name='form' method='post'>"; // the form action isn't specified because it is handled by the buttons
     echo "<input type='hidden' name='csrf_token' value='" . $_SESSION['csrf_token'] . "' readonly='readonly' >";
     echo "<table>";
     echo "<tr>";
@@ -27,12 +27,11 @@ if (isset($_SESSION['cart'])) {
     echo "<th>Price</th>";
     echo "<th>Quantity</th>";
     echo "</tr>";
+    $total_price = 0;
     try{
-    // connect to the database
         $db = new DBConnection();
         // get the book list from the db
         // loop through the book list
-        $total_price = 0;
         foreach ($_SESSION['cart'] as $bookid => $quantity){
             $db->stmt = $db->conn->prepare("SELECT * FROM books WHERE id = ?");
             $db->stmt->bind_param("i", $bookid);

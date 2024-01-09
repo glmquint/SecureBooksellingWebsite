@@ -8,7 +8,8 @@ session_start_or_expire();
 if (isset($_POST['OldPassword']) && isset($_POST['NewPassword']) && isset($_SESSION['email'])
     && is_string($_POST['OldPassword']) && is_string($_POST['NewPassword']) && is_string($_SESSION['email'])) {
     if (!isset($_POST['csrf_token']) || $_POST['csrf_token'] != $_SESSION['csrf_token']) {
-        $_SESSION['errorMsg'] = "CSRF token mismatch";
+        performLog("Error", "CSRF token mismatch", array("token" => $_POST['csrf_token']));
+        $_SESSION['errorMsg'] = "Something went wrong with your request";
         header('Location: index.php');
         exit();
     }
@@ -58,6 +59,13 @@ if (isset($_POST['OldPassword']) && isset($_POST['NewPassword']) && isset($_SESS
     }
 }
 
+if (!isset($_SESSION['email'])) {
+    performLog("Warning", "User not logged in", array());
+    $_SESSION['errorMsg'] = "You need to login first!";
+    header('Location: login.php?redirect=changepassword.php');
+    exit();
+}
+
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -69,9 +77,6 @@ if (isset($_POST['OldPassword']) && isset($_POST['NewPassword']) && isset($_SESS
 </head>
 <body>
 
-<!-- if the user is logged in, show a message -->
-
-    <!-- show a form to login -->
 <header>
     <h1>Change Password</h1>
     <nav>

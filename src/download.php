@@ -36,6 +36,6 @@ try {
 }
 performLog("Info", "EBook downloaded", ["book_id" => $_GET['id'], "user_id" => $user_id]);
 header("Content-type: application/pdf");
-header("Content-Disposition: inline; filename=" . $row['title'] . ".pdf");
-@readfile('../ebooks/' . $row['title'] . '.pdf');
+header("Content-Disposition: inline; filename=" . basename($row['title']) . ".pdf");
+@readfile('../ebooks/' . basename($row['title']) . '.pdf');
 ?>

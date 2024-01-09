@@ -2,12 +2,12 @@
     require_once 'utils/dbUtils.php';
     session_start_or_expire();
     if (!isset($_POST['csrf_token']) || $_POST['csrf_token'] != $_SESSION['csrf_token']) {
-        $_SESSION['errorMsg'] = "CSRF token mismatch";
+        performLog("Error", "CSRF token mismatch", array("token" => $_POST['csrf_token']));
+        $_SESSION['errorMsg'] = "Something went wrong with your request";
         header('Location: cart.php');
         exit();
     }
     $bookid = $_POST['id'] ?? "";
-    #echo "book id: " . htmlspecialchars($bookid) . " removed from cart (WIP)";
     if (!isset($_SESSION['cart'])){
         $_SESSION['cart'] = array();
     }
@@ -23,10 +23,6 @@
             unset($_SESSION['cart']);
         }
     }
-    // dump content of cart
-    //echo "<pre>";
-    //print_r($_SESSION['cart']);
-    //echo "</pre>";
     header('Location: cart.php');
 
-    ?>
+?>

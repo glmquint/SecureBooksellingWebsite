@@ -14,7 +14,7 @@ if (isset($_POST['email']) || isset($_POST['password'])) {
     // Check if the email and password are strings for type juggling
     if (!is_string($_POST['email'])|| !is_string($_POST['password'])) {
         performLog("Error", "Invalid email or password, not a string", array("mail" => $_POST['email']));
-        $_SESSION['message'] = "Something went wrong with your request, please try again later with different email or password";
+        $_SESSION['errorMsg'] = "Something went wrong with your request, please try again later with different email or password";
         header("Location: register.php");
         exit();
     }
@@ -42,7 +42,7 @@ if (isset($_POST['email']) || isset($_POST['password'])) {
     if($userId){
         if (!saveToken($token, $userId, 60)){
             // This is a fake message to avoid account enumeration (too many register on the same account)
-            $_SESSION['message'] = "Account registered, a confirmation mail was sent to your email address";
+            $_SESSION['success'] = "Account registered, a confirmation mail was sent to your email address";
             performLog("Error", "Failed to generate registration token", array( "mail" => $_POST['email']));
         }
         else {
@@ -54,10 +54,10 @@ if (isset($_POST['email']) || isset($_POST['password'])) {
             $mailSuccess = mail($email, $subject, $message, $headers);
 
             if ($mailSuccess) {
-                $_SESSION['message'] = "Account registered, a confirmation mail was sent to your email address";
+                $_SESSION['success'] = "Account registered, a confirmation mail was sent to your email address";
                 performLog("Info", "New user registered, confirmation mail sent", array("mail" => $_POST['email']));
             } else {
-                $_SESSION['message'] = "Failed to send email";
+                $_SESSION['errorMsg'] = "Failed to send email";
                 performLog("Error", "Failed to send email", array("mail" => $_POST['email']));
                 session_unset();
                 session_destroy();
@@ -66,7 +66,7 @@ if (isset($_POST['email']) || isset($_POST['password'])) {
             }
         }
     }
-    else if (($userArray = getUser($email)) && count($userArray) > 0){
+    else if (($userArray = getUser($email)) && count($userArray) > 0){ // User already exists
         if($userArray['active']){
             if(saveToken($token,  $userArray['id'], 5)){
                 performLog("Warning", "Invalid register", array("mail" => $_POST['email']));
@@ -78,10 +78,10 @@ if (isset($_POST['email']) || isset($_POST['password'])) {
                 $mailSuccess = mail($email, $subject, $message, $headers);
 
                 if ($mailSuccess) {
-                    $_SESSION['message'] = "Account registered, a confirmation mail was sent to your email address";
+                    $_SESSION['success'] = "Account registered, a confirmation mail was sent to your email address";
                     performLog("Info", "Password reset email sent", array("mail" => $_POST['email']));
                 } else {
-                    $_SESSION['message'] = "Failed to send email";
+                    $_SESSION['errorMsg'] = "Failed to send email";
                     performLog("Error", "Failed to send email", array("mail" => $_POST['email']));
                     session_unset();
                     session_destroy();
@@ -91,8 +91,8 @@ if (isset($_POST['email']) || isset($_POST['password'])) {
             }
             else{
                 // This is a fake message to avoid account enumeration (too many register on the same account)
-                $_SESSION['message'] = "Something went wrong with your request";
-                performLog("Warning", "Invalid credentials during registration", array( "mail" => $_POST['email']));
+                $_SESSION['success'] = "Account registered, a confirmation mail was sent to your email address";
+                performLog("Warning", "User active but with too many tokens", array( "mail" => $_POST['email']));
             }
 
         }
@@ -106,10 +106,10 @@ if (isset($_POST['email']) || isset($_POST['password'])) {
                 $mailSuccess = mail($email, $subject, $message, $headers);
 
                 if ($mailSuccess) {
-                    $_SESSION['message'] = "Account registered, a confirmation mail was sent to your email address";
+                    $_SESSION['success'] = "Account registered, a confirmation mail was sent to your email address";
                     performLog("Info", "New user registered, confirmation mail sent", array("mail" => $_POST['email']));
                 } else {
-                    $_SESSION['message'] = "Failed to send email";
+                    $_SESSION['errorMsg'] = "Failed to send email";
                     performLog("Error", "Failed to send email", array("mail" => $_POST['email']));
                     session_unset();
                     session_destroy();
@@ -119,8 +119,8 @@ if (isset($_POST['email']) || isset($_POST['password'])) {
             }
             else{
                 // This is a fake message to avoid account enumeration (too many register on the same account)
-                $_SESSION['message'] = "Something went wrong with your request";
-                performLog("Warning", "Invalid credentials during registration", array( "mail" => $_POST['email']));
+                $_SESSION['success'] = "Account registered, a confirmation mail was sent to your email address";
+                performLog("Warning", "User not active with too many tokens", array( "mail" => $_POST['email']));
             }
 
         }
@@ -128,8 +128,8 @@ if (isset($_POST['email']) || isset($_POST['password'])) {
     }
     else{
         // This is a fake message to avoid account enumeration (too many register on the same account)
-        $_SESSION['message'] = "Something went wrong with your request";
-        performLog("Warning", "Invalid credentials during registration", array( "mail" => $_POST['email']));
+        $_SESSION['success'] = "Account registered, a confirmation mail was sent to your email address";
+        performLog("Warning", "Invalid credentials during registration (how did we end up here?)", array( "mail" => $_POST['email']));
     }
 
 
@@ -148,39 +148,28 @@ if (isset($_POST['email']) || isset($_POST['password'])) {
         <script src="utils/checkPasswordStrength.js"></script>
     </head>
     <body>
-    <?php if (isset($_SESSION['message'])): ?>
+    <?php if(!isset($_SESSION['success']) && !isset($_SESSION['errorMsg'])): ?>
         <header>
-            <h3>
-                <?php
-                echo htmlspecialchars($_SESSION['message']);
-                unset($_SESSION['message']);
-                ?>
-            </h3>
-            <nav>
-                <a href="index.php">Back to Home</a>
-            </nav>
+            <h1>Register</h1>
+                <nav>
+                    <a href="index.php">Back to Home</a>
+                </nav>
         </header>
-
+        <br>
+            <form method="post" action="register.php">
+                <label for="email">Email</label>
+                <input type="email" name="email" id="email" required="required">
+                <label for="password">Password</label>
+                <input type="password" name="password" id="password" required="required" oninput=checkPasswordStrength(document.getElementById('password').value)>
+                <button id="btn" type="submit">Register</button>
+            </form>
+            <label for="strength">password strength: </label>
+            <progress id="strength" value="0" max="4"> password strength </progress>
+            <p id="warning"></p>
+            <p id="suggestions"></p>
+            <p>Already have an account? <a href="login.php">Login here</a></p>
     <?php else: ?>
-    <header>
-        <h1>Register</h1>
-            <nav>
-                <a href="index.php">Back to Home</a>
-            </nav>
-    </header>
-    <br>
-        <form method="post" action="register.php">
-            <label for="email">Email</label>
-            <input type="email" name="email" id="email" required="required">
-            <label for="password">Password</label>
-            <input type="password" name="password" id="password" required="required" oninput=checkPasswordStrength(document.getElementById('password').value)>
-            <button id="btn" type="submit">Register</button>
-        </form>
-        <label for="strength">password strength: </label>
-        <progress id="strength" value="0" max="4"> password strength </progress>
-        <p id="warning"></p>
-        <p id="suggestions"></p>
-        <p>Already have an account? <a href="login.php">Login here</a></p>
+        <?php include 'utils/messages.php' ?>
     <?php endif ?>
     </body>
 </html>

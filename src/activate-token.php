@@ -1,6 +1,6 @@
 <?php
 require_once 'utils/dbUtils.php';
-session_start();
+session_start_or_expire();
 // Check if the token is set and is a string for type juggling
 if (isset($_GET['token']) && is_string($_GET['token'])) {
     // Check if the token is valid
@@ -17,7 +17,6 @@ if (isset($_GET['token']) && is_string($_GET['token'])) {
         if(deleteToken($token)) {
             if(activateAccount($userid)){
                 $_SESSION['success'] = "Your account was successfully activated";
-                $_SESSION['userid'] = $userid;
                 // Can log the token because it is deleted and randomBytes is cryptographically secure
                 performLog("Info", "Account activated", array("userid" => $userid, "token" => $_GET['token']));
             }

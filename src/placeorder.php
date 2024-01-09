@@ -27,7 +27,8 @@ if (!isset($_SESSION['email']) || !is_string($_SESSION['email'])) {
     exit();
 } else {
     if (!isset($_POST['csrf_token']) || $_POST['csrf_token'] != $_SESSION['csrf_token']) {
-        $_SESSION['errorMsg'] = "CSRF token mismatch";
+        performLog("Error", "CSRF token mismatch", array("token" => $_POST['csrf_token']));
+        $_SESSION['errorMsg'] = "Something went wrong with your request";
         header('Location: index.php');
         exit();
     }
@@ -40,7 +41,6 @@ if (!isset($_SESSION['email']) || !is_string($_SESSION['email'])) {
             exit();
         }
 
-        // TODO: check the insert ignore
         // we want to insert the purchase only if it is not already present
         // but currently all purchases by a user that already has a book, get discarded
         $db->stmt = $db->conn->prepare("INSERT INTO purchases (buyer, book) VALUES (?, ?) ON DUPLICATE KEY UPDATE buyer = buyer");
@@ -125,7 +125,7 @@ if (!isset($_SESSION['email']) || !is_string($_SESSION['email'])) {
         $db->conn->rollback();
         // echo out the error
 
-        if ($ex->getCode() == 3819){
+        if ($ex->getCode() == 3819){ // book not in stock
             echo "<header>";
             echo "<h3>Order placed successfully</h3>";
             echo "<nav>";
@@ -154,8 +154,7 @@ if (!isset($_SESSION['email']) || !is_string($_SESSION['email'])) {
             unset($_SESSION['order']);
             unset($_SESSION['payment']);
             unset($_SESSION['delivery']);
-            //header('Location: index.php');
-        }else{
+        }else{ // other errors
             performLog("Error", "Error while placing order", ["db_msg"=>$ex->getMessage(), "db_error_code"=>$ex->getCode(), "email" => $_SESSION['email'], "orderid" => $_SESSION['order']['orderid']]);
             echo "<header>";
             echo "<h3>A problem occured while placing the order</h3>";

@@ -9,7 +9,7 @@ require_once 'utils/Logger.php';
     // remove remember me cookie
     if (isset($_COOKIE['rememberme'])) {
         unset($_COOKIE['rememberme']);
-        setcookie('rememberme', '', time() - 3600, '/', '', true, true);
+        setcookie('rememberme', '', time() - 3600, '/', '', true, true); // this resets the cookie
     }
 
     // change session id to prevent session fixation

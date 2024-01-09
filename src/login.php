@@ -40,11 +40,16 @@ if (isset($_POST['email']) || isset($_POST['password'])) {
         header("Location: login.php");
         exit();
     }
+    if (!isset($_POST['csrf_token']) || $_POST['csrf_token'] != $_SESSION['csrf_token']) {
+        performLog("Error", "CSRF token mismatch", array("token" => $_POST['csrf_token']));
+        $_SESSION['errorMsg'] = "Something went wrong with your request";
+        header('Location: index.php');
+        exit();
+    }
     // Get username and password from the form submitted by the user
     $email = $_POST['email'] ?? '';
     $password = $_POST['password'] ?? '';
     // Assume $username and $password are the submitted credentials
-    // You need to replace this with your actual login verification logic
     $userValidity = verifyLogin($email, $password);
     if ($userValidity) {
         if ($userValidity == 1) {
@@ -64,7 +69,7 @@ if (isset($_POST['email']) || isset($_POST['password'])) {
                     $ivlen = openssl_cipher_iv_length($CIPHER);
                     $iv = openssl_random_pseudo_bytes($ivlen);
                     $enc_email = openssl_encrypt($email, $CIPHER, $REMEMBERME_KEY, $options = 0, $iv, $tag);
-                    setcookie('rememberme', base64_encode(serialize([$iv, $enc_email, $tag])), time() + (86400 * 30), '/', '', true, true); // 86400 = 1 day
+                    setcookie('rememberme', base64_encode(serialize([$iv, $enc_email, $tag])), time() + (86400 * $_ENV['REMEMBERME_LIFETIME']), '/', '', true, true); // 86400 = 1 day
                 } else {
                     performLog("Error", "Cipher not supported", array("cipher" => $CIPHER));
                 }
@@ -102,6 +107,7 @@ if (isset($_POST['email']) || isset($_POST['password'])) {
     <?php include 'utils/messages.php' ?>
     <br>
     <form method="post" action="login.php">
+        <input type="hidden" name="csrf_token" value="<?php echo $_SESSION['csrf_token'] ?>" readonly="readonly" >
         <label for="email">Email</label>
         <input type="email" name="email" id="email" required="required">
         <label for="password">Password</label>
