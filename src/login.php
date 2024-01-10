@@ -26,7 +26,7 @@ if (isset($_COOKIE['rememberme']) && $_COOKIE['rememberme'] != "") {
         performLog("Error", "Failed to decrypt remember me cookie", array("cookie" => $rememberme_token, "cipher" => $CIPHER));
     }
     // To Redirect the user to the home page or another secure page
-    if (isset($_REQUEST['redirect'])) {
+    if (isset($_REQUEST['redirect']) && !str_contains($_REQUEST['redirect'], "\n")) {
         header('Location: ' . $_REQUEST['redirect']);
         exit();
     }
@@ -75,7 +75,7 @@ if (isset($_POST['email']) || isset($_POST['password'])) {
                 }
             }
             // To Redirect the user to the home page or another secure page
-            if (isset($_REQUEST['redirect'])) {
+            if (isset($_REQUEST['redirect']) && !str_contains($_REQUEST['redirect'], "\n")) {
                 header('Location: ' . $_REQUEST['redirect']);
                 exit();
             }
