@@ -3,6 +3,14 @@ require_once 'utils/Logger.php';
 require_once 'utils/dbUtils.php';
 session_start_or_expire();
 
+$dotenv = Dotenv\Dotenv::createImmutable(__DIR__);
+$dotenv->load();
+if(str_contains($_SERVER['SERVER_NAME'], "PhpStorm")){
+    $DOMAIN = $_ENV['DEV_DOMAIN'];
+} else {
+    $DOMAIN = $_ENV['DOMAIN'];
+}
+
 // Check if the user is logged in and if the form was submitted
 // Also check if the email and passwords are strings for type juggling
 if (isset($_POST['OldPassword']) && isset($_POST['NewPassword']) && isset($_SESSION['email'])
@@ -29,7 +37,8 @@ if (isset($_POST['OldPassword']) && isset($_POST['NewPassword']) && isset($_SESS
         if(changePassword($email, $NewPassword)){
 
             $subject = "Password changed successfully";
-            $message = "Your password has been changed successfully. You can now login with your new credentials\n";
+            $message = "Your password has been changed successfully. You can now login with your new credentials here: " . $DOMAIN . "/login.php\n"
+                    . "If you didn't request this change, please reset your password at the following link: " . $DOMAIN . "/resetpassword.php";
 
             // Additional headers
             $headers = "From: " . $_ENV['NO_REPLY_EMAIL'] . "\r\n";
