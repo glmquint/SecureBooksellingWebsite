@@ -174,7 +174,24 @@ function changePasswordById($userId, $newPassword): bool
         performLog("Error", "Invalid type of userid or password: not a string", array("id" => $userId));
         return false;
     }
-    return changePasswordCommon($userId, $newPassword, "UPDATE users SET password=? WHERE id=?", "si");
+    if(changePasswordCommon($userId, $newPassword, "UPDATE users SET password=? WHERE id=?", "si")){
+        // Set to 0 the failed login attempts
+        try {
+            $db = new DBConnection();
+            $db->stmt = $db->conn->prepare("UPDATE users SET failed_login_attempts=0 WHERE id=?");
+            $db->stmt->bind_param("i", $userId);
+            $db->stmt->execute();
+            // check if insertion was successful
+            return true;
+        } catch (mysqli_sql_exception $e) {
+            performLog("Error", "Failed to connect to DB in changePasswordById", array("id" => $userId, "error" => $e->getCode(), "message" => $e->getMessage()));
+            session_unset();
+            session_destroy();
+            header('Location: 500.html');
+            exit();
+        }
+    }
+    return false;
 }
 
 function getUser($email): array
