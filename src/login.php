@@ -1,9 +1,9 @@
 <?php
-require_once 'utils/dbUtils.php';
-require_once 'utils/Logger.php';
+require_once '../utils/dbUtils.php';
+require_once '../utils/Logger.php';
 session_start_or_expire();
 
-$dotenv = Dotenv\Dotenv::createImmutable(__DIR__);
+$dotenv = Dotenv\Dotenv::createImmutable(__DIR__ . '/../');
 $dotenv->load();
 $REMEMBERME_KEY = $_ENV['REMEMBERME_KEY'];
 $CIPHER = "aes-128-gcm";
@@ -104,7 +104,7 @@ if (isset($_POST['email']) || isset($_POST['password'])) {
             <a href="index.php">Back to Home</a>
         </nav>
     </header>
-    <?php include 'utils/messages.php' ?>
+    <?php include '../utils/messages.php' ?>
     <br>
     <form method="post" action="login.php">
         <input type="hidden" name="csrf_token" value="<?php echo $_SESSION['csrf_token'] ?>" readonly="readonly" >

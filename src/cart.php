@@ -12,9 +12,9 @@
     </nav>
 </header>
 <?php
-require_once 'utils/dbUtils.php';
+require_once '../utils/dbUtils.php';
 session_start_or_expire();
-include 'utils/messages.php';
+include '../utils/messages.php';
 
 // print the cart contents in a table
 if (isset($_SESSION['cart'])) {

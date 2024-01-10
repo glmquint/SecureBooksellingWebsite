@@ -1,10 +1,10 @@
 <?php
 
-require_once 'utils/dbUtils.php';
-require_once 'utils/Logger.php';
+require_once '../utils/dbUtils.php';
+
 session_start_or_expire();
 // Code used to get the domain to create the link in the email
-$dotenv = Dotenv\Dotenv::createImmutable(__DIR__);
+$dotenv = Dotenv\Dotenv::createImmutable(__DIR__ . '/../');
 $dotenv->load();
 if(str_contains($_SERVER['SERVER_NAME'], "PhpStorm")){
     $DOMAIN = $_ENV['DEV_DOMAIN'];
@@ -102,7 +102,7 @@ if(isset($_POST['email'])){
     </form>
 
 <?php else: ?>
-    <?php include 'utils/messages.php' ?>
+    <?php include '../utils/messages.php' ?>
 <?php endif ?>
 
 </body>

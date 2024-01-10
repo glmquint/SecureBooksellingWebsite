@@ -1,9 +1,9 @@
 <?php
-require_once 'utils/Logger.php';
-require_once 'utils/dbUtils.php';
+require_once '../utils/Logger.php';
+require_once '../utils/dbUtils.php';
 session_start_or_expire();
 
-$dotenv = Dotenv\Dotenv::createImmutable(__DIR__);
+$dotenv = Dotenv\Dotenv::createImmutable(__DIR__ . '/../');
 $dotenv->load();
 if(str_contains($_SERVER['SERVER_NAME'], "PhpStorm")){
     $DOMAIN = $_ENV['DEV_DOMAIN'];
@@ -81,7 +81,7 @@ if (!isset($_SESSION['email'])) {
 <head>
     <title>Secure Book selling website</title>
     <link rel="stylesheet" href="https://cdn.simplecss.org/simple.min.css">
-    <script src="utils/checkPasswordStrength.js"></script>
+    <script src="js/checkPasswordStrength.js"></script>
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/zxcvbn/4.4.2/zxcvbn.js"></script>
 </head>
 <body>
@@ -93,7 +93,7 @@ if (!isset($_SESSION['email'])) {
     </nav>
 </header>
 <br>
-    <?php include 'utils/messages.php' ?>
+    <?php include '../utils/messages.php' ?>
     <form method="post" action="changepassword.php">
         <input type="hidden" name="csrf_token" value="<?php echo $_SESSION['csrf_token'] ?>" readonly="readonly" >
         <div class="input-group">

@@ -6,7 +6,7 @@
 </head>
 <body>
 <?php
-require_once 'utils/dbUtils.php';
+require_once '../utils/dbUtils.php';
 session_start_or_expire();
 
 $regexes = [
@@ -244,7 +244,7 @@ if (!isset($_SESSION['email']) || !is_string($_SESSION['email'])) {
     echo "</form>";
 }
 
-include 'utils/messages.php';
+include '../utils/messages.php';
 
 ?>
 </body>

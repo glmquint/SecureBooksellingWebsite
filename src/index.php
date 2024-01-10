@@ -1,5 +1,5 @@
 <?php
-require_once 'utils/dbUtils.php';
+require_once '../utils/dbUtils.php';
 session_start_or_expire();
 ?>
 <!DOCTYPE html>
@@ -27,7 +27,7 @@ session_start_or_expire();
         <p>You are logged in as <?php echo htmlspecialchars($_SESSION['email']) ?></p>
     <?php endif ?>
     <!-- if session is started, show a link to the logout page -->
-    <?php include 'utils/messages.php' ?>
+    <?php include '../utils/messages.php' ?>
     <h2>Book list</h2>
     <script>
         books = [

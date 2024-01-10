@@ -1,5 +1,5 @@
 <?php
-require_once 'utils/dbUtils.php';
+require_once '../utils/dbUtils.php';
 session_start_or_expire();
 // Check if the token is set and is a string for type juggling
 if (isset($_GET['token']) && is_string($_GET['token'])) {
@@ -61,6 +61,6 @@ else {
             <a href="index.php">Back to Home</a>
         </nav>
     </header>
-    <?php include 'utils/messages.php' ?>
+    <?php include '../utils/messages.php' ?>
 </body>
 <?php

@@ -1,7 +1,7 @@
 <?php
-require_once 'utils/Logger.php';
+require_once '../utils/Logger.php';
  // perform logout
-    require_once 'utils/dbUtils.php';
+    require_once '../utils/dbUtils.php';
     session_start_or_expire();
     performLog("Info", "User logged out", array("email" => $_SESSION['email']));
     // reset username

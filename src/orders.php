@@ -12,7 +12,7 @@
     </nav>
 </header>
 <?php
-require_once 'utils/dbUtils.php';
+require_once '../utils/dbUtils.php';
 session_start_or_expire();
 
 if (!isset($_SESSION['email']) || !is_string($_SESSION['email'])) {

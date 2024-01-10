@@ -12,9 +12,9 @@
     </nav>
 </header>
 <?php
-require_once 'utils/dbUtils.php';
+require_once '../utils/dbUtils.php';
 session_start_or_expire();
-include 'utils/messages.php';
+include '../utils/messages.php';
 
 if (!isset($_SESSION['email']) || !is_string($_SESSION['email'])) {
     // By urlencoding the redirect parameter, we can pass it to the login page preserving the GET parameters

@@ -1,6 +1,6 @@
 <?php
 require_once 'Logger.php';
-$dotenv = Dotenv\Dotenv::createImmutable(__DIR__.'/../');
+$dotenv = Dotenv\Dotenv::createImmutable(__DIR__ . '/../');
 $dotenv->load();
 function session_start_or_expire() : void
 {

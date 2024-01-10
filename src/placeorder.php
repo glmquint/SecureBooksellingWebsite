@@ -13,8 +13,8 @@ function paymentSuccessful($order, $payment) : bool
     return true;
 }
 
-require_once 'utils/dbUtils.php';
-require_once 'utils/Logger.php';
+require_once '../utils/dbUtils.php';
+require_once '../utils/Logger.php';
 session_start_or_expire();
 
 if (!isset($_SESSION['email']) || !is_string($_SESSION['email'])) {
@@ -80,7 +80,7 @@ if (!isset($_SESSION['email']) || !is_string($_SESSION['email'])) {
     }
     $db->conn->begin_transaction();
 
-    $dotenv = Dotenv\Dotenv::createImmutable(__DIR__);
+    $dotenv = Dotenv\Dotenv::createImmutable(__DIR__ . '/../');
     $dotenv->load();
     if(str_contains($_SERVER['SERVER_NAME'], "PhpStorm")){
         $DOMAIN = $_ENV['DEV_DOMAIN'];

@@ -1,8 +1,8 @@
 <?php
-require_once 'utils/dbUtils.php';
-require_once 'utils/Logger.php';
+require_once '../utils/dbUtils.php';
+require_once '../utils/Logger.php';
 // Code used to get the domain to create the link in the email
-$dotenv = Dotenv\Dotenv::createImmutable(__DIR__);
+$dotenv = Dotenv\Dotenv::createImmutable(__DIR__ . '/../');
 $dotenv->load();
 if(str_contains($_SERVER['SERVER_NAME'], "PhpStorm")){
     $DOMAIN = $_ENV['DEV_DOMAIN'];
@@ -145,7 +145,7 @@ if (isset($_POST['email']) || isset($_POST['password'])) {
         <title>Secure Book selling website</title>
         <link rel="stylesheet" href="https://cdn.simplecss.org/simple.min.css">
         <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/zxcvbn/4.4.2/zxcvbn.js"></script>
-        <script src="utils/checkPasswordStrength.js"></script>
+        <script src="js/checkPasswordStrength.js"></script>
     </head>
     <body>
     <?php if(!isset($_SESSION['success']) && !isset($_SESSION['errorMsg'])): ?>
@@ -169,7 +169,7 @@ if (isset($_POST['email']) || isset($_POST['password'])) {
             <p id="suggestions"></p>
             <p>Already have an account? <a href="login.php">Login here</a></p>
     <?php else: ?>
-        <?php include 'utils/messages.php' ?>
+        <?php include '../utils/messages.php' ?>
     <?php endif ?>
     </body>
 </html>

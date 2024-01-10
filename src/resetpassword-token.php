@@ -1,7 +1,7 @@
 <?php
-require_once 'utils/dbUtils.php';
+require_once '../utils/dbUtils.php';
 session_start_or_expire();
-require_once 'utils/Logger.php';
+require_once '../utils/Logger.php';
 if (!isset($_REQUEST['token']) || $_REQUEST['token'] === "") {
     performLog("Warning", "Token not set", array());
     // If 'token' is not set, return a 404 error
@@ -83,7 +83,7 @@ if(isset($_POST["newPassword"]) && isset($_POST["newPasswordRetype"]) && isset($
     <title>Secure Book selling website</title>
     <link rel="stylesheet" href="https://cdn.simplecss.org/simple.min.css">
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/zxcvbn/4.4.2/zxcvbn.js"></script>
-    <script src="utils/checkPasswordStrength.js"></script>
+    <script src="js/checkPasswordStrength.js"></script>
 </head>
 <body>
 <header>
@@ -92,7 +92,7 @@ if(isset($_POST["newPassword"]) && isset($_POST["newPasswordRetype"]) && isset($
     <a href="index.php">Back to Home</a>
     </nav>
 </header>
-    <?php include 'utils/messages.php' ?>
+    <?php include '../utils/messages.php' ?>
     <br>
     <form method="post" action="resetpassword-token.php">
         <input type="hidden" name="csrf_token" value="<?php echo $_SESSION['csrf_token'] ?>" readonly="readonly" >

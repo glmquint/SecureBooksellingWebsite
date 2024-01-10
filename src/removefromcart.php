@@ -1,5 +1,5 @@
 <?php
-    require_once 'utils/dbUtils.php';
+    require_once '../utils/dbUtils.php';
     session_start_or_expire();
     if (!isset($_POST['csrf_token']) || $_POST['csrf_token'] != $_SESSION['csrf_token']) {
         performLog("Error", "CSRF token mismatch", array("token" => $_POST['csrf_token']));

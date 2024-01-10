@@ -1,5 +1,5 @@
 <?php
-require_once 'utils/dbUtils.php';
+require_once '../utils/dbUtils.php';
 session_start_or_expire();
 // Check if the user is logged in and if email is a string for type safety
 if (!isset($_SESSION['email']) || !is_string($_SESSION['email'])) {
