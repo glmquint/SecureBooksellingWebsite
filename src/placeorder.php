@@ -96,36 +96,42 @@ if (!isset($_SESSION['email']) || !is_string($_SESSION['email'])) {
 
     // Additional headers
     $headers = "From: " . $_ENV['NO_REPLY_EMAIL'] . "\r\n";
+    $notavailableBooks = 0;
     try {
-        $db->stmt = $db->conn->prepare("UPDATE books SET available = available - ? WHERE id = ?");
-        $db->stmt->bind_param("ii", $quantity, $bookid);
         foreach ($_SESSION['cart'] as $bookid => $quantity) {
-            $db->stmt->execute();
+            try {
+                $db->stmt = $db->conn->prepare("UPDATE books SET available = available - ? WHERE id = ?");
+                $db->stmt->bind_param("ii", $quantity, $bookid);
+                $db->stmt->execute();
+            } catch (mysqli_sql_exception $ex) {
+                if ($ex->getCode() == 3819){
+                    $notavailableBooks=$bookid;
+                    $db->stmt= $db->conn->prepare("UPDATE books SET available = 0 WHERE id = ?");
+                    $db->stmt->bind_param("i", $bookid);
+                    $db->stmt->execute();
+                }
+                else {
+                    throw new mysqli_sql_exception($ex->getMessage(), $ex->getCode());
+                }
+            }
         }
 
+        if($notavailableBooks===0){
+            performLog("Info", "Order placed successfully", array("email" => $_SESSION['email'], "orderid" => $_SESSION['order']['orderid']));
 
-        $db->conn->commit();
+            unset($_SESSION['cart']);
+            unset($_SESSION['order']);
+            unset($_SESSION['payment']);
+            unset($_SESSION['delivery']);
 
-        performLog("Info", "Order placed successfully", array("email" => $_SESSION['email'], "orderid" => $_SESSION['order']['orderid']));
-
-        unset($_SESSION['cart']);
-        unset($_SESSION['order']);
-        unset($_SESSION['payment']);
-        unset($_SESSION['delivery']);
-
-        echo "<header>";
-        echo "<h3>Order placed successfully</h3>";
-        echo "<nav>";
-        echo "<a href='index.php'>Back to home</a>";
-        echo "</nav>";
-        echo "</header>";
-        //header('Location: index.php');
-        //exit();
-    } catch (mysqli_sql_exception $ex) {
-        $db->conn->rollback();
-        // echo out the error
-
-        if ($ex->getCode() == 3819){ // book not in stock
+            echo "<header>";
+            echo "<h3>Order placed successfully</h3>";
+            echo "<nav>";
+            echo "<a href='index.php'>Back to home</a>";
+            echo "</nav>";
+            echo "</header>";
+        }
+        else{
             echo "<header>";
             echo "<h3>Order placed successfully</h3>";
             echo "<nav>";
@@ -141,7 +147,6 @@ if (!isset($_SESSION['email']) || !is_string($_SESSION['email'])) {
 
             $db->stmt->bind_param("i", $_SESSION['order']['orderid']);
             $db->stmt->execute();
-
             $message = "Thanks for buying our books!\n"
                 . "Unfortunately, a book that you ordered is currently not available.\n"
                 . "We will let you know when your book will get back in stock!\n"
@@ -154,17 +159,22 @@ if (!isset($_SESSION['email']) || !is_string($_SESSION['email'])) {
             unset($_SESSION['order']);
             unset($_SESSION['payment']);
             unset($_SESSION['delivery']);
-        }else{ // other errors
-            performLog("Error", "Error while placing order", ["db_msg"=>$ex->getMessage(), "db_error_code"=>$ex->getCode(), "email" => $_SESSION['email'], "orderid" => $_SESSION['order']['orderid']]);
-            echo "<header>";
-            echo "<h3>A problem occured while placing the order</h3>";
-            echo "<nav>";
-            echo "<a href='index.php'>Back to home</a>";
-            echo "</nav>";
-            echo "</header>";
-            echo "<p>Please try again later</p>";
-            exit();
         }
+        $db->conn->commit();
+
+
+    } catch (mysqli_sql_exception $ex) {
+        $db->conn->rollback();
+        performLog("Error", "Error while placing order", ["db_msg"=>$ex->getMessage(), "db_error_code"=>$ex->getCode(), "email" => $_SESSION['email'], "orderid" => $_SESSION['order']['orderid']]);
+        echo "<header>";
+        echo "<h3>A problem occured while placing the order</h3>";
+        echo "<nav>";
+        echo "<a href='index.php'>Back to home</a>";
+        echo "</nav>";
+        echo "</header>";
+        echo "<p>Please try again later</p>";
+        exit();
+
     }
     // Send email
     $mailSuccess = mail($_SESSION['email'], $subject, $message, $headers);
