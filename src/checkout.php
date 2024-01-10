@@ -38,7 +38,7 @@ if (!isset($_SESSION['email']) || !is_string($_SESSION['email'])) {
     exit();
 } elseif (!isset($_SESSION['cart']) || !is_array($_SESSION['cart']) || count($_SESSION['cart']) == 0) {
     performLog("Info", "Cart not set while in checkout", array());
-    $_SESSION['errorMsg'] = 'something went wrong with your request, check your cart';
+    $_SESSION['errorMsg'] = 'Something went wrong with your request';
     header('Location: index.php');
     exit();
 } elseif (!isset($_SESSION['delivery']) || isset($_GET['updatedelivery'])) {
@@ -54,6 +54,7 @@ if (!isset($_SESSION['email']) || !is_string($_SESSION['email'])) {
             $result = mysqli_stmt_get_result($db->stmt);
             $row = mysqli_fetch_array($result);
             if (!$row) {
+                $_SESSION['errorMsg'] = 'Something went wrong with your request';
                 performLog("Error", "Book not found in checkout", array("bookid" => $bookid));
                 header('Location: index.php');
                 exit();
@@ -222,6 +223,7 @@ if (!isset($_SESSION['email']) || !is_string($_SESSION['email'])) {
     foreach ($_SESSION['cart'] as $bookid => $quantity) {
         $row = $_SESSION['bookdetails'][$bookid];
         if (!$row) {
+            $_SESSION['errorMsg'] = 'Something went wrong with your request';
             performLog("Error", "Book not found in checkout", array("bookid" => $bookid));
             header('Location: index.php');
             exit();
