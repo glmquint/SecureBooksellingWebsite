@@ -15,6 +15,7 @@ function session_start_or_expire() : void
         session_unset();
         session_destroy();
         session_start();
+        session_regenerate_id(true);
         $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
     }
     $_SESSION['last_access'] = time();
