@@ -49,8 +49,8 @@ if (isset($_POST['OldPassword']) && isset($_POST['NewPassword']) && isset($_SESS
                 performLog("Info", "Password changed correctly, confirmation email sent", array("email" => $email));
                 $_SESSION['success'] = "Password changed successfully, a confirmation email has been sent to your email";
             } else {
-                $_SESSION['success'] = "Password changed successfully, but there was an error sending the confirmation email";
                 performLog("Error", "Password changed correctly, confirmation email not sent", array("mail" => $_POST['email']));
+                $_SESSION['success'] = "Password changed successfully, but there was an error sending the confirmation email";
 
             }
             header('Location: logout.php');

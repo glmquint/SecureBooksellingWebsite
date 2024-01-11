@@ -16,7 +16,7 @@ require_once '../utils/dbUtils.php';
 session_start_or_expire();
 
 if (!isset($_SESSION['email']) || !is_string($_SESSION['email'])) {
-    $_SESSION['errorMsg'] = 'something went wrong with your request';
+    performLog("Warning", "User not logged in while in orders", array());
     header('Location: login.php?redirect=orders.php');
     exit();
 }

@@ -8,8 +8,8 @@ if (!isset($_SESSION['email']) || !is_string($_SESSION['email'])) {
 }
 // Check if the book id is set and if it is a valid number, no float or scientific notation allowed
 if (!isset($_GET['id']) || !is_numeric($_GET['id']) || strpos($_GET['id'], '.') !== false || strpos($_GET['id'], 'e') !== false) {
-    $_SESSION['errorMsg'] = 'something went wrong with your request, please try again';
     performLog("Error", "Error while retrieving a book", ["book_id" => $_GET['id'], "email" => $_SESSION['email']]);
+    $_SESSION['errorMsg'] = 'something went wrong with your request, please try again';
     header('Location: index.php');
     exit();
 }

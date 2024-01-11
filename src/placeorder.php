@@ -18,10 +18,12 @@ require_once '../utils/Logger.php';
 session_start_or_expire();
 
 if (!isset($_SESSION['email']) || !is_string($_SESSION['email'])) {
+    performLog("Warning", "User not logged in while in placeorder", array());
     $_SESSION['errorMsg'] = 'something went wrong with your request';
     header('Location: login.php');
     exit();
 } elseif (!isset($_SESSION['cart']) || !is_array($_SESSION['cart']) || !isset($_SESSION['order']) || !is_array($_SESSION['order']) || !isset($_SESSION['payment']) || !is_array($_SESSION['payment']) || !isset($_SESSION['delivery']) || !is_array($_SESSION['delivery'])) {
+    performLog("Warning", "User with missing cart or order or payment or delivery while in placeorder", array());
     $_SESSION['errorMsg'] = 'something went wrong with your request';
     header('Location: index.php');
     exit();
@@ -173,8 +175,8 @@ if (!isset($_SESSION['email']) || !is_string($_SESSION['email'])) {
         performLog("Info", "Mail order confirmation sent successfully", array("email" => $_SESSION['email']));
         echo "<p>Order confirmation sent to " . $_SESSION['email'] . "</p>";
     } else {
-        $_SESSION['errorMsg'] = "Failed to send order confirmation to " . $_SESSION['email'];
         performLog("Error", "Failed to send email confirmation", array("email" => $_SESSION['email']));
+        $_SESSION['errorMsg'] = "Failed to send order confirmation to " . $_SESSION['email'];
         session_unset();
         session_destroy();
         header('Location: 500.html');

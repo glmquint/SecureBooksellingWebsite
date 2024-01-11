@@ -41,9 +41,9 @@ if (isset($_POST['email']) || isset($_POST['password'])) {
     $userId=registerUser($email, $_POST['password']);
     if($userId){
         if (!saveToken($token, $userId, 60)){
+            performLog("Error", "Failed to generate registration token", array( "mail" => $_POST['email']));
             // This is a fake message to avoid account enumeration (too many register on the same account)
             $_SESSION['success'] = "Account registered, a confirmation mail was sent to your email address";
-            performLog("Error", "Failed to generate registration token", array( "mail" => $_POST['email']));
         }
         else {
             $subject = "Activation account";
@@ -54,11 +54,11 @@ if (isset($_POST['email']) || isset($_POST['password'])) {
             $mailSuccess = mail($email, $subject, $message, $headers);
 
             if ($mailSuccess) {
-                $_SESSION['success'] = "Account registered, a confirmation mail was sent to your email address";
                 performLog("Info", "New user registered, confirmation mail sent", array("mail" => $_POST['email']));
+                $_SESSION['success'] = "Account registered, a confirmation mail was sent to your email address";
             } else {
-                $_SESSION['errorMsg'] = "Failed to send email";
                 performLog("Error", "Failed to send email", array("mail" => $_POST['email']));
+                $_SESSION['errorMsg'] = "Failed to send email";
                 session_unset();
                 session_destroy();
                 header('Location: 500.html');
@@ -78,11 +78,11 @@ if (isset($_POST['email']) || isset($_POST['password'])) {
                 $mailSuccess = mail($email, $subject, $message, $headers);
 
                 if ($mailSuccess) {
-                    $_SESSION['success'] = "Account registered, a confirmation mail was sent to your email address";
                     performLog("Info", "Password reset email sent", array("mail" => $_POST['email']));
+                    $_SESSION['success'] = "Account registered, a confirmation mail was sent to your email address";
                 } else {
-                    $_SESSION['errorMsg'] = "Failed to send email";
                     performLog("Error", "Failed to send email", array("mail" => $_POST['email']));
+                    $_SESSION['errorMsg'] = "Failed to send email";
                     session_unset();
                     session_destroy();
                     header('Location: 500.html');
@@ -90,9 +90,9 @@ if (isset($_POST['email']) || isset($_POST['password'])) {
                 }
             }
             else{
+                performLog("Warning", "User active but with too many tokens", array( "mail" => $_POST['email']));
                 // This is a fake message to avoid account enumeration (too many register on the same account)
                 $_SESSION['success'] = "Account registered, a confirmation mail was sent to your email address";
-                performLog("Warning", "User active but with too many tokens", array( "mail" => $_POST['email']));
             }
 
         }
@@ -106,11 +106,11 @@ if (isset($_POST['email']) || isset($_POST['password'])) {
                 $mailSuccess = mail($email, $subject, $message, $headers);
 
                 if ($mailSuccess) {
-                    $_SESSION['success'] = "Account registered, a confirmation mail was sent to your email address";
                     performLog("Info", "New user registered, confirmation mail sent", array("mail" => $_POST['email']));
+                    $_SESSION['success'] = "Account registered, a confirmation mail was sent to your email address";
                 } else {
-                    $_SESSION['errorMsg'] = "Failed to send email";
                     performLog("Error", "Failed to send email", array("mail" => $_POST['email']));
+                    $_SESSION['errorMsg'] = "Failed to send email";
                     session_unset();
                     session_destroy();
                     header('Location: 500.html');
@@ -118,18 +118,18 @@ if (isset($_POST['email']) || isset($_POST['password'])) {
                 }
             }
             else{
+                performLog("Warning", "User not active with too many tokens", array( "mail" => $_POST['email']));
                 // This is a fake message to avoid account enumeration (too many register on the same account)
                 $_SESSION['success'] = "Account registered, a confirmation mail was sent to your email address";
-                performLog("Warning", "User not active with too many tokens", array( "mail" => $_POST['email']));
             }
 
         }
 
     }
     else{
+        performLog("Warning", "Invalid credentials during registration (how did we end up here?)", array( "mail" => $_POST['email']));
         // This is a fake message to avoid account enumeration (too many register on the same account)
         $_SESSION['success'] = "Account registered, a confirmation mail was sent to your email address";
-        performLog("Warning", "Invalid credentials during registration (how did we end up here?)", array( "mail" => $_POST['email']));
     }
 
 

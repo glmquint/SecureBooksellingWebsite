@@ -52,8 +52,8 @@ if(isset($_POST['email'])){
                 performLog("Info", "Password reset link sent to user", array("email" => $email));
                 $_SESSION['success'] = "Password reset link sent to your email";
             } else {
-                $_SESSION['errorMsg'] = "Failed to send email";
                 performLog("Error", "Failed to send email", array("email" => $email));
+                $_SESSION['errorMsg'] = "Failed to send email";
                 session_unset();
                 session_destroy();
                 header('Location: 500.html');

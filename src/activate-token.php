@@ -16,9 +16,9 @@ if (isset($_GET['token']) && is_string($_GET['token'])) {
     if($userid){
         if(deleteToken($token)) {
             if(activateAccount($userid)){
-                $_SESSION['success'] = "Your account was successfully activated";
                 // Can log the token because it is deleted and randomBytes is cryptographically secure
                 performLog("Info", "Account activated", array("userid" => $userid, "token" => $_GET['token']));
+                $_SESSION['success'] = "Your account was successfully activated";
             }
             else{
                 // Can log the token because it is deleted and randomBytes is cryptographically secure

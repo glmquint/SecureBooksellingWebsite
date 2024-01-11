@@ -43,6 +43,7 @@ if(isset($_POST["newPassword"]) && isset($_POST["newPasswordRetype"]) && isset($
         if ($userid) {
             if (deleteToken($token)) {
                 if (changePasswordById($userid, $newPassword)) {
+                    performLog("Info", "Password reset", array("userid" => $userid));
                     $_SESSION['success'] = "Your password was successfully reset";
                     header('Location: login.php');
                 } else {
@@ -71,6 +72,7 @@ if(isset($_POST["newPassword"]) && isset($_POST["newPasswordRetype"]) && isset($
             exit();
         }
     } else{
+        performLog("Error", "Passwords do not match or are empty", array());
         $_SESSION['errorMsg'] = "Passwords do not match or are empty";
     }
 }

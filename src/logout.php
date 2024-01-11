@@ -15,11 +15,12 @@ require_once '../utils/Logger.php';
     // change session id to prevent session fixation
     session_regenerate_id();
 
-    // redirect the user to the index page
-    if(!isset($_SESSION['success']))
+    performLog("Info", "User logged out", array("email" => $_SESSION['email']));
+    if(!isset($_SESSION['success'])){
         $_SESSION['success'] = "You are now logged out";
-    else
+    } else {
         $_SESSION['success'] =  $_SESSION['success'] . ". You are now logged out";
+    }
     header('Location: index.php');
     exit();
     ?>

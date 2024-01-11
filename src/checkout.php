@@ -54,8 +54,8 @@ if (!isset($_SESSION['email']) || !is_string($_SESSION['email'])) {
             $result = mysqli_stmt_get_result($db->stmt);
             $row = mysqli_fetch_array($result);
             if (!$row) {
-                $_SESSION['errorMsg'] = 'Something went wrong with your request';
                 performLog("Error", "Book not found in checkout", array("bookid" => $bookid));
+                $_SESSION['errorMsg'] = 'Something went wrong with your request';
                 header('Location: index.php');
                 exit();
             }
@@ -114,10 +114,10 @@ if (!isset($_SESSION['email']) || !is_string($_SESSION['email'])) {
         if (any(array_map(function ($field) use ($regexes) {
             return !preg_match("/" . $regexes[$field] . "/", $_POST[$field]);
         }, $delivery_fields))) {
-            $_SESSION['errorMsg'] = "Invalid delivery information";
             performLog("Warning", "Invalid delivery information", array("preg_matched" => array_map(function ($field) use ($regexes) {
                 return !preg_match("/" . $regexes[$field] . "/", $_POST[$field]);
             }, $delivery_fields)));
+            $_SESSION['errorMsg'] = "Invalid delivery information";
             header('Location: checkout.php');
             exit();
         }
@@ -161,10 +161,10 @@ if (!isset($_SESSION['email']) || !is_string($_SESSION['email'])) {
         if (any(array_map(function ($field) use ($regexes) {
             return !preg_match("/" . $regexes[$field] . "/", $_POST[$field]);
         }, $payment_fields))) {
-            $_SESSION['errorMsg'] = "Invalid payment information";
             performLog("Warning", "Invalid payment information", array("preg_matched" => array_map(function ($field) use ($regexes) {
                 return !preg_match("/" . $regexes[$field] . "/", $_POST[$field]);
             }, $payment_fields)));
+            $_SESSION['errorMsg'] = "Invalid payment information";
             header('Location: checkout.php');
             exit();
         }
@@ -223,8 +223,8 @@ if (!isset($_SESSION['email']) || !is_string($_SESSION['email'])) {
     foreach ($_SESSION['cart'] as $bookid => $quantity) {
         $row = $_SESSION['bookdetails'][$bookid];
         if (!$row) {
-            $_SESSION['errorMsg'] = 'Something went wrong with your request';
             performLog("Error", "Book not found in checkout", array("bookid" => $bookid));
+            $_SESSION['errorMsg'] = 'Something went wrong with your request';
             header('Location: index.php');
             exit();
         }
