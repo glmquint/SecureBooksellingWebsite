@@ -105,7 +105,7 @@ if (!isset($_SESSION['email'])) {
         <div class="input-group">
             <label>New Password</label>
             <label>
-                <input type="password" name="NewPassword" id="NewPassword" required="required" oninput=checkPasswordStrength(document.getElementById('NewPassword').value)>
+                <input type="password" name="NewPassword" id="NewPassword" required="required" oninput="checkPasswordStrength(document.getElementById('NewPassword').value, '<?php echo htmlspecialchars($_SESSION['email']); ?>')">
             </label>
         </div>
         <div class="input-group">

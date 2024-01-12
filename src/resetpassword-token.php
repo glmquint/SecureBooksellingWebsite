@@ -101,13 +101,13 @@ if(isset($_POST["newPassword"]) && isset($_POST["newPasswordRetype"]) && isset($
         <div class="input-group">
             <label>New password</label>
             <label>
-                <input type="password" required="required" id="newPassword" name="newPassword" oninput=checkPasswordStrength(document.getElementById('newPassword').value)>
+                <input type="password" required="required" id="newPassword" name="newPassword" oninput="checkPasswordStrength(document.getElementById('newPassword').value, '<?php echo getEmailFromToken(hex2bin($_REQUEST['token'] ?? '')) ?>')">
             </label>
         </div>
         <div class="input-group">
             <label>Rewrite password</label>
             <label>
-                <input type="password" required="required" id="newPasswordRetype" name="newPasswordRetype" oninput=checkPasswordStrength(document.getElementById('newPassword').value)>
+                <input type="password" required="required" id="newPasswordRetype" name="newPasswordRetype" oninput="checkPasswordStrength(document.getElementById('newPassword').value, '<?php echo getEmailFromToken(hex2bin($_REQUEST['token'] ?? '')) ?>')">
             </label>
         </div>
         <input type="hidden" name="token" value="<?php echo htmlspecialchars($_GET['token'] ?? '') ; ?>" readonly>

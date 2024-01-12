@@ -273,6 +273,37 @@ function saveToken($token, $userId, $time): bool
     }
 }
 
+function getEmailFromToken($token): string
+{
+    // Check if the token is a string for type safety and if it is false (wrong conversion)
+    if (!$token || !is_string($token)) {
+        performLog("Error", "Invalid type of token", array("token" => $token));
+        return '';
+    }
+    $hashed_token = hash('sha256', $token);
+    try {
+        // Get the token from the database
+        $db = new DBConnection();
+        $db->stmt = $db->conn->prepare("SELECT users.email AS email FROM reset_token INNER JOIN users ON reset_token.user_id = users.id WHERE token=? AND expiration_date > NOW()");
+        $db->stmt->bind_param("s", $hashed_token);
+        mysqli_stmt_execute($db->stmt);
+        $result = mysqli_stmt_get_result($db->stmt);
+        // Check if insertion was successful
+        if ($db->stmt->affected_rows > 0) {
+            $row = mysqli_fetch_array($result);
+            return $row["email"];
+        }
+        // Token does not exist
+        return '';
+    } catch (mysqli_sql_exception $e) {
+        performLog("Error", "Failed to connect to DB in getUidFromToken", array("error" => $e->getCode(), "message" => $e->getMessage()));
+        session_unset();
+        session_destroy();
+        header('Location: 500.html');
+        exit();
+    }
+}
+
 function getUidFromToken($token): int
 {
     // Check if the token is a string for type safety and if it is false (wrong conversion)

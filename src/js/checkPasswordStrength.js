@@ -1,5 +1,5 @@
-function checkPasswordStrength (password) {
-  const result = zxcvbn(password);
+function checkPasswordStrength (password, email) {
+  const result = zxcvbn(password, [email]);
 
   const warning = document.getElementById('warning') ;
   const suggestions = document.getElementById('suggestions') ;

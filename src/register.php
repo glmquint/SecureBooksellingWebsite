@@ -160,7 +160,7 @@ if (isset($_POST['email']) || isset($_POST['password'])) {
                 <label for="email">Email</label>
                 <input type="email" name="email" id="email" required="required">
                 <label for="password">Password</label>
-                <input type="password" name="password" id="password" required="required" oninput=checkPasswordStrength(document.getElementById('password').value)>
+                <input type="password" name="password" id="password" required="required" oninput="checkPasswordStrength(document.getElementById('password').value, document.getElementById('email').value)">
                 <button id="btn" type="submit">Register</button>
             </form>
             <label for="strength">password strength: </label>
