@@ -255,11 +255,12 @@ function saveToken($token, $userId, $time): bool
     date_default_timezone_set('Europe/Rome');
     // get the current date and time and add the expiration time in minutes
     $ttl = date('Y-m-d H:i:s', strtotime('+' . $time . ' minutes'));
+    $hashed_token = hash('sha256', $token);
     try {
         $db = new DBConnection();
 
         $db->stmt = $db->conn->prepare("INSERT INTO reset_token (token, user_id, expiration_date) VALUES (?, ?, ?)");
-        $db->stmt->bind_param("sss", $token, $userId, $ttl);
+        $db->stmt->bind_param("sis", $hashed_token, $userId, $ttl);
         mysqli_stmt_execute($db->stmt);
         $result = mysqli_stmt_get_result($db->stmt);
         return ($db->stmt->affected_rows > 0);
@@ -279,17 +280,17 @@ function getUidFromToken($token): int
         performLog("Error", "Invalid type of token", array("token" => $token));
         return 0;
     }
+    $hashed_token = hash('sha256', $token);
     try {
         // Get the token from the database
         $db = new DBConnection();
         $db->stmt = $db->conn->prepare("SELECT token, expiration_date, user_id FROM reset_token WHERE token=? AND expiration_date > NOW()");
-        $db->stmt->bind_param("s", $token);
+        $db->stmt->bind_param("s", $hashed_token);
         mysqli_stmt_execute($db->stmt);
         $result = mysqli_stmt_get_result($db->stmt);
         // Check if insertion was successful
         if ($db->stmt->affected_rows > 0) {
             $row = mysqli_fetch_array($result);
-            // Check if the token is expired
             return $row["user_id"];
         }
         // Token does not exist
@@ -311,6 +312,7 @@ function deleteToken($token): bool
         performLog("Error", "Invalid type of token", array("token" => $token));
         return false;
     }
+    $hashed_token = hash('sha256', $token);
     try {
         $db = new DBConnection();
 
@@ -318,7 +320,7 @@ function deleteToken($token): bool
         // This helps in keeping the database clean
         $db->stmt = $db->conn->prepare("DELETE FROM reset_token WHERE token=? OR expiration_date < NOW()");
         //bind the token parameter
-        $db->stmt->bind_param("s", $token);
+        $db->stmt->bind_param("s", $hashed_token);
         mysqli_stmt_execute($db->stmt);
         $result = mysqli_stmt_get_result($db->stmt);
         // check if insertion was successful

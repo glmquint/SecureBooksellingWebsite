@@ -142,7 +142,7 @@ DROP TABLE IF EXISTS `reset_token`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `reset_token` (
-  `token` binary(16) NOT NULL,
+  `token` varchar(64) NOT NULL,
   `user_id` int NOT NULL,
   `expiration_date` datetime NOT NULL,
   PRIMARY KEY (`token`),
@@ -177,7 +177,7 @@ CREATE TABLE `users` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `id_UNIQUE` (`id`),
   UNIQUE KEY `email_UNIQUE` (`email`)
-) ENGINE=InnoDB AUTO_INCREMENT=20 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=21 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -186,7 +186,7 @@ CREATE TABLE `users` (
 
 LOCK TABLES `users` WRITE;
 /*!40000 ALTER TABLE `users` DISABLE KEYS */;
-INSERT INTO `users` VALUES (4,'ghi0m@localhost.com','$2y$10$3BhgHBnlHGN7vMhgBEfwXuQjX8wqo7s478ZpMd0ZC7Oq4TuW4YqIW',0,'2024-01-08 11:18:46',1),(5,'fabi0@localhost.com','$2y$10$MdaisEyyuy6TwmSSo8ipDOue6T/dmrDgdHzoQjvkm75eXDFFkeXCu',0,'2023-12-18 16:59:58',1),(6,'giacom0@localhost.com','$2y$10$BUUPclzGBPrJSKILGyKh7.Z0ULvlcrM6MRrdIoDAxjfIDVnZZNuXm',0,'1970-01-01 00:00:00',1);
+INSERT INTO `users` VALUES (4,'ghi0m@localhost.com','$2y$10$3BhgHBnlHGN7vMhgBEfwXuQjX8wqo7s478ZpMd0ZC7Oq4TuW4YqIW',0,'2024-01-08 11:18:46',1),(5,'fabi0@localhost.com','$2y$10$nm1eudXji.VX.9CSGYyibu.RnG2xpyKRzgaVWMt95erixqa2rattq',0,'2023-12-18 16:59:58',1),(6,'giacom0@localhost.com','$2y$10$BUUPclzGBPrJSKILGyKh7.Z0ULvlcrM6MRrdIoDAxjfIDVnZZNuXm',0,'1970-01-01 00:00:00',1);
 /*!40000 ALTER TABLE `users` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -206,15 +206,15 @@ DELIMITER ;;
 /*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;;
 /*!50003 SET @saved_time_zone      = @@time_zone */ ;;
 /*!50003 SET time_zone             = 'SYSTEM' */ ;;
-/*!50106 CREATE*/ /*!50117 DEFINER=`root`@`localhost`*/ /*!50106 EVENT `check_inactive_users` ON SCHEDULE EVERY 1 DAY STARTS '2024-01-09 02:00:00' ON COMPLETION PRESERVE ENABLE DO BEGIN
-DELETE FROM users
-WHERE id IN (
-	SELECT * FROM(
-		SELECT users.id
-		FROM users
-		LEFT JOIN reset_token ON users.id = reset_token.user_id
-		WHERE users.active = 0 AND (reset_token.user_id IS NULL OR reset_token.expiration_date < NOW())
-    ) as U2);
+/*!50106 CREATE*/ /*!50117 DEFINER=`root`@`localhost`*/ /*!50106 EVENT `check_inactive_users` ON SCHEDULE EVERY 1 DAY STARTS '2024-01-09 02:00:00' ON COMPLETION PRESERVE ENABLE DO BEGIN
+DELETE FROM users
+WHERE id IN (
+	SELECT * FROM(
+		SELECT users.id
+		FROM users
+		LEFT JOIN reset_token ON users.id = reset_token.user_id
+		WHERE users.active = 0 AND (reset_token.user_id IS NULL OR reset_token.expiration_date < NOW())
+    ) as U2);
 END */ ;;
 /*!50003 SET time_zone             = @saved_time_zone */ ;;
 /*!50003 SET sql_mode              = @saved_sql_mode */ ;;
@@ -233,4 +233,4 @@ DELIMITER ;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2024-01-09 11:50:36
+-- Dump completed on 2024-01-12 12:12:28
