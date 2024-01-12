@@ -48,7 +48,7 @@ if (isset($_POST['email']) || isset($_POST['password'])) {
         else {
             $subject = "Activation account";
             $message = "This is a activation email. Click on the link to activate your account\n"
-                . $DOMAIN . "/activate-token.php?token=" . bin2hex($token);
+                . $DOMAIN . "/activate-token.php?token=" . htmlspecialchars(bin2hex($token));
 
             // Send email
             $mailSuccess = mail($email, $subject, $message, $headers);
@@ -72,7 +72,7 @@ if (isset($_POST['email']) || isset($_POST['password'])) {
                 performLog("Warning", "Invalid register", array("mail" => $_POST['email']));
                 $subject = "Invalid register attempt";
                 $message = "Someone tried to register with your email address. If it was you, click on the link to reset your password\n"
-                    . $DOMAIN . "/resetpassword-token.php?token=" . bin2hex($token). "\n"
+                    . $DOMAIN . "/resetpassword-token.php?token=" . htmlspecialchars(bin2hex($token)). "\n"
                     . "If it wasn't you, ignore this email";
                 // Send email
                 $mailSuccess = mail($email, $subject, $message, $headers);
@@ -100,7 +100,7 @@ if (isset($_POST['email']) || isset($_POST['password'])) {
             if(saveToken($token,  $userArray['id'], 60)){
                 $subject = "Activation account";
                 $message = "This is a activation email. Click on the link to activate your account\n"
-                    . $DOMAIN . "/activate-token.php?token=" . bin2hex($token);
+                    . $DOMAIN . "/activate-token.php?token=" . htmlspecialchars(bin2hex($token));
 
                 // Send email
                 $mailSuccess = mail($email, $subject, $message, $headers);

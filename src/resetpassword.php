@@ -41,7 +41,7 @@ if(isset($_POST['email'])){
         } elseif (saveToken($token, $userId, 5)) { // User is active, we try to save the token and send mail
             $subject = "Reset Email";
             $message = "This is a reset email. Click on the link to reset your password\n"
-                . $DOMAIN . "/resetpassword-token.php?token=" . bin2hex($token);
+                . $DOMAIN . "/resetpassword-token.php?token=" . htmlspecialchars(bin2hex($token));
 
             // Additional headers
             $headers = "From: " . $_ENV['NO_REPLY_EMAIL'] . "\r\n";

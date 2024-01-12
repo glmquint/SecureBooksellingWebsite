@@ -47,7 +47,7 @@
         </tr>
         <tr>
             <td><?php echo htmlspecialchars($bookauthor) ?></td>
-            <td><?php echo $bookprice / 100 /* price is guaranteed to be an integer in db */?>€</td>
+            <td><?php echo htmlspecialchars($bookprice) / 100 /* price is guaranteed to be an integer in db */?>€</td>
             <td><?php echo htmlspecialchars($bookavailable) ?></td>
         </tr>
     </table>

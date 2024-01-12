@@ -90,11 +90,11 @@ if (!isset($_SESSION['email']) || !is_string($_SESSION['email'])) {
         $DOMAIN = $_ENV['DOMAIN'];
     }
 
-    $subject = "Your order [#" . $_SESSION['order']['orderid'] . "] has been placed";
+    $subject = "Your order [#" . htmlspecialchars($_SESSION['order']['orderid']) . "] has been placed";
     $message = "Thanks for buying our books!\n"
-        . "Total price: " . $_SESSION['order']['total_price'] / 100 . "€\n\n"
+        . "Total price: " . htmlspecialchars($_SESSION['order']['total_price']) / 100 . "€\n\n"
         . "You can see your order here: \n"
-        . $DOMAIN . "/books.php?id=" . $cart_id . "\n";
+        . $DOMAIN . "/books.php?id=" . htmlspecialchars($cart_id) . "\n";
 
     // Additional headers
     $headers = "From: " . $_ENV['NO_REPLY_EMAIL'] . "\r\n";
@@ -134,7 +134,7 @@ if (!isset($_SESSION['email']) || !is_string($_SESSION['email'])) {
             echo "<a href='index.php'>Back to home</a>";
             echo "</nav>";
             echo "</header>";
-            echo "<p>A book that you ordered is currently not available. You can still read the digital version from <a href='books.php?id=" . $cart_id . "'>your books</a>. We will let you know when your book will get back in stock!</p>";
+            echo "<p>A book that you ordered is currently not available. You can still read the digital version from <a href='books.php?id=" . htmlspecialchars($cart_id) . "'>your books</a>. We will let you know when your book will get back in stock!</p>";
 
             performLog("Warning", "Book not in stock", array("email" => $_SESSION['email'], "orderid" => $_SESSION['order']['orderid']));
 
@@ -147,9 +147,9 @@ if (!isset($_SESSION['email']) || !is_string($_SESSION['email'])) {
             $message = "Thanks for buying our books!\n"
                 . "Unfortunately, a book that you ordered is currently not available.\n"
                 . "We will let you know when your book will get back in stock!\n"
-                . "Total price: " . $_SESSION['order']['total_price'] / 100 . "€\n\n"
+                . "Total price: " . htmlspecialchars($_SESSION['order']['total_price']) / 100 . "€\n\n"
                 . "You can still read the digital version from : \n"
-                . $DOMAIN . "/books.php?id=" . $cart_id . "\n";
+                . $DOMAIN . "/books.php?id=" . htmlspecialchars($cart_id) . "\n";
 
             //cannot factor out this unset because we need to keep the cart if an error occured while placing the order (different from the book not in stock error)
             unset($_SESSION['cart']);
@@ -173,7 +173,7 @@ if (!isset($_SESSION['email']) || !is_string($_SESSION['email'])) {
 
     if ($mailSuccess) {
         performLog("Info", "Mail order confirmation sent successfully", array("email" => $_SESSION['email']));
-        echo "<p>Order confirmation sent to " . $_SESSION['email'] . "</p>";
+        echo "<p>Order confirmation sent to " . htmlspecialchars($_SESSION['email']) . "</p>";
     } else {
         performLog("Error", "Failed to send email confirmation", array("email" => $_SESSION['email']));
         $_SESSION['errorMsg'] = "Failed to send order confirmation to " . $_SESSION['email'];

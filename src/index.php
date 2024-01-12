@@ -41,12 +41,12 @@ session_start_or_expire();
                 // loop through the book list
                 while ($row = mysqli_fetch_array($result)) {
                     echo "{";
-                    echo '"id":' . $row['id'] . ',';
+                    echo '"id":' . htmlspecialchars($row['id']) . ',';
                     echo '"title":"' . htmlspecialchars($row['title']) . '",';
                     echo '"author":"' . htmlspecialchars($row['author']) . '",';
                     // price is divided by 100 to avoid floating point arithmetic
-                    echo '"price":' . $row['price'] / 100 . ',';
-                    echo '"available":' . $row['available'];
+                    echo '"price":' . htmlspecialchars($row['price']) / 100 . ',';
+                    echo '"available":' . htmlspecialchars($row['available']);
                     echo "},";
                 }
             } catch (mysqli_sql_exception $e) {

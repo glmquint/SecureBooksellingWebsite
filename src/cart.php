@@ -46,10 +46,10 @@ if (isset($_SESSION['cart'])) {
             echo "<td><a href='bookdetails.php?id=" . htmlspecialchars($row['id']) . "'>" . htmlspecialchars($row['title']) . "</a></td>";
             echo "<td>" . htmlspecialchars($row['author']) . "</td>";
             // price is divided by 100 to avoid floating point arithmetic
-            echo "<td>" . $row['price'] / 100 . "€</td>";
+            echo "<td>" . htmlspecialchars($row['price']) / 100 . "€</td>";
             $quantity = $_SESSION['cart'][$row['id']];
             $total_price += $row['price'] * $quantity;
-            echo "<td>" . $quantity . "</td>";
+            echo "<td>" . htmlspecialchars($quantity) . "</td>";
             echo "<td><button name='id' formaction='addtocart.php' value=". htmlspecialchars($row['id']) .">Add</button></td>";
             echo "<td><button name='id' formaction='removefromcart.php' value=". htmlspecialchars($row['id']) .">Remove</button></td>";
 

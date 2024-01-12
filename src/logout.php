@@ -23,4 +23,4 @@ require_once '../utils/Logger.php';
     }
     header('Location: index.php');
     exit();
-    ?>
+?>

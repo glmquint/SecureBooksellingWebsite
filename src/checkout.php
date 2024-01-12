@@ -75,7 +75,7 @@ if (!isset($_SESSION['email']) || !is_string($_SESSION['email'])) {
         'orderid' => random_int(100000, 999999),
         'cart' => $_SESSION['cart'],
         'total_price' => $total_price,
-        'email' => htmlspecialchars($_SESSION['email']),
+        'email' => $_SESSION['email'],
         'status' => 'in transit'
     ];
 
@@ -84,22 +84,22 @@ if (!isset($_SESSION['email']) || !is_string($_SESSION['email'])) {
     echo "<form method='post' action='checkout.php'>";
     echo "<label for='firstname'>First name</label>";
     $firstname = $_SESSION['delivery']['firstname'] ?? '';
-    echo "<input type='text' name='firstname' id='firstname' required='required' placeholder='Abbie' pattern=\"" . $regexes['firstname'] . "\" value='" . $firstname . "'>";
+    echo "<input type='text' name='firstname' id='firstname' required='required' placeholder='Abbie' pattern=\"" . $regexes['firstname'] . "\" value='" . htmlspecialchars($firstname) . "'>";
     echo "<label for='lastname'>Last name</label>";
     $lastname = $_SESSION['delivery']['lastname'] ?? '';
-    echo "<input type='text' name='lastname' id='lastname' required='required' placeholder='Bernstein' pattern=\"" . $regexes['lastname'] . "\" value='" . $lastname . "'>";
+    echo "<input type='text' name='lastname' id='lastname' required='required' placeholder='Bernstein' pattern=\"" . $regexes['lastname'] . "\" value='" . htmlspecialchars($lastname) . "'>";
     echo "<label for='address'>Address</label>";
     $address = $_SESSION['delivery']['address'] ?? '';
-    echo "<input type='text' name='address' id='address' required='required' placeholder='5th Avenue' pattern=\"" . $regexes['address'] . "\" value='" . $address . "'>";
+    echo "<input type='text' name='address' id='address' required='required' placeholder='5th Avenue' pattern=\"" . $regexes['address'] . "\" value='" . htmlspecialchars($address) . "'>";
     echo "<label for='city'>City</label>";
     $city = $_SESSION['delivery']['city'] ?? '';
-    echo "<input type='text' name='city' id='city' required='required' placeholder='New York' pattern=\"" . $regexes['city'] . "\" value='" . $city . "'>";
+    echo "<input type='text' name='city' id='city' required='required' placeholder='New York' pattern=\"" . $regexes['city'] . "\" value='" . htmlspecialchars($city) . "'>";
     echo "<label for='postalcode'>Postal code</label>";
     $postalcode = $_SESSION['delivery']['postalcode'] ?? '';
-    echo "<input type='text' name='postalcode' id='postalcode' required='required' placeholder='10128' pattern=\"" . $regexes['postalcode'] . "\" value='" . $postalcode . "'>";
+    echo "<input type='text' name='postalcode' id='postalcode' required='required' placeholder='10128' pattern=\"" . $regexes['postalcode'] . "\" value='" . htmlspecialchars($postalcode) . "'>";
     echo "<label for='country'>Country</label>";
     $country = $_SESSION['delivery']['country'] ?? '';
-    echo "<input type='text' name='country' id='country' required='required' placeholder='United States' pattern=\"" . $regexes['country'] . "\" value='" . $country . "'>";
+    echo "<input type='text' name='country' id='country' required='required' placeholder='United States' pattern=\"" . $regexes['country'] . "\" value='" . htmlspecialchars($country) . "'>";
     echo "<br>";
     echo "<button type='submit'>Submit</button>";
     echo "</form>";
@@ -124,12 +124,12 @@ if (!isset($_SESSION['email']) || !is_string($_SESSION['email'])) {
 
         $_SESSION['delivery'] = array();
         $_SESSION['delivery'] = [
-            'firstname' => htmlspecialchars($_POST['firstname']) ?? '',
-            'lastname' => htmlspecialchars($_POST['lastname']) ?? '',
-            'address' => htmlspecialchars($_POST['address']) ?? '',
-            'city' => htmlspecialchars($_POST['city']) ?? '',
-            'postalcode' => htmlspecialchars($_POST['postalcode']) ?? '',
-            'country' => htmlspecialchars($_POST['country']) ?? '',
+            'firstname' => $_POST['firstname'] ?? '',
+            'lastname' => $_POST['lastname'] ?? '',
+            'address' => $_POST['address'] ?? '',
+            'city' => $_POST['city'] ?? '',
+            'postalcode' => $_POST['postalcode'] ?? '',
+            'country' => $_POST['country'] ?? '',
         ];
         header('Location: checkout.php');
     }
@@ -139,16 +139,16 @@ if (!isset($_SESSION['email']) || !is_string($_SESSION['email'])) {
     echo "<form method='post' action='checkout.php'>";
     echo "<label for='cardnumber'>Card number</label>";
     $cardnumber = $_SESSION['payment']['cardnumber'] ?? '';
-    echo "<input type='text' name='cardnumber' id='cardnumber' required='required' placeholder='XXXX-XXXX-XXXX-XXXX' pattern=\"" . $regexes['cardnumber'] . "\" value='" . $cardnumber . "'>";
+    echo "<input type='text' name='cardnumber' id='cardnumber' required='required' placeholder='XXXX-XXXX-XXXX-XXXX' pattern=\"" . $regexes['cardnumber'] . "\" value='" . htmlspecialchars($cardnumber) . "'>";
     echo "<label for='cardholder'>Card holder</label>";
     $cardholder = $_SESSION['payment']['cardholder'] ?? '';
-    echo "<input type='text' name='cardholder' id='cardholder' required='required' placeholder='Abbie Bernstein' patter=\"" . $regexes['cardholder'] . "\" value='" . $cardholder . "'>";
+    echo "<input type='text' name='cardholder' id='cardholder' required='required' placeholder='Abbie Bernstein' patter=\"" . $regexes['cardholder'] . "\" value='" . htmlspecialchars($cardholder) . "'>";
     echo "<label for='expirationdate'>Expiration date</label>";
     $expirationdate = $_SESSION['payment']['expirationdate'] ?? '';
-    echo "<input type='month' name='expirationdate' id='expirationdate' required='required' value='" . $expirationdate . "'>";
+    echo "<input type='month' name='expirationdate' id='expirationdate' required='required' value='" . htmlspecialchars($expirationdate) . "'>";
     echo "<label for='cvv'>CVV</label>";
     $cvv = $_SESSION['payment']['cvv'] ?? '';
-    echo "<input type='text' name='cvv' id='cvv' required='required' placeholder='123' pattern=\"" . $regexes['cvv'] . "\" value='" . $cvv . "'>";
+    echo "<input type='text' name='cvv' id='cvv' required='required' placeholder='123' pattern=\"" . $regexes['cvv'] . "\" value='" . htmlspecialchars($cvv) . "'>";
     echo "<br>";
     echo "<button type='submit'>Submit</button>";
     echo "</form>";
@@ -170,10 +170,10 @@ if (!isset($_SESSION['email']) || !is_string($_SESSION['email'])) {
         }
         $_SESSION['payment'] = array();
         $_SESSION['payment'] = [
-            'cardnumber' => htmlspecialchars($_POST['cardnumber']) ?? '',
-            'cardholder' => htmlspecialchars($_POST['cardholder']) ?? '',
-            'expirationdate' => htmlspecialchars($_POST['expirationdate']) ?? '',
-            'cvv' => htmlspecialchars($_POST['cvv']) ?? '',
+            'cardnumber' => $_POST['cardnumber'] ?? '',
+            'cardholder' => $_POST['cardholder'] ?? '',
+            'expirationdate' => $_POST['expirationdate'] ?? '',
+            'cvv' => $_POST['cvv'] ?? '',
         ];
         header('Location: checkout.php');
     }
@@ -191,13 +191,13 @@ if (!isset($_SESSION['email']) || !is_string($_SESSION['email'])) {
     echo "<h3>Delivery summary</h3>";
     echo "<table>";
 
-    echo "<tr><td>Order ID: </td><td>" . $_SESSION['order']['orderid'] . "</td></tr>";
-    echo "<tr><td>Email: </td><td>" . $_SESSION['order']['email'] . "</td></tr>";
-    echo "<tr><td>Firstname Lastname: </td><td>" . $_SESSION['delivery']['firstname'] . " " . $_SESSION['delivery']['lastname'] . "</td></tr>";
-    echo "<tr><td>Delivery address:  </td><td>" . $_SESSION['delivery']['address'] . "</td></tr>";
-    echo "<tr><td>Delivery city:  </td><td>" . $_SESSION['delivery']['city']. "</td></tr>";
-    echo "<tr><td>Delivery postalcode:  </td><td>" . $_SESSION['delivery']['postalcode']. "</td></tr>";
-    echo "<tr><td>Delivery country:  </td><td>" . $_SESSION['delivery']['country']. "</td></tr>";
+    echo "<tr><td>Order ID: </td><td>" . htmlspecialchars($_SESSION['order']['orderid']) . "</td></tr>";
+    echo "<tr><td>Email: </td><td>" . htmlspecialchars($_SESSION['order']['email']) . "</td></tr>";
+    echo "<tr><td>Firstname Lastname: </td><td>" . htmlspecialchars($_SESSION['delivery']['firstname']) . " " . htmlspecialchars($_SESSION['delivery']['lastname']) . "</td></tr>";
+    echo "<tr><td>Delivery address:  </td><td>" . htmlspecialchars($_SESSION['delivery']['address']) . "</td></tr>";
+    echo "<tr><td>Delivery city:  </td><td>" . htmlspecialchars($_SESSION['delivery']['city']) . "</td></tr>";
+    echo "<tr><td>Delivery postalcode:  </td><td>" . htmlspecialchars($_SESSION['delivery']['postalcode']) . "</td></tr>";
+    echo "<tr><td>Delivery country:  </td><td>" . htmlspecialchars($_SESSION['delivery']['country']) . "</td></tr>";
 
     echo "</table>";
     echo "<a href='checkout.php?updatedelivery'>Back to delivery</a>";
@@ -206,9 +206,9 @@ if (!isset($_SESSION['email']) || !is_string($_SESSION['email'])) {
     echo "<table>";
     $cart_obfuscated = substr_replace(str_repeat('*', strlen($_SESSION['payment']['cardnumber'])), substr($_SESSION['payment']['cardnumber'],-2), -2);
 
-    echo "<tr><td>Payment card number: </td><td>" . $cart_obfuscated. "</td></tr>";
-    echo "<tr><td>Payment card holder: </td><td>" . $_SESSION['payment']['cardholder']. "</td></tr>";
-    echo "<tr><td>Payment card expiration date: </td><td>" . $_SESSION['payment']['expirationdate']. "</td></tr>";
+    echo "<tr><td>Payment card number: </td><td>" . htmlspecialchars($cart_obfuscated). "</td></tr>";
+    echo "<tr><td>Payment card holder: </td><td>" . htmlspecialchars($_SESSION['payment']['cardholder']). "</td></tr>";
+    echo "<tr><td>Payment card expiration date: </td><td>" . htmlspecialchars($_SESSION['payment']['expirationdate']). "</td></tr>";
     echo "</table>";
     echo "<a href='checkout.php?updatepayment'>Back to payment</a>";
     // echo "<p>Payment card CVV: " . $_SESSION['payment']['cvv']). "</p>";
@@ -230,13 +230,13 @@ if (!isset($_SESSION['email']) || !is_string($_SESSION['email'])) {
         }
         echo "<tr>";
         echo "<td>" . htmlspecialchars($row['title']) . "</td>";
-        echo "<td>" . $quantity . "</td>";
+        echo "<td>" . htmlspecialchars($quantity) . "</td>";
         echo "</tr>";
         $total_price += $row['price'] * $quantity;
     }
     $_SESSION['order']['total_price'] = $total_price;
     echo "</table>";
-    echo "<b>Total price: " . $_SESSION['order']['total_price'] / 100 . "€</b>";
+    echo "<b>Total price: " . htmlspecialchars($_SESSION['order']['total_price']) / 100 . "€</b>";
     echo "<br>";
     echo "<form method='post' action='placeorder.php'>";
     echo "<input type='hidden' name='csrf_token' value='" . $_SESSION['csrf_token'] . "' readonly='readonly' >";
